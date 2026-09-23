@@ -18,15 +18,15 @@ def detect_role(filename):
         if role in name:
             return role
     for fragment, role in [('динамика', 'sales_transactions'), ('продаж', 'sales_monthly'),
-                           ('остат', 'stock_monthly'), ('сезон', 'seasonality'), ('moq', 'moq'), ('пути', 'current_stock_inbound')]:
+                           ('остат', 'stock_monthly'), ('сезон', 'seasonality'), ('moq', 'moq'), ('пути', 'current_stock_inbound'), ('путь', 'current_stock_inbound')]:
         if fragment in name:
             return role
     raise DomainError('INVALID_FILE', f'Не определена роль файла «{filename}». Используйте названия ролей из шаблона.', 400)
 
 
 def inspect_upload(files, supplier_id, context):
-    if supplier_id != 'systeme-electric':
-        raise DomainError('INVALID_PARAMETERS', 'Сейчас поддержан только Systeme Electric.')
+    if supplier_id not in ('systeme-electric', 'iek'):
+        raise DomainError('INVALID_PARAMETERS', 'Поддержаны Systeme Electric и IEK.')
     if not 1 <= len(files) <= 6:
         raise DomainError('INVALID_FILE', 'Загрузите от одного до шести файлов XLSX.', 400)
     if sum(len(content) for _, content in files) > MAX_BYTES:
@@ -48,8 +48,8 @@ def inspect_upload(files, supplier_id, context):
             book = load_workbook(BytesIO(content), read_only=True, data_only=True, keep_links=False)
             rows = 0
             for sheet in book:
-                if (sheet.max_row or 0) > 100000 or (sheet.max_column or 0) > 256:
-                    raise DomainError('INVALID_FILE', 'Лист превышает лимит 100 000 строк / 256 столбцов.', 400)
+                if (sheet.max_row or 0) > 250000 or (sheet.max_column or 0) > 256:
+                    raise DomainError('INVALID_FILE', 'Лист превышает лимит 250 000 строк / 256 столбцов.', 400)
                 rows += sum(1 for row in sheet.iter_rows(values_only=True) if any(cell is not None for cell in row))
             book.close()
         except DomainError:

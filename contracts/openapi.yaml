@@ -303,6 +303,51 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OverrideRequest'
+  /calculations/{calculation_id}/items/{item_id}/ai-review:
+    post:
+      operationId: reviewItemWithAI
+      tags:
+      - Calculations
+      summary: Проверить выбранную позицию через настроенный LLM
+      description: Сохраняет только заключение ИИ. Количества и утверждённые снимки не меняются. При изменении ревизии во время вызова ответ отклоняется.
+      parameters: *id002
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_revision]
+              properties:
+                expected_revision:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Карточка с заключением или явной причиной недоступности ИИ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDetail'
+        '404':
+          description: Позиция не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ревизия изменилась
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /calculations/{calculation_id}/approve:
     post:
       operationId: approveCalculation

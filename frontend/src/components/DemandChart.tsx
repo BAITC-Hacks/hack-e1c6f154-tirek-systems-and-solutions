@@ -10,12 +10,16 @@ import {
   YAxis,
 } from 'recharts'
 import type { ItemDetail } from '../api/client'
+import { useId } from 'react'
 import { date, number } from './ui'
 
 export default function DemandChart({ detail }: { detail: ItemDetail }) {
+  const fillId = useId()
+  const regular =
+    detail.history.length > 0 && detail.history.every((row) => row.regular_sales !== null)
   const history = detail.history.map((row) => ({
     period: date(row.period_end, true),
-    actual: row.regular_sales,
+    actual: regular ? row.regular_sales : row.observed_sales,
     forecast: null as number | null,
     range: null as number[] | null,
   }))
@@ -41,7 +45,7 @@ export default function DemandChart({ detail }: { detail: ItemDetail }) {
       <div className="chart-legend">
         <span>
           <i className="legend-line" />
-          Регулярные продажи
+          {regular ? 'Регулярные продажи' : 'Наблюдаемые продажи'}
         </span>
         <span>
           <i className="legend-line forecast" />
@@ -52,12 +56,12 @@ export default function DemandChart({ detail }: { detail: ItemDetail }) {
       <div
         className="demand-chart"
         role="img"
-        aria-label={`История спроса ${detail.item.sku}. Последний период: ${number(last?.actual)} ${detail.item.unit}. Прогноз: ${number(forecast?.p50)}. Синтетические данные.`}
+        aria-label={`История спроса ${detail.item.sku}. Последний период: ${number(last?.actual)} ${detail.item.unit}. Прогноз: ${number(forecast?.p50 ?? forecast?.mean)} ${detail.item.unit}.`}
       >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={rows} margin={{ top: 20, right: 25, left: -23, bottom: 0 }}>
             <defs>
-              <linearGradient id="demand-fill" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#208163" stopOpacity={0.17} />
                 <stop offset="100%" stopColor="#208163" stopOpacity={0} />
               </linearGradient>
@@ -85,7 +89,7 @@ export default function DemandChart({ detail }: { detail: ItemDetail }) {
               dataKey="actual"
               stroke="#208163"
               strokeWidth={2.5}
-              fill="url(#demand-fill)"
+              fill={`url(#${fillId})`}
               isAnimationActive={false}
             />
             <Line
@@ -102,12 +106,18 @@ export default function DemandChart({ detail }: { detail: ItemDetail }) {
       </div>
       {forecast && (
         <div className="chart-foot">
-          <span>Каждая точка — полный период 28 дней</span>
+          <span>Каждая точка — сумма за период 28 дней</span>
           <span>
-            Прогнозный интервал:{' '}
-            <strong>
-              {number(forecast.p10)}–{number(forecast.p90)} {detail.item.unit}
-            </strong>
+            {forecast.p10 == null || forecast.p90 == null ? (
+              'Прогнозный интервал не рассчитан'
+            ) : (
+              <>
+                Прогнозный интервал:{' '}
+                <strong>
+                  {number(forecast.p10)}–{number(forecast.p90)} {detail.item.unit}
+                </strong>
+              </>
+            )}
           </span>
         </div>
       )}

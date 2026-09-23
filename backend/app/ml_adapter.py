@@ -86,6 +86,9 @@ def _prepare_model_inputs(directory, report):
 
 def normalize_dataset(directory: Path, report: dict, context: dict | None) -> dict:
     """Normalize and audit all six uploaded workbooks for the platform import job."""
+    if report['supplier_ids'] == ['iek']:
+        from .iek_adapter import normalize_dataset as normalize_iek
+        return normalize_iek(directory, report, context)
     directory = Path(directory)
     roles = {source["role"] for source in report["sources"]}
     if roles != ROLE_NAMES:
@@ -296,6 +299,9 @@ class TirekCalculationPipeline:
     """Use frozen forecast weights and the production decision core."""
 
     def calculate(self, dataset: dict, request: dict, calculation_id: str) -> dict:
+        if dataset.get('supplier_ids') == ['iek']:
+            from .iek_adapter import IEKForecastPipeline
+            return IEKForecastPipeline().calculate(dataset, request, calculation_id)
         data_dir = Path(os.getenv("DATA_DIR", str(ROOT / "data")))
         directory = data_dir / "uploads" / dataset["dataset_id"]
         metadata = json.loads((directory / "normalized" / "metadata.json").read_text(encoding="utf-8"))

@@ -9,6 +9,7 @@ import json
 import logging
 import os
 from uuid import uuid4
+from dotenv import load_dotenv
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, Header, UploadFile
 from fastapi.exceptions import RequestValidationError
@@ -21,6 +22,9 @@ from .ingestion import MAX_BYTES, inspect_upload
 from .pipeline import calculate
 from .storage import Store
 from .runtime import DEFAULT_INGESTOR, capabilities, load_adapter
+from .ai_review import configuration as ai_configuration, review as review_ai
+
+load_dotenv(ROOT / 'backend' / '.env', override=False)
 
 
 def error_body(error):
@@ -146,8 +150,8 @@ def create_app(db_path=None):
 
     @app.get(prefix + '/health')
     def health():
-        return {'status': 'ok', 'api_version': '1.0.0', 'supported_suppliers': ['systeme-electric'],
-                'supported_horizons': [28], 'llm_available': False, 'max_file_count': 6, 'max_total_upload_bytes': MAX_BYTES}
+        return {'status': 'ok', 'api_version': '1.0.0', 'supported_suppliers': ['systeme-electric', 'iek'],
+                'supported_horizons': [28], 'llm_available': ai_configuration()['available'], 'max_file_count': 6, 'max_total_upload_bytes': MAX_BYTES}
 
     @app.get(prefix + '/workspace')
     def workspace():
@@ -275,6 +279,31 @@ def create_app(db_path=None):
             if item_id not in result['details']:
                 raise DomainError('NOT_FOUND', 'Товар не найден.', 404)
             return result['details'][item_id]
+
+    @app.post(prefix + '/calculations/{calculation_id}/items/{item_id}/ai-review')
+    def ai_review(calculation_id: str, item_id: str, payload: dict):
+        revision = payload.get('expected_revision')
+        if set(payload) != {'expected_revision'} or type(revision) is not int or revision < 1:
+            raise DomainError('INVALID_PARAMETERS', 'Укажите текущую ревизию расчёта.')
+        with store.transaction() as db:
+            result = store.get(db, 'calculation', calculation_id)
+            if result['response']['meta']['revision'] != revision:
+                raise DomainError('STALE_REVISION', 'Расчёт изменился. Обновите карточку и повторите проверку.', 409)
+            if item_id not in result['details']:
+                raise DomainError('NOT_FOUND', 'Товар не найден.', 404)
+            detail = deepcopy(result['details'][item_id])
+        judgement = review_ai(detail)
+        validate('AIJudgement', judgement)
+        with store.transaction() as db:
+            current = store.get(db, 'calculation', calculation_id)
+            if current['response']['meta']['revision'] != revision:
+                raise DomainError('STALE_REVISION', 'Расчёт изменился во время проверки ИИ. Ответ не применён.', 409)
+            current['details'][item_id]['item']['ai'] = judgement
+            for item in current['response']['items']:
+                if item['item_id'] == item_id:
+                    item['ai'] = deepcopy(judgement)
+            store.put(db, 'calculation', calculation_id, current)
+            return current['details'][item_id]
 
     @app.patch(prefix + '/calculations/{calculation_id}/items/{item_id}')
     def override(calculation_id: str, item_id: str, payload: dict):

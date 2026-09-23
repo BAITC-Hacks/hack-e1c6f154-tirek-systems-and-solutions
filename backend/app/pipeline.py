@@ -4,6 +4,7 @@ from typing import Protocol
 from .contracts import DomainError, validate
 from .demo import make_demo, summary
 from .runtime import DEFAULT_PIPELINE, load_adapter
+from .ai_review import review_calculation
 
 
 class CalculationPipeline(Protocol):
@@ -45,5 +46,7 @@ def calculate(dataset, request, calculation_id):
     meta = result['response']['meta']
     if meta['calculation_id'] != calculation_id or meta['dataset_id'] != dataset['dataset_id']:
         raise DomainError('INVALID_PIPELINE_RESULT', 'Расчётный модуль вернул неверную идентичность результата.', 500)
+    if request['request_ai_review']:
+        review_calculation(result)
     result['request'] = request
     return result

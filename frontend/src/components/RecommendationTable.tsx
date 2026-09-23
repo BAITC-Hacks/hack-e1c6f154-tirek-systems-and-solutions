@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowDown,
   ArrowUpRight,
@@ -28,6 +28,7 @@ export default function RecommendationTable({
   const [params, setParams] = useSearchParams()
   const [category, setCategory] = useState('all')
   const [supplier, setSupplier] = useState('all')
+  const [page, setPage] = useState(0)
   const [sortDescending, setSortDescending] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const query = params.get('q') || ''
@@ -49,7 +50,14 @@ export default function RecommendationTable({
     if (sortDescending) items.sort((a, b) => (b.final_quantity ?? -1) - (a.final_quantity ?? -1))
     return compact ? items.slice(0, 5) : items
   }, [data, query, category, supplier, status, sortDescending, compact])
-  const selectable = filtered.filter(canSelect)
+  useEffect(
+    () => setPage(0),
+    [query, category, supplier, status, sortDescending, data.meta.calculation_id],
+  )
+  const pageCount = Math.max(1, Math.ceil(filtered.length / 50))
+  const currentPage = Math.min(page, pageCount - 1)
+  const visible = filtered.slice(currentPage * 50, currentPage * 50 + 50)
+  const selectable = visible.filter(canSelect)
   const allChecked =
     selectable.length > 0 && selectable.every((item) => selected.includes(item.item_id))
   function setParam(key: string, value: string) {
@@ -230,10 +238,10 @@ export default function RecommendationTable({
               </tr>
             </thead>
             <tbody>
-              {[...new Set(filtered.map((i) => i.supplier_id))].map((supplier) => (
+              {[...new Set(visible.map((i) => i.supplier_id))].map((supplier) => (
                 <TableGroup
                   key={supplier}
-                  items={filtered.filter((i) => i.supplier_id === supplier)}
+                  items={visible.filter((i) => i.supplier_id === supplier)}
                   selected={selected}
                   onSelect={onSelect}
                   onOpen={onOpen}
@@ -246,8 +254,31 @@ export default function RecommendationTable({
       )}
       <div className="table-footer">
         <span>
-          Показано {filtered.length} из {data.items.length} позиций
+          Показано {visible.length} из {filtered.length} найденных · всего {data.items.length}
         </span>
+        {pageCount > 1 && (
+          <div className="history-actions">
+            <button
+              className="button"
+              disabled={currentPage === 0}
+              onClick={() => setPage(currentPage - 1)}
+              aria-label="Предыдущая страница"
+            >
+              Назад
+            </button>
+            <span>
+              {currentPage + 1} / {pageCount}
+            </span>
+            <button
+              className="button"
+              disabled={currentPage + 1 >= pageCount}
+              onClick={() => setPage(currentPage + 1)}
+              aria-label="Следующая страница"
+            >
+              Далее
+            </button>
+          </div>
+        )}
         <span>
           Единицы указаны для каждого товара <span className="footer-dot">·</span> Данные на{' '}
           {new Date(data.meta.data_as_of).toLocaleDateString('ru-RU')}

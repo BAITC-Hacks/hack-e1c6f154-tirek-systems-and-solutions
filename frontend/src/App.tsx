@@ -424,7 +424,8 @@ export default function App() {
                 <footer className="page-footer">
                   <span>Tirek · Закупки с ясным обоснованием</span>
                   <span>
-                    Systeme Electric <span className="footer-dot">·</span> Алматы
+                    {[...new Set(data.items.map((item) => item.supplier_name))].join(' · ')}{' '}
+                    <span className="footer-dot">·</span> Алматы
                   </span>
                 </footer>
               </>
@@ -446,6 +447,9 @@ export default function App() {
           itemId={itemId}
           onClose={() => setItemId(null)}
           onSaved={saved}
+          aiAvailable={!!health?.llm_available}
+          sourceKind={activeDataset?.source_kind}
+          onReviewed={refresh}
         />
       )}
       {workspace && (
@@ -453,12 +457,13 @@ export default function App() {
           open={calculationOpen}
           close={() => setCalculationOpen(false)}
           workspace={workspace}
-          initialDataset={calculationDataset}
+          initialDataset={calculationDataset || data?.meta.dataset_id || null}
           onComplete={async (id) => {
             currentId.current = id
             setSelected([])
             await refresh()
             setCalculationOpen(false)
+            setCalculationDataset(null)
             navigate('/recommendations')
             setToast('Расчёт подготовлен. Рекомендации готовы к проверке.')
           }}
@@ -499,10 +504,15 @@ export default function App() {
 }
 
 function Metrics({ data }: { data: Recommendations }) {
+  const forecastOnly = data.meta.issues.some((issue) => issue.code === 'FORECAST_ONLY')
   const metrics = [
     {
-      label: 'К закупке',
-      value: String(data.items.filter((i) => (i.final_quantity ?? 0) > 0).length),
+      label: forecastOnly ? 'Прогноз готов' : 'К закупке',
+      value: String(
+        data.items.filter((i) =>
+          forecastOnly ? i.forecast?.mean != null : (i.final_quantity ?? 0) > 0,
+        ).length,
+      ),
       unit: 'позиций',
       note: 'На ближайшие 28 дней',
       icon: ShoppingCartSimple,
@@ -510,9 +520,9 @@ function Metrics({ data }: { data: Recommendations }) {
     },
     {
       label: 'Критичный запас',
-      value: String(data.items.filter((i) => i.urgency === 'critical').length),
+      value: forecastOnly ? '—' : String(data.items.filter((i) => i.urgency === 'critical').length),
       unit: 'позиции',
-      note: 'В первую очередь',
+      note: forecastOnly ? 'Нужен актуальный остаток' : 'В первую очередь',
       icon: WarningCircle,
       tone: 'red',
     },
@@ -526,11 +536,13 @@ function Metrics({ data }: { data: Recommendations }) {
     },
     {
       label: 'Оценка закупки',
-      value: number(data.summary.known_order_cost_kzt),
+      value: forecastOnly ? '—' : number(data.summary.known_order_cost_kzt),
       unit: '₸',
-      note: data.summary.order_cost_complete
-        ? 'Все цены известны'
-        : 'Частичная сумма · не все цены',
+      note: forecastOnly
+        ? 'Нет данных для оценки'
+        : data.summary.order_cost_complete
+          ? 'Все цены известны'
+          : 'Частичная сумма · не все цены',
       icon: Package,
       tone: 'neutral',
     },
@@ -610,15 +622,22 @@ function Overview({
           Склад Алматы
           <CaretDown size={12} />
         </span>
-        <span>
-          <span className="supplier-monogram">S</span>Systeme Electric
-        </span>
+        <span>{[...new Set(data.items.map((item) => item.supplier_name))].join(' · ')}</span>
         <span className="context-date">
           Данные на {date(data.meta.data_as_of)}
           <CheckCircle size={15} />
         </span>
       </div>
       <Metrics data={data} />
+      {data.meta.issues.some((issue) => issue.code === 'FORECAST_ONLY') && (
+        <div className="notice warning">
+          <Info size={20} />
+          <span>
+            Показан ML-прогноз по загруженным продажам. Для расчёта заказа нужен актуальный
+            свободный остаток.
+          </span>
+        </div>
+      )}
       <div className="overview-grid">
         <section className="panel demand-panel">
           <div className="panel-heading">
@@ -751,6 +770,7 @@ function CalculationModal({
   const operation = useRef<{ body: string; key: string } | null>(null)
   const source = workspace.datasets.find((value) => value.dataset_id === dataset)
   const isDemo = source?.source_kind === 'synthetic'
+  const forecastOnly = source?.supplier_ids.includes('iek')
   const available = !!source?.calculation_allowed && (isDemo || workspace.capabilities.ml_connected)
   function selectDataset(id: string) {
     const next = workspace.datasets.find((value) => value.dataset_id === id)
@@ -886,8 +906,12 @@ function CalculationModal({
               <input
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                disabled={busy}
-                placeholder="Коды через запятую; пусто — все"
+                disabled={busy || forecastOnly}
+                placeholder={
+                  forecastOnly
+                    ? 'Для IEK категории не подтверждены'
+                    : 'Коды через запятую; пусто — все'
+                }
               />
             )}
           </label>
@@ -950,69 +974,73 @@ function CalculationModal({
                 />
               </label>
             </div>
-            <label className="field">
-              Политики категорий · JSON
-              <textarea
-                rows={4}
-                value={policies}
-                onChange={(e) => setPolicies(e.target.value)}
-                disabled={busy}
-                spellCheck={false}
-              />
-              <span className="field-hint">
-                Укажите исходный код категории, квантиль и основание. Без политики или экономики
-                количество останется неизвестным.
-              </span>
-            </label>
-            <details className="context-details">
-              <summary>Формат политики и дополнительные параметры</summary>
-              <p className="field-hint">
-                Пример формата; замените код, значения и основание своими:
-              </p>
-              <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-                {JSON.stringify(
-                  [
-                    {
-                      category_raw: 'КОД',
-                      target_quantile: 0.9,
-                      minimum_target_quantile: null,
-                      source_kind: 'manual',
-                      rationale: 'Основание выбранной политики',
-                    },
-                  ],
-                  null,
-                  2,
-                )}
-              </pre>
-              <label className="field">
-                Экономические профили · JSON
-                <textarea
-                  rows={4}
-                  value={economics}
-                  onChange={(e) => setEconomics(e.target.value)}
-                  disabled={busy}
-                  spellCheck={false}
-                />
-                <span className="field-hint">
-                  Для каждого SKU: underage_cost, overage_cost, unit_cost, currency (KZT),
-                  horizon_days (28), source_kind и rationale.
-                </span>
-              </label>
-              <label className="field">
-                Прогноз прироста · JSON
-                <textarea
-                  rows={4}
-                  value={growth}
-                  onChange={(e) => setGrowth(e.target.value)}
-                  disabled={busy}
-                  spellCheck={false}
-                />
-                <span className="field-hint">
-                  Для каждого SKU: rate, valid_from, valid_to, source_kind и rationale.
-                  Необязательно; без прироста оставьте [].
-                </span>
-              </label>
-            </details>
+            {!forecastOnly && (
+              <>
+                <label className="field">
+                  Политики категорий · JSON
+                  <textarea
+                    rows={4}
+                    value={policies}
+                    onChange={(e) => setPolicies(e.target.value)}
+                    disabled={busy}
+                    spellCheck={false}
+                  />
+                  <span className="field-hint">
+                    Укажите исходный код категории, квантиль и основание. Без политики или экономики
+                    количество останется неизвестным.
+                  </span>
+                </label>
+                <details className="context-details">
+                  <summary>Формат политики и дополнительные параметры</summary>
+                  <p className="field-hint">
+                    Пример формата; замените код, значения и основание своими:
+                  </p>
+                  <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+                    {JSON.stringify(
+                      [
+                        {
+                          category_raw: 'КОД',
+                          target_quantile: 0.9,
+                          minimum_target_quantile: null,
+                          source_kind: 'manual',
+                          rationale: 'Основание выбранной политики',
+                        },
+                      ],
+                      null,
+                      2,
+                    )}
+                  </pre>
+                  <label className="field">
+                    Экономические профили · JSON
+                    <textarea
+                      rows={4}
+                      value={economics}
+                      onChange={(e) => setEconomics(e.target.value)}
+                      disabled={busy}
+                      spellCheck={false}
+                    />
+                    <span className="field-hint">
+                      Для каждого SKU: underage_cost, overage_cost, unit_cost, currency (KZT),
+                      horizon_days (28), source_kind и rationale.
+                    </span>
+                  </label>
+                  <label className="field">
+                    Прогноз прироста · JSON
+                    <textarea
+                      rows={4}
+                      value={growth}
+                      onChange={(e) => setGrowth(e.target.value)}
+                      disabled={busy}
+                      spellCheck={false}
+                    />
+                    <span className="field-hint">
+                      Для каждого SKU: rate, valid_from, valid_to, source_kind и rationale.
+                      Необязательно; без прироста оставьте [].
+                    </span>
+                  </label>
+                </details>
+              </>
+            )}
           </>
         )}
         <label className="field">
@@ -1033,7 +1061,9 @@ function CalculationModal({
           <span>
             {isDemo
               ? 'Сценарный режим: используются готовые синтетические профили. Это демонстрация платформы, не результат ML-прогноза.'
-              : 'Расчёт использует загруженные источники и выбранный прогнозный метод. Недостаточные данные и неизвестные условия поставки будут отмечены в рекомендациях.'}
+              : forecastOnly
+                ? 'Будет построен ML-прогноз IEK на 28 дней по загруженным продажам. Количество закупки недоступно без актуального свободного остатка.'
+                : 'Расчёт использует загруженные источники и выбранный прогнозный метод. Недостаточные данные и неизвестные условия поставки будут отмечены в рекомендациях.'}
           </span>
         </div>
         {!available && (
@@ -1355,7 +1385,9 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           </div>
           <div className="settings-row">
             <span>Проверка ИИ</span>
-            <Badge>Не подключена</Badge>
+            <Badge tone={health?.llm_available ? 'normal' : 'scenario'}>
+              {health?.llm_available ? 'Провайдер настроен' : 'Требуется настройка провайдера'}
+            </Badge>
           </div>
           <div className="settings-row">
             <span>Горизонт расчёта</span>
@@ -1375,7 +1407,7 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           </p>
           <p>
             {workspace.capabilities.ml_connected
-              ? 'Адаптер нормализации и прогноза доступен. Загрузите шесть исходных файлов SE и задайте политики категорий или экономические профили. ИИ-проверка пока не подключена.'
+              ? 'Доступны расчёт SE и прогноз продаж IEK. Для ИИ-проверки задайте TIREK_LLM_BASE_URL, TIREK_LLM_MODEL и TIREK_LLM_API_KEY в локальном backend/.env и перезапустите сервер. Ключ хранится только на сервере.'
               : workspace.capabilities.ml_error ||
                 'Для расчёта по загруженным файлам требуется настроить адаптер модели.'}
           </p>

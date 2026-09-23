@@ -297,3 +297,78 @@ test('settings reports the runtime and supplier filtering works', async ({ page,
     .selectOption('systeme-electric')
   await expect(page.locator('.product-cell')).toHaveCount(12)
 })
+
+test('AI review button displays a provider judgement without changing quantity', async ({
+  page,
+  request,
+}) => {
+  await freshScenario(request)
+  const workspace = await (await request.get('/api/v1/workspace')).json()
+  const id = workspace.latest_calculation_id
+  const items = await (await request.get(`/api/v1/calculations/${id}/recommendations`)).json()
+  const item = items.items.find((value: { sku: string }) => value.sku === 'EZ9F34116')
+  const detail = await (
+    await request.get(`/api/v1/calculations/${id}/items/${item.item_id}`)
+  ).json()
+  // UI fixture only: the real HTTP transport is covered separately with MockTransport.
+  await page.route('**/api/v1/health', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ json: { ...(await response.json()), llm_available: true } })
+  })
+  await page.route('**/ai-review', (route) =>
+    route.fulfill({
+      json: {
+        ...detail,
+        item: {
+          ...detail.item,
+          ai: {
+            status: 'reviewed',
+            verdict: 'needs_review',
+            reasons: ['Тестовое заключение: проверьте сроки поставки.'],
+            evidence_ids: [item.evidence[0].id],
+            rule_ids: ['AI-01'],
+            suggested_action: 'Проверить сроки поставки',
+            provider_model: 'UI-TEST-MODEL',
+          },
+        },
+      },
+    }),
+  )
+  await page.goto('/recommendations')
+  await page.getByRole('button', { name: 'Открыть EZ9F34116', exact: true }).click()
+  await page.getByRole('tab', { name: 'Обоснование', exact: true }).click()
+  await page.getByRole('button', { name: 'Проверить с ИИ', exact: true }).click()
+  await expect(
+    page.getByText('Тестовое заключение: проверьте сроки поставки.', { exact: true }),
+  ).toBeVisible()
+  await expect(page.getByText('Модель: UI-TEST-MODEL', { exact: true })).toBeVisible()
+  const unchanged = await (
+    await request.get(`/api/v1/calculations/${id}/items/${item.item_id}`)
+  ).json()
+  expect(unchanged.item.final_quantity).toBe(item.final_quantity)
+})
+
+test('observed history remains visible when regular sales and quantiles are unavailable', async ({
+  page,
+}) => {
+  await page.route('**/calculations/*/items/*', async (route) => {
+    const response = await route.fetch()
+    const detail = await response.json()
+    detail.history = detail.history.map((row: object) => ({
+      ...row,
+      observed_sales: 10,
+      regular_sales: null,
+      source_kind: 'observed',
+    }))
+    detail.item.forecast = { ...detail.item.forecast, p10: null, p50: null, p90: null, mean: 20 }
+    await route.fulfill({ json: detail })
+  })
+  await page.goto('/')
+  await expect(page.getByText('Наблюдаемые продажи', { exact: true })).toBeVisible()
+  await expect(page.getByText('Прогнозный интервал не рассчитан', { exact: true })).toBeVisible()
+  await expect(page.locator('.demand-chart')).toHaveAttribute(
+    'aria-label',
+    /Последний период: 10 .*Прогноз: 20/,
+  )
+  await expect(page.locator('.recharts-area-area').first()).toBeVisible()
+})

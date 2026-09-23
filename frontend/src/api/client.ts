@@ -94,16 +94,21 @@ export const api = {
   recommendations: (id: string) => request<Recommendations>(`/calculations/${id}/recommendations`),
   detail: (id: string, item: string, signal?: AbortSignal) =>
     request<ItemDetail>(`/calculations/${id}/items/${item}`, { signal }),
+  review: (id: string, item: string, revision: number) =>
+    request<ItemDetail>(
+      `/calculations/${id}/items/${item}/ai-review`,
+      json({ expected_revision: revision }),
+    ),
   override: (id: string, item: string, payload: components['schemas']['OverrideRequest']) =>
     request<ItemDetail>(`/calculations/${id}/items/${item}`, json(payload, 'PATCH')),
   calculate: (payload: CalculationRequest, key: string) =>
     request<Job>('/calculations', json(payload, 'POST', key)),
   approve: (id: string, payload: components['schemas']['ApprovalRequest'], key: string) =>
     request<Approval>(`/calculations/${id}/approve`, json(payload, 'POST', key)),
-  upload: (files: File[], context: string, key: string) => {
+  upload: (files: File[], context: string, key: string, supplier = 'systeme-electric') => {
     const body = new FormData()
     files.forEach((file) => body.append('files', file))
-    body.append('supplier_id', 'systeme-electric')
+    body.append('supplier_id', supplier)
     if (context.trim()) body.append('context', context)
     return request<Job>('/datasets/import', {
       method: 'POST',

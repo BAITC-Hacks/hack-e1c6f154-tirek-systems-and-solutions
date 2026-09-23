@@ -124,6 +124,26 @@ export interface paths {
     patch: operations['overrideItem']
     trace?: never
   }
+  '/calculations/{calculation_id}/items/{item_id}/ai-review': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Проверить выбранную позицию через настроенный LLM
+     * @description Сохраняет только заключение ИИ. Количества и утверждённые снимки не меняются. При изменении ревизии во время вызова ответ отклоняется.
+     */
+    post: operations['reviewItemWithAI']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/calculations/{calculation_id}/approve': {
     parameters: {
       query?: never
@@ -843,6 +863,62 @@ export interface operations {
         }
       }
       /** @description Ошибка с кодом и описанием */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Error']
+        }
+      }
+    }
+  }
+  reviewItemWithAI: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        calculation_id: string
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': {
+          expected_revision: number
+        }
+      }
+    }
+    responses: {
+      /** @description Карточка с заключением или явной причиной недоступности ИИ */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemDetail']
+        }
+      }
+      /** @description Позиция не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Error']
+        }
+      }
+      /** @description Ревизия изменилась */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Error']
+        }
+      }
+      /** @description Некорректный запрос */
       422: {
         headers: {
           [name: string]: unknown

@@ -39,6 +39,7 @@ export default function DataPage({
   onCalculate: (datasetId: string) => void
 }) {
   const [files, setFiles] = useState<File[]>([])
+  const [supplier, setSupplier] = useState('systeme-electric')
   const [context, setContext] = useState('')
   const [error, setError] = useState('')
   const [job, setJob] = useState<Job | null>(null)
@@ -76,7 +77,7 @@ export default function DataPage({
     setError('')
     controller.current = new AbortController()
     try {
-      const initial = await api.upload(files, context, key.current)
+      const initial = await api.upload(files, context, key.current, supplier)
       const result = await api.wait(initial, setJob, controller.current.signal)
       await refresh()
       setReportId(result.resource_id!)
@@ -97,7 +98,7 @@ export default function DataPage({
           <h1>Источники данных</h1>
           <p>Все исходные данные в одном месте. Каждая загрузка сохраняет свою версию.</p>
         </div>
-        <Badge tone="normal">Systeme Electric</Badge>
+        <Badge tone="normal">Systeme Electric · IEK</Badge>
       </div>
       <div className="data-layout">
         <section className="panel upload-panel">
@@ -105,6 +106,20 @@ export default function DataPage({
             <h2>Загрузить новый набор</h2>
             <span className="muted small">XLSX · до 30 МБ</span>
           </div>
+          <label className="field">
+            Поставщик файлов
+            <select
+              value={supplier}
+              disabled={busy}
+              onChange={(e) => {
+                setSupplier(e.target.value)
+                key.current = crypto.randomUUID()
+              }}
+            >
+              <option value="systeme-electric">Systeme Electric</option>
+              <option value="iek">IEK · прогноз продаж</option>
+            </select>
+          </label>
           <div
             className={`dropzone ${dragging ? 'dragging' : ''}`}
             onDragOver={(e) => {
@@ -213,16 +228,20 @@ export default function DataPage({
                 <span>{index + 1}</span>
                 <div>
                   <strong>{label}</strong>
-                  <small>{sourceNames[role]}</small>
+                  <small>
+                    {supplier === 'iek' && role === 'current_stock_inbound'
+                      ? 'Путь ИЭК ДД.ММ.ГГГГ.xlsx'
+                      : sourceNames[role]}
+                  </small>
                 </div>
               </div>
             ))}
           <div className="notice">
             <Info size={20} />
             <p>
-              Сохраните оригинальные имена и структуру выгрузок SE: они используются при
-              нормализации. Для расчёта нужны все шесть ролей. Дату складского снимка берём из имени
-              файла.
+              {supplier === 'iek'
+                ? 'IEK: модель строит прогноз по динамике и помесячным продажам. Без актуального свободного остатка количество закупки не рассчитывается.'
+                : 'Сохраните оригинальные имена и структуру выгрузок SE. Для расчёта нужны все шесть ролей. Дату складского снимка берём из имени файла.'}
             </p>
           </div>
         </aside>
