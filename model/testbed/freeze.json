@@ -1,0 +1,76 @@
+{
+  "version": "testbed-v2.0",
+  "protocol": {
+    "version": "testbed-v2.0",
+    "mode": "synthetic",
+    "development_seeds": [
+      101,
+      202,
+      303
+    ],
+    "final_seeds": [
+      909,
+      1337,
+      2027,
+      4099
+    ],
+    "origins": [
+      "2025-07-01",
+      "2026-04-01"
+    ],
+    "history_days": 560,
+    "horizon_days": 28,
+    "items_per_case": 4,
+    "forecast_target_wape": 0.1,
+    "project_forecast_tolerance_fraction": 0.1,
+    "project_quantity_tolerance_fraction": 0.1,
+    "project_minimum_batch": 1,
+    "baseline": {
+      "window_days": 56,
+      "client_window_days": 7,
+      "recurring_weeks": 3,
+      "project_daily_multiplier": 8
+    },
+    "scenarios": [
+      "stable",
+      "seasonal_growth",
+      "intermittent",
+      "new_product",
+      "full_stockout",
+      "partial_stockout",
+      "single_project",
+      "split_project",
+      "recurring_client",
+      "known_promotion",
+      "demand_shock",
+      "combined"
+    ],
+    "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
+    "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",
+    "zero_denominator": "null (undefined); retain absolute error, zero-target count and row",
+    "failure_policy": "retain failed rows; aggregate metrics null if any prediction missing; never score only successful subset as complete",
+    "final_policy": "Freeze code, protocol, fixtures and adapter before final seeds. Do not tune from final outcomes. A rerun of frozen code is a reproducibility check, not a new holdout."
+  },
+  "files": {
+    "__init__.py": "7a4dfed39ef1fcc4015812018cb495188f99da91e1e182281f4fd3d73d0b5ab9",
+    "adapters.py": "47dfb846bc48b0207db7d33c1a1ddec62c812143bd137cdba7cb509bc481f028",
+    "baseline.py": "12c0765192a6f520c6737ed0429c45a271dd0b0a4d742dfad3da8a6b8b7f4ea2",
+    "business.py": "b3e82596ab0f8ed28b8cff75fd1ade2bc8c5be47173ba3d00f1b2f54a11bbdc9",
+    "generator.py": "cf4a96bae8e85debe426a5899b5f68a1f78bffc0e08db8621f7bc90e10b0e79a",
+    "metrics.py": "02098ed9303b99eeba5d82f73f5f610e907424033a4c300364f611a28e4078b0",
+    "run.py": "241ec97b06b80e3ccbd6ddddd4064b600d8793e42bbb1c3743381af263893c13",
+    "tests/__init__.py": "385ef9baec426726bc8b4808673161bf1521b08890642d1859f9d0697f013694",
+    "tests/adapter_examples.py": "b46382f531aa232d78caeb8a781fe028fe61e7704c9c97bcd57cc4a3ba182edb",
+    "tests/test_testbed.py": "a376cf56c32bb788b6ae34c740791d9e99834a926fe6c92c36d54a3eafd39f36",
+    "worker.py": "bab3ce7c702ee423490b54178013b380b47728aabd5f9f3597cb817b0598f230",
+    "protocol.json": "32d9f66701adf0fdbd36e4fd3b2b68b1df9c2ea0d35cec00a7fc575806418f72",
+    "fixtures/business_cases.json": "dc642d96a5cd925d5fdfb8c37d76230a7a28e5861d49802bede948a9ea5db78a"
+  },
+  "adapter": "model.testbed.baseline:forecast",
+  "adapter_sha256": "12c0765192a6f520c6737ed0429c45a271dd0b0a4d742dfad3da8a6b8b7f4ea2",
+  "calculator": "model.testbed.business:reference_calculate",
+  "calculator_sha256": "b3e82596ab0f8ed28b8cff75fd1ade2bc8c5be47173ba3d00f1b2f54a11bbdc9",
+  "python_version": "3.14.4",
+  "source_commit": "710714a4344a54dc082886c62931d67a824cf097",
+  "artifacts": {}
+}
