@@ -1,0 +1,291 @@
+{
+  "audit_date": "2026-09-23",
+  "audit_status": "completed_with_open_findings",
+  "audited_base_commit": "c3dbd52b662e7b2c7cd2b65709b4e1ade64c71da",
+  "git_commit_at_run": "c3dbd52b662e7b2c7cd2b65709b4e1ade64c71da",
+  "frozen_candidate_commit": "710714a4344a54dc082886c62931d67a824cf097",
+  "manifest_sha256": "54d0b8ed33887b0114c54fb45d62d88300dc20224d0afa35263fa7044282c6d6",
+  "python_version": "3.14.4",
+  "frozen_source_unchanged": true,
+  "team": {
+    "subagents_started": 3,
+    "subagents_completed": 2,
+    "completed_roles": [
+      "independent_metrics",
+      "independent_business"
+    ],
+    "generator_role": "root",
+    "generator_subagent_failure": "API credit limit; two attempts, no completed work",
+    "integration_and_full_replay": "root"
+  },
+  "forecast_quality": {
+    "development": {
+      "rows": 288,
+      "wape_realized": 0.2535718830798757,
+      "wape_expectation": 0.24923497856286966,
+      "mae_realized": 424.33141534391535,
+      "bias_realized": -0.21720790718226105,
+      "mean_signed_error_units": -363.47933201058197,
+      "target_wape": 0.1,
+      "target_met": false,
+      "daily_wape_realized": 0.43439012922644393
+    },
+    "final": {
+      "rows": 384,
+      "wape_realized": 0.2584883819605464,
+      "wape_expectation": 0.2469086687484208,
+      "mae_realized": 441.5688368055556,
+      "bias_realized": -0.20702274186878067,
+      "mean_signed_error_units": -353.65145089285716,
+      "target_wape": 0.1,
+      "target_met": false,
+      "daily_wape_realized": 0.4425167643090136
+    }
+  },
+  "test_evidence": {
+    "original_unit_tests": {
+      "passed": 25,
+      "total": 25
+    },
+    "original_business_checks": {
+      "development": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      },
+      "final": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      }
+    },
+    "paired_checks": {
+      "development": {
+        "passed": 48,
+        "total": 48
+      },
+      "final": {
+        "passed": 64,
+        "total": 64
+      }
+    },
+    "independent_metrics_assertions": {
+      "passed": 2076,
+      "failed": 0
+    },
+    "generator_development_cases": 72,
+    "business_probe_groups": {
+      "decimal_batch_sweep": {
+        "checks": 20,
+        "matches": 12,
+        "mismatches": 8
+      },
+      "decimal_money_sweep": {
+        "checks": 48,
+        "matches": 37,
+        "mismatches": 11
+      },
+      "independent_boundary_probes": {
+        "checks": 33,
+        "matches": 18,
+        "mismatches": 15
+      },
+      "manual_fixture_quantity_status": {
+        "checks": 54,
+        "matches": 54,
+        "mismatches": 0
+      },
+      "metamorphic_stock_controls": {
+        "checks": 4,
+        "matches": 4,
+        "mismatches": 0
+      }
+    },
+    "business_counts": {
+      "confirmed_finding_categories": 8,
+      "ambiguity_categories": 1,
+      "confirmed_failing_probe_rows": 32,
+      "ambiguity_probe_rows": 2,
+      "checker_mutation_campaigns": 6,
+      "checker_mutation_campaigns_with_false_pass": 6
+    },
+    "meaning": "Counts describe selected checks; neither forecasting accuracy nor a production reliability estimate."
+  },
+  "reproducibility": {
+    "both_reports_byte_identical": true,
+    "final_require_target_exit": 3,
+    "evidence_sha256": {
+      "business/driver.log": "73e5c0b1cb20e92f1b440dcaff7fdcbc516777f7ca9d86ee5defb0691e69d06b",
+      "business/report.md": "88f5a1dc3c30ffadcb739bd785fc084721e07e6fd292f9f70165a681b1356eab",
+      "business/results.json": "77c740b5658125ba17ce2ee7221fe3aa79ce5a0c3e7b0796ef18b285892084bc",
+      "business/run.sh": "dc417cd1fdb85a7332df60e7eb9ebe9893085637db8adc7845c7c3c87442c461",
+      "generator/driver.log": "85a6c85d4fb14da31800a249f3c520819bf23a503e550efeb62b2184ac1c9475",
+      "generator/report.md": "df45dc15bd016cc8c25b6c8c906c88e9c1351b877be76ba631642bd5f07421d0",
+      "generator/results.json": "d0d76eeeb6fb54d2edffde46959398a6695de297a0f5457ae3a911d0a01d2250",
+      "generator/run.sh": "966da1ff1e135c591c1c5a40debc4c8406165e7ce039550400349d36d20348d5",
+      "metrics/driver.log": "a3fc41bf0e88d7a83c3a59cd2726607da27a0de7eb65fb7787a97d3cf4779e6d",
+      "metrics/report.md": "75f8e5a898e3c8ca530a4c4f914469ed7dbaa07f481ac16b5fd0acd8df3b872b",
+      "metrics/results.json": "57b8a09c360386b326dd27a72746726d9ffe28ea277ff91c3cc5b422d2bde784",
+      "metrics/run.sh": "972f7529c7b74be74c2049ab29722b68464169baf083250557baed44943f8640",
+      "root/development-replay.log": "c3287e0f27b5b3c850e9b4c44da96dff966d825753bd39e8180241cf822bc81b",
+      "root/driver.log": "2707219144690d6ef9214ffe8e5f3d74ac51835bd9f09e87345a8e9f9573d1d8",
+      "root/final-replay.log": "f7337ea69ddb235437ecde6dec1dc9a1847916d6f587e384761ec4359a5938ae",
+      "root/results.json": "415dd883a7a1632fda603e49e3a6a7a310e867f1cb54365c0f2f84c07a9d277f",
+      "root/run.sh": "e2b702e25d01a97f4d25cdd3be849580712da2bf4e8d102901702e387a6ed6c8",
+      "root/unit-tests.log": "93a785ce24717b8370db40251bdad4ef399291b330b94ab1048bf072c1056e15"
+    }
+  },
+  "findings": [
+    {
+      "id": "GEN-01",
+      "severity": "high",
+      "title": "ID раскрывает исторический класс покупки",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "generator/results.json",
+      "report": "generator/report.md"
+    },
+    {
+      "id": "GEN-02",
+      "severity": "medium",
+      "title": "Неполная проверка горизонта, полноты и акций",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "generator/results.json",
+      "report": "generator/report.md"
+    },
+    {
+      "id": "GEN-03",
+      "severity": "medium",
+      "title": "Порядок датированных строк меняет окно baseline",
+      "classification": "confirmed_defect",
+      "new_in_this_review": true,
+      "status": "open",
+      "evidence": "generator/results.json",
+      "report": "generator/report.md"
+    },
+    {
+      "id": "MET-001",
+      "severity": "medium",
+      "title": "Переполнение прерывает оценку до записи отчёта",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "metrics/results.json",
+      "report": "metrics/report.md"
+    },
+    {
+      "id": "BIZ-01",
+      "severity": "high",
+      "title": "Checker пропускает неверную схему и противоречивые ответы",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-02",
+      "severity": "medium",
+      "title": "Float перед Decimal добавляет лишнюю партию",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-03",
+      "severity": "medium",
+      "title": "Float блокирует точно достаточный бюджет",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-04",
+      "severity": "high",
+      "title": "Позднее поступление скрывает дефицит после ETA заказа",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-05",
+      "severity": "medium",
+      "title": "Принимаются отрицательные количества, цены и сроки",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-06",
+      "severity": "medium",
+      "title": "Теряется источник экономических параметров",
+      "classification": "confirmed_defect",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-07",
+      "severity": "low",
+      "title": "Не определено значение количества при неизвестном ограничении",
+      "classification": "ambiguity",
+      "new_in_this_review": false,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-08",
+      "severity": "high",
+      "title": "Некорректные даты попадают в суммы, но исчезают из календаря",
+      "classification": "confirmed_defect",
+      "new_in_this_review": true,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    },
+    {
+      "id": "BIZ-09",
+      "severity": "high",
+      "title": "Разные допуски вероятностей обнуляют целевой запас при q=1",
+      "classification": "confirmed_defect",
+      "new_in_this_review": true,
+      "status": "open",
+      "evidence": "business/results.json",
+      "report": "business/report.md"
+    }
+  ],
+  "confirmed_findings": 12,
+  "ambiguities": 1,
+  "severity_counts_confirmed": {
+    "high": 5,
+    "medium": 7
+  },
+  "new_confirmed_ids": [
+    "BIZ-08",
+    "BIZ-09",
+    "GEN-03"
+  ],
+  "limitations": [
+    "Synthetic realized latent regular demand, not observed partner sales; no forecast_v2 evaluation.",
+    "Previously viewed final seeds, not a new independent holdout.",
+    "Original business fixtures exercise reference_only, not a production calculator.",
+    "Adversarial probe frequencies are not representative production failure rates.",
+    "Historical class leakage remains; baseline ID invariance does not validate arbitrary adapters.",
+    "Public subprocess transport is not an OS security sandbox.",
+    "Two independent subagent audits completed; generator checked by root after infrastructure failure.",
+    "Frozen source, protocol, fixtures, manifest and previous reports were not changed."
+  ]
+}

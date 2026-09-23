@@ -1,0 +1,276 @@
+{
+  "author": "root (generator subagent failed twice before any work due to API credit limit)",
+  "audit_execution_success": true,
+  "audit_status": "findings_open",
+  "development_cases": 72,
+  "sku_cases": 288,
+  "checks": {
+    "deterministic": 72,
+    "private_truth_mutation_no_public_change": 72,
+    "baseline_opaque_id_invariance": 72,
+    "exact_future_dates": 288,
+    "ledger_lengths": 288,
+    "events_point_in_time": 136027,
+    "independent_censor_reconstruction": 147936,
+    "documents_reconcile": 147936,
+    "history_point_in_time": 147936,
+    "intermittent_analytic_expectation": 24,
+    "analogue_point_in_time": 2016,
+    "promotion_known_at_cutoff": 96,
+    "paired_latent_paths": 24,
+    "same_project_total": 24,
+    "poisson_mean_sanity": 5,
+    "future_private_rejected": 1,
+    "confirmed_order_sensitivity": 1,
+    "transport_public_keys": 1,
+    "transport_no_seed_scenario_path": 1
+  },
+  "leakage": {
+    "decoded_project_units": 29211,
+    "true_sold_project_units": 29211,
+    "false_positive_units": 0,
+    "false_negative_units": 0
+  },
+  "boundary_probes": [
+    {
+      "mutation": "future_history",
+      "accepted": false,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "future_announcement",
+      "accepted": false,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "private_truth",
+      "accepted": false,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "negative_horizon",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "boolean_horizon",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "fractional_horizon",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": "TypeError: 'float' object cannot be interpreted as an integer"
+    },
+    {
+      "mutation": "string_complete",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "reversed_promotion",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "invalid_promotion_date",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": null
+    },
+    {
+      "mutation": "zero_promotion",
+      "accepted": true,
+      "expected_acceptance": false,
+      "baseline_error": "ZeroDivisionError: division by zero"
+    }
+  ],
+  "history_order_probe": {
+    "SKU-001": {
+      "sorted_horizon": 280.0,
+      "reversed_horizon": 28.0
+    },
+    "SKU-002": {
+      "sorted_horizon": 280.0,
+      "reversed_horizon": 28.0
+    },
+    "SKU-003": {
+      "sorted_horizon": 280.0,
+      "reversed_horizon": 28.0
+    },
+    "SKU-004": {
+      "sorted_horizon": 280.0,
+      "reversed_horizon": 28.0
+    }
+  },
+  "transport": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "model.testbed.worker",
+        "model.testbed.baseline:forecast"
+      ],
+      "request_keys": [
+        "as_of",
+        "horizon_days",
+        "items",
+        "schema_version"
+      ]
+    }
+  ],
+  "poisson_sanity": [
+    {
+      "mean": 0,
+      "sample_mean": 0,
+      "sample_variance": 0,
+      "mean_z": 0,
+      "n": 10000
+    },
+    {
+      "mean": 0.1,
+      "sample_mean": 0.1028,
+      "sample_variance": 0.10224238423842384,
+      "mean_z": 0.8854377448471452,
+      "n": 10000
+    },
+    {
+      "mean": 1,
+      "sample_mean": 0.996,
+      "sample_variance": 0.9930833083308331,
+      "mean_z": -0.40000000000000036,
+      "n": 10000
+    },
+    {
+      "mean": 20,
+      "sample_mean": 20.0263,
+      "sample_variance": 20.240632373237325,
+      "mean_z": 0.5880858780824246,
+      "n": 10000
+    },
+    {
+      "mean": 70,
+      "sample_mean": 70.0005,
+      "sample_variance": 68.2051202620262,
+      "mean_z": 0.0059761430467005034,
+      "n": 10000
+    }
+  ],
+  "findings": [
+    {
+      "id": "GEN-01",
+      "prior_id": "GEN-01",
+      "severity": "high",
+      "status": "confirmed_open",
+      "title": "event_id suffix discloses historical project classes exactly",
+      "evidence": "leakage",
+      "expected": "Opaque identifier independent of hidden classification",
+      "actual": {
+        "decoded_project_units": 29211,
+        "true_sold_project_units": 29211,
+        "false_positive_units": 0,
+        "false_negative_units": 0
+      },
+      "scope": "historical classification leak, not direct future demand; baseline does not read event_id"
+    },
+    {
+      "id": "GEN-02",
+      "prior_id": "GEN-02",
+      "severity": "medium",
+      "status": "confirmed_open",
+      "title": "Public request validator accepts invalid types/ranges/dates",
+      "evidence": "boundary_probes",
+      "expected": "Reject malformed horizon/completeness/promotion inputs",
+      "actual": [
+        {
+          "mutation": "negative_horizon",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": null
+        },
+        {
+          "mutation": "boolean_horizon",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": null
+        },
+        {
+          "mutation": "fractional_horizon",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": "TypeError: 'float' object cannot be interpreted as an integer"
+        },
+        {
+          "mutation": "string_complete",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": null
+        },
+        {
+          "mutation": "reversed_promotion",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": null
+        },
+        {
+          "mutation": "invalid_promotion_date",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": null
+        },
+        {
+          "mutation": "zero_promotion",
+          "accepted": true,
+          "expected_acceptance": false,
+          "baseline_error": "ZeroDivisionError: division by zero"
+        }
+      ]
+    },
+    {
+      "id": "GEN-03",
+      "severity": "medium",
+      "status": "confirmed_open",
+      "title": "Accepted history order changes chronological window and forecast",
+      "expected": "Sort historical dates or reject unsorted input",
+      "actual": {
+        "SKU-001": {
+          "sorted_horizon": 280.0,
+          "reversed_horizon": 28.0
+        },
+        "SKU-002": {
+          "sorted_horizon": 280.0,
+          "reversed_horizon": 28.0
+        },
+        "SKU-003": {
+          "sorted_horizon": 280.0,
+          "reversed_horizon": 28.0
+        },
+        "SKU-004": {
+          "sorted_horizon": 280.0,
+          "reversed_horizon": 28.0
+        }
+      },
+      "source": [
+        "adapters.py:validate_request",
+        "baseline.py:rows[-56:]"
+      ],
+      "note": "Generated evaluation inputs are sorted, so saved benchmark numbers remain valid; external import ordering is not protected."
+    }
+  ],
+  "forecast_quality_measured": false,
+  "limitations": [
+    "Subprocess is not an OS sandbox.",
+    "SKU suffix fixes scale across seeds.",
+    "Promotion multiplier and availability are exact synthetic quantities.",
+    "Generated days are all complete.",
+    "Expected demand conditions on private future shocks."
+  ]
+}
