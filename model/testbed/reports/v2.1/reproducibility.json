@@ -1,0 +1,22 @@
+{
+  "regression_exit_code": 3,
+  "replay_exit_code": 3,
+  "frozen_candidate_unchanged": true,
+  "files": {
+    "report.json": {
+      "sha256": "8c5e2ecf5fa77cd69eb0363ee7faead565998012eb650c2d9a203e962b553710",
+      "replay_sha256": "8c5e2ecf5fa77cd69eb0363ee7faead565998012eb650c2d9a203e962b553710",
+      "identical_bytes": true
+    },
+    "report.md": {
+      "sha256": "d07d9f3790482e60a4f7882851e931d8a4e74ed2fca0c0e0619f6229ddb37c55",
+      "replay_sha256": "d07d9f3790482e60a4f7882851e931d8a4e74ed2fca0c0e0619f6229ddb37c55",
+      "identical_bytes": true
+    },
+    "rows.csv": {
+      "sha256": "14dc76798e13949649462c7db7a08feffc9c0c7942423644292f819c7a725d2a",
+      "replay_sha256": "14dc76798e13949649462c7db7a08feffc9c0c7942423644292f819c7a725d2a",
+      "identical_bytes": true
+    }
+  }
+}

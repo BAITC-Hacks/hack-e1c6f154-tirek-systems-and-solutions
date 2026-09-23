@@ -1,0 +1,3242 @@
+{
+  "schema_version": "testbed-source-inspection-v1",
+  "mode": "real_observed_source_audit",
+  "profile_scope": "fixed supplied twelve workbooks; not a universal importer",
+  "archives": [
+    {
+      "file": "IEK.zip",
+      "sha256": "fed312f909943e69b17d2cc5dd577123b5fe0874064558e8f503deaf9fc50054",
+      "status": "read",
+      "unexpected_xlsx_count": 0
+    },
+    {
+      "file": "Systeme electric.zip",
+      "sha256": "10ce24d572b750e199bfe8aa9887d467f67471950804392dccc97715dd0344cc",
+      "status": "read",
+      "unexpected_xlsx_count": 0
+    }
+  ],
+  "case_pdf_fingerprints": [
+    {
+      "file": "HackAlem AI_ Автоматизация формирования заказов поставщикам.docx.pdf",
+      "sha256": "3b76d0ed67f0964e97138529652822a50a5ef76e0eb72eb535ffaaaf7eed0317",
+      "content_inspected_by_this_function": false
+    }
+  ],
+  "files": [
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/MOQ  ИЭК.xlsx",
+      "brand": "IEK",
+      "kind": "moq",
+      "sha256": "4705b5bbbaa7c55541a151f146270bcbdc72a4ce28686fdb3378575733c4a446",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "moq",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "№",
+              "matched": true
+            },
+            "B": {
+              "expected": "Код 1с",
+              "matched": true
+            },
+            "C": {
+              "expected": "Артикул поставщика",
+              "matched": true
+            },
+            "D": {
+              "expected": "Наименование",
+              "matched": true
+            },
+            "E": {
+              "expected": "Мин. разр. к отгр.",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 1939,
+            "cells_in_xml": 9695,
+            "formula_cells": 1938,
+            "excel_error_cells": 15,
+            "formula_cached_errors": 15
+          },
+          "identified_rows": 1938,
+          "unique_sku_count": 1937,
+          "repeated_sku_rows": 1,
+          "numeric_columns": {
+            "A": {
+              "numeric": 1938,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "C": {
+              "numeric": 1,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1937
+            },
+            "E": {
+              "numeric": 1923,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 15
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [
+            {
+              "cell": "E78",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E86",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E89",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E95",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E106",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E377",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E414",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E415",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1222",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1223",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1280",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1316",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1510",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1795",
+              "error": "#N/A"
+            },
+            {
+              "cell": "E1810",
+              "error": "#N/A"
+            }
+          ],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 1,
+      "status": "inspected"
+    },
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/Динамика продаж_2025-2026.xlsx",
+      "brand": "IEK",
+      "kind": "detail",
+      "sha256": "7b0100a662eba816fd2e6a477ba56ca2a7846d3489ce1083821c94333ac30e4c",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "detail",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Дата",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номер",
+              "matched": true
+            },
+            "C": {
+              "expected": "Документ",
+              "matched": true
+            },
+            "D": {
+              "expected": "Код",
+              "matched": true
+            },
+            "E": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "F": {
+              "expected": "Ед.",
+              "matched": true
+            },
+            "G": {
+              "expected": "Склад",
+              "matched": true
+            },
+            "H": {
+              "expected": "Количество",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 171605,
+            "cells_in_xml": 1372840,
+            "dated_rows": 171603,
+            "quantity_missing_or_invalid": 18,
+            "negative_quantity_rows": 115,
+            "zero_quantity_rows": 0,
+            "fractional_quantity_rows": 0,
+            "empty_error_typed_cells": 24,
+            "rows_without_sku_below_header_including_footers": 1
+          },
+          "identified_rows": 171603,
+          "unique_sku_count": 2151,
+          "repeated_sku_rows": 169452,
+          "numeric_columns": {
+            "B": {
+              "numeric": 171601,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2
+            },
+            "H": {
+              "numeric": 171585,
+              "negative": 115,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 18
+            }
+          },
+          "units": {
+            "м": 12657,
+            "упак": 9336,
+            "шт": 149610
+          },
+          "date_start": "2023-07-20T16:15:38",
+          "date_end": "2026-09-22T15:55:51",
+          "warehouse_count": 1,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/Ежемесячные остатки продукции за последние 2 года  ИЭК.xlsx",
+      "brand": "IEK",
+      "kind": "monthly_stock",
+      "sha256": "ad8a8df9cbb242a3df60a147fb4011b146ca7cdd9e98c1247b1b19fd517f4a30",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "monthly_stock",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "B": {
+              "expected": "Ед.",
+              "matched": true
+            },
+            "C": {
+              "expected": "Номенклатура.Код",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [
+            {
+              "column": "D",
+              "period": "2024-01",
+              "expected_period": "2024-01"
+            },
+            {
+              "column": "E",
+              "period": "2024-02",
+              "expected_period": "2024-02"
+            },
+            {
+              "column": "F",
+              "period": "2024-03",
+              "expected_period": "2024-03"
+            },
+            {
+              "column": "G",
+              "period": "2024-04",
+              "expected_period": "2024-04"
+            },
+            {
+              "column": "H",
+              "period": "2024-05",
+              "expected_period": "2024-05"
+            },
+            {
+              "column": "I",
+              "period": "2024-06",
+              "expected_period": "2024-06"
+            },
+            {
+              "column": "J",
+              "period": "2024-07",
+              "expected_period": "2024-07"
+            },
+            {
+              "column": "K",
+              "period": "2024-08",
+              "expected_period": "2024-08"
+            },
+            {
+              "column": "L",
+              "period": "2024-09",
+              "expected_period": "2024-09"
+            },
+            {
+              "column": "M",
+              "period": "2024-10",
+              "expected_period": "2024-10"
+            },
+            {
+              "column": "N",
+              "period": "2024-11",
+              "expected_period": "2024-11"
+            },
+            {
+              "column": "O",
+              "period": "2024-12",
+              "expected_period": "2024-12"
+            },
+            {
+              "column": "P",
+              "period": "2025-01",
+              "expected_period": "2025-01"
+            },
+            {
+              "column": "Q",
+              "period": "2025-02",
+              "expected_period": "2025-02"
+            },
+            {
+              "column": "R",
+              "period": "2025-03",
+              "expected_period": "2025-03"
+            },
+            {
+              "column": "S",
+              "period": "2025-04",
+              "expected_period": "2025-04"
+            },
+            {
+              "column": "T",
+              "period": "2025-05",
+              "expected_period": "2025-05"
+            },
+            {
+              "column": "U",
+              "period": "2025-06",
+              "expected_period": "2025-06"
+            },
+            {
+              "column": "V",
+              "period": "2025-07",
+              "expected_period": "2025-07"
+            },
+            {
+              "column": "W",
+              "period": "2025-08",
+              "expected_period": "2025-08"
+            },
+            {
+              "column": "X",
+              "period": "2025-09",
+              "expected_period": "2025-09"
+            },
+            {
+              "column": "Y",
+              "period": "2025-10",
+              "expected_period": "2025-10"
+            },
+            {
+              "column": "Z",
+              "period": "2025-11",
+              "expected_period": "2025-11"
+            },
+            {
+              "column": "AA",
+              "period": "2025-12",
+              "expected_period": "2025-12"
+            },
+            {
+              "column": "AB",
+              "period": "2026-01",
+              "expected_period": "2026-01"
+            },
+            {
+              "column": "AC",
+              "period": "2026-02",
+              "expected_period": "2026-02"
+            },
+            {
+              "column": "AD",
+              "period": "2026-03",
+              "expected_period": "2026-03"
+            },
+            {
+              "column": "AE",
+              "period": "2026-04",
+              "expected_period": "2026-04"
+            },
+            {
+              "column": "AF",
+              "period": "2026-05",
+              "expected_period": "2026-05"
+            },
+            {
+              "column": "AG",
+              "period": "2026-06",
+              "expected_period": "2026-06"
+            },
+            {
+              "column": "AH",
+              "period": "2026-07",
+              "expected_period": "2026-07"
+            },
+            {
+              "column": "AI",
+              "period": "2026-08",
+              "expected_period": "2026-08"
+            },
+            {
+              "column": "AJ",
+              "period": "2026-09",
+              "expected_period": "2026-09"
+            }
+          ],
+          "counts": {
+            "rows_in_xml": 2857,
+            "cells_in_xml": 105709,
+            "empty_error_typed_cells": 28807,
+            "rows_without_sku_below_header_including_footers": 3
+          },
+          "identified_rows": 2853,
+          "unique_sku_count": 2853,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "AA": {
+              "numeric": 2087,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 766
+            },
+            "AB": {
+              "numeric": 2077,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 776
+            },
+            "AC": {
+              "numeric": 2089,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 764
+            },
+            "AD": {
+              "numeric": 2130,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 723
+            },
+            "AE": {
+              "numeric": 2115,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 738
+            },
+            "AF": {
+              "numeric": 2120,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 733
+            },
+            "AG": {
+              "numeric": 2101,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 752
+            },
+            "AH": {
+              "numeric": 2105,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 748
+            },
+            "AI": {
+              "numeric": 2101,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 752
+            },
+            "AJ": {
+              "numeric": 2056,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 797
+            },
+            "AK": {
+              "numeric": 1732,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1121
+            },
+            "D": {
+              "numeric": 1732,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1121
+            },
+            "E": {
+              "numeric": 1713,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1140
+            },
+            "F": {
+              "numeric": 1719,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1134
+            },
+            "G": {
+              "numeric": 1729,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1124
+            },
+            "H": {
+              "numeric": 1719,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 1134
+            },
+            "I": {
+              "numeric": 1915,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 938
+            },
+            "J": {
+              "numeric": 1903,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 950
+            },
+            "K": {
+              "numeric": 1856,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 997
+            },
+            "L": {
+              "numeric": 1893,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 960
+            },
+            "M": {
+              "numeric": 2012,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 841
+            },
+            "N": {
+              "numeric": 2051,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 802
+            },
+            "O": {
+              "numeric": 2105,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 748
+            },
+            "P": {
+              "numeric": 2116,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 737
+            },
+            "Q": {
+              "numeric": 2081,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 772
+            },
+            "R": {
+              "numeric": 2065,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 788
+            },
+            "S": {
+              "numeric": 2099,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 754
+            },
+            "T": {
+              "numeric": 2093,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 760
+            },
+            "U": {
+              "numeric": 2076,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 777
+            },
+            "V": {
+              "numeric": 2113,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 740
+            },
+            "W": {
+              "numeric": 2136,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 1,
+              "absent_or_non_numeric": 717
+            },
+            "X": {
+              "numeric": 2101,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 752
+            },
+            "Y": {
+              "numeric": 2150,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 703
+            },
+            "Z": {
+              "numeric": 2113,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 740
+            }
+          },
+          "units": {
+            "компл": 1,
+            "м": 153,
+            "упак": 96,
+            "шт": 2603
+          },
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/Ежемесячные продажи в количественном выражении за последние 2 года.xlsx",
+      "brand": "IEK",
+      "kind": "monthly_sales",
+      "sha256": "048a0af940370153511769396570259a1bb28da63709d9b974f99c45081fa255",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "monthly_sales",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номенклатура.Код",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [
+            {
+              "column": "C",
+              "period": "2024-01",
+              "expected_period": "2024-01"
+            },
+            {
+              "column": "D",
+              "period": "2024-02",
+              "expected_period": "2024-02"
+            },
+            {
+              "column": "E",
+              "period": "2024-03",
+              "expected_period": "2024-03"
+            },
+            {
+              "column": "F",
+              "period": "2024-04",
+              "expected_period": "2024-04"
+            },
+            {
+              "column": "G",
+              "period": "2024-05",
+              "expected_period": "2024-05"
+            },
+            {
+              "column": "H",
+              "period": "2024-06",
+              "expected_period": "2024-06"
+            },
+            {
+              "column": "I",
+              "period": "2024-07",
+              "expected_period": "2024-07"
+            },
+            {
+              "column": "J",
+              "period": "2024-08",
+              "expected_period": "2024-08"
+            },
+            {
+              "column": "K",
+              "period": "2024-09",
+              "expected_period": "2024-09"
+            },
+            {
+              "column": "L",
+              "period": "2024-10",
+              "expected_period": "2024-10"
+            },
+            {
+              "column": "M",
+              "period": "2024-11",
+              "expected_period": "2024-11"
+            },
+            {
+              "column": "N",
+              "period": "2024-12",
+              "expected_period": "2024-12"
+            },
+            {
+              "column": "O",
+              "period": "2025-01",
+              "expected_period": "2025-01"
+            },
+            {
+              "column": "P",
+              "period": "2025-02",
+              "expected_period": "2025-02"
+            },
+            {
+              "column": "Q",
+              "period": "2025-03",
+              "expected_period": "2025-03"
+            },
+            {
+              "column": "R",
+              "period": "2025-04",
+              "expected_period": "2025-04"
+            },
+            {
+              "column": "S",
+              "period": "2025-05",
+              "expected_period": "2025-05"
+            },
+            {
+              "column": "T",
+              "period": "2025-06",
+              "expected_period": "2025-06"
+            },
+            {
+              "column": "U",
+              "period": "2025-07",
+              "expected_period": "2025-07"
+            },
+            {
+              "column": "V",
+              "period": "2025-08",
+              "expected_period": "2025-08"
+            },
+            {
+              "column": "W",
+              "period": "2025-09",
+              "expected_period": "2025-09"
+            },
+            {
+              "column": "X",
+              "period": "2025-10",
+              "expected_period": "2025-10"
+            },
+            {
+              "column": "Y",
+              "period": "2025-11",
+              "expected_period": "2025-11"
+            },
+            {
+              "column": "Z",
+              "period": "2025-12",
+              "expected_period": "2025-12"
+            },
+            {
+              "column": "AA",
+              "period": "2026-01",
+              "expected_period": "2026-01"
+            },
+            {
+              "column": "AB",
+              "period": "2026-02",
+              "expected_period": "2026-02"
+            },
+            {
+              "column": "AC",
+              "period": "2026-03",
+              "expected_period": "2026-03"
+            },
+            {
+              "column": "AD",
+              "period": "2026-04",
+              "expected_period": "2026-04"
+            },
+            {
+              "column": "AE",
+              "period": "2026-05",
+              "expected_period": "2026-05"
+            },
+            {
+              "column": "AF",
+              "period": "2026-06",
+              "expected_period": "2026-06"
+            },
+            {
+              "column": "AG",
+              "period": "2026-07",
+              "expected_period": "2026-07"
+            },
+            {
+              "column": "AH",
+              "period": "2026-08",
+              "expected_period": "2026-08"
+            },
+            {
+              "column": "AI",
+              "period": "2026-09",
+              "expected_period": "2026-09"
+            }
+          ],
+          "counts": {
+            "rows_in_xml": 2466,
+            "cells_in_xml": 88776,
+            "empty_error_typed_cells": 44632,
+            "rows_without_sku_below_header_including_footers": 2
+          },
+          "identified_rows": 2463,
+          "unique_sku_count": 2463,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "AA": {
+              "numeric": 1003,
+              "negative": 7,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1460
+            },
+            "AB": {
+              "numeric": 1093,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1370
+            },
+            "AC": {
+              "numeric": 969,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1494
+            },
+            "AD": {
+              "numeric": 1085,
+              "negative": 2,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1378
+            },
+            "AE": {
+              "numeric": 1016,
+              "negative": 13,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1447
+            },
+            "AF": {
+              "numeric": 1115,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1348
+            },
+            "AG": {
+              "numeric": 1113,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1350
+            },
+            "AH": {
+              "numeric": 1112,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1351
+            },
+            "AI": {
+              "numeric": 993,
+              "negative": 7,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1470
+            },
+            "AJ": {
+              "numeric": 2460,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 3
+            },
+            "C": {
+              "numeric": 1096,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1367
+            },
+            "D": {
+              "numeric": 1072,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1391
+            },
+            "E": {
+              "numeric": 1068,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1395
+            },
+            "F": {
+              "numeric": 1158,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1305
+            },
+            "G": {
+              "numeric": 1114,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1349
+            },
+            "H": {
+              "numeric": 1098,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1365
+            },
+            "I": {
+              "numeric": 1146,
+              "negative": 2,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1317
+            },
+            "J": {
+              "numeric": 1125,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1338
+            },
+            "K": {
+              "numeric": 1144,
+              "negative": 28,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1319
+            },
+            "L": {
+              "numeric": 1135,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1328
+            },
+            "M": {
+              "numeric": 1186,
+              "negative": 13,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1277
+            },
+            "N": {
+              "numeric": 1125,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1338
+            },
+            "O": {
+              "numeric": 1065,
+              "negative": 8,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1398
+            },
+            "P": {
+              "numeric": 1075,
+              "negative": 10,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1388
+            },
+            "Q": {
+              "numeric": 1094,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1369
+            },
+            "R": {
+              "numeric": 1120,
+              "negative": 30,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1343
+            },
+            "S": {
+              "numeric": 1128,
+              "negative": 4,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1335
+            },
+            "T": {
+              "numeric": 1143,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1320
+            },
+            "U": {
+              "numeric": 1164,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1299
+            },
+            "V": {
+              "numeric": 1151,
+              "negative": 15,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1312
+            },
+            "W": {
+              "numeric": 1170,
+              "negative": 9,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1293
+            },
+            "X": {
+              "numeric": 1188,
+              "negative": 13,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1275
+            },
+            "Y": {
+              "numeric": 1167,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1296
+            },
+            "Z": {
+              "numeric": 1222,
+              "negative": 2,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 1241
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/Путь ИЭК 22.09.2026.xlsx",
+      "brand": "IEK",
+      "kind": "inbound",
+      "sha256": "751fd3c2cbdfabe32f9c20c7f0289135273f007471f39101f03f9c6e1231ce7d",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "inbound",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Код 1с",
+              "matched": true
+            },
+            "B": {
+              "expected": "Артикул ИЭК",
+              "matched": true
+            },
+            "C": {
+              "expected": "Наименование",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 2642,
+            "cells_in_xml": 8408,
+            "rows_without_sku_below_header_including_footers": 18
+          },
+          "identified_rows": 2623,
+          "unique_sku_count": 2616,
+          "repeated_sku_rows": 7,
+          "numeric_columns": {
+            "B": {
+              "numeric": 1,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2622
+            },
+            "D": {
+              "numeric": 11,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2612
+            },
+            "E": {
+              "numeric": 18,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2605
+            },
+            "F": {
+              "numeric": 152,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2471
+            },
+            "G": {
+              "numeric": 1,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2622
+            },
+            "H": {
+              "numeric": 51,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2572
+            },
+            "I": {
+              "numeric": 73,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 2550
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [
+            {
+              "column": "D",
+              "eta": "2026-10-10"
+            },
+            {
+              "column": "E",
+              "eta": "2026-10-15"
+            },
+            {
+              "column": "F",
+              "eta": "2026-10-01"
+            },
+            {
+              "column": "G",
+              "eta": "2026-09-30"
+            },
+            {
+              "column": "H",
+              "eta": "2026-09-30"
+            },
+            {
+              "column": "I",
+              "eta": "2026-09-30"
+            }
+          ],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "IEK.zip",
+      "file": "IEK/Сезонность ИЭК.xlsx",
+      "brand": "IEK",
+      "kind": "seasonality",
+      "sha256": "d4d9a8f208884c5197d0dcea0eb60d3972e9382cb3530675d0760fe9a8339635",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "seasonality_summary",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "год",
+              "matched": true
+            },
+            "N": {
+              "expected": "ИТОГО",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 38,
+            "cells_in_xml": 308,
+            "formula_cells": 228
+          },
+          "identified_rows": 0,
+          "unique_sku_count": 0,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {},
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/MOQ SystemElectric.xlsx",
+      "brand": "SE",
+      "kind": "moq",
+      "sha256": "4fc809ecf9c0a73d97f13f7a16e7dbb20425ab97a6b2d9a0f6be0bbe1a326a7b",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "moq",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "№",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "C": {
+              "expected": "Номенклатура.Код",
+              "matched": true
+            },
+            "D": {
+              "expected": "Артикул",
+              "matched": true
+            },
+            "E": {
+              "expected": "Кратность",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 557,
+            "cells_in_xml": 2785,
+            "rows_without_sku_below_header_including_footers": 2
+          },
+          "identified_rows": 554,
+          "unique_sku_count": 554,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "A": {
+              "numeric": 554,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "E": {
+              "numeric": 554,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/Динамика продаж_Syseme Electric_2025-2026.xlsx",
+      "brand": "SE",
+      "kind": "detail",
+      "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "detail",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Дата",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номер",
+              "matched": true
+            },
+            "C": {
+              "expected": "Документ",
+              "matched": true
+            },
+            "D": {
+              "expected": "Код",
+              "matched": true
+            },
+            "E": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "F": {
+              "expected": "Ед.",
+              "matched": true
+            },
+            "G": {
+              "expected": "Склад",
+              "matched": true
+            },
+            "H": {
+              "expected": "Количество",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 77314,
+            "cells_in_xml": 618512,
+            "dated_rows": 77312,
+            "quantity_missing_or_invalid": 13,
+            "negative_quantity_rows": 302,
+            "zero_quantity_rows": 0,
+            "fractional_quantity_rows": 0,
+            "empty_error_typed_cells": 19,
+            "rows_without_sku_below_header_including_footers": 1
+          },
+          "identified_rows": 77312,
+          "unique_sku_count": 565,
+          "repeated_sku_rows": 76747,
+          "numeric_columns": {
+            "B": {
+              "numeric": 77312,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "H": {
+              "numeric": 77299,
+              "negative": 302,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 13
+            }
+          },
+          "units": {
+            "шт": 77312
+          },
+          "date_start": "2023-01-18T16:00:11",
+          "date_end": "2026-09-22T16:10:12",
+          "warehouse_count": 1,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/Ежемесячные остатки SystemElectric 2024-2026.xlsx",
+      "brand": "SE",
+      "kind": "monthly_stock",
+      "sha256": "45d55eb244966ef9fdba1aa09c666e9dbc4c0b05c1088f4041edcd86b908c85e",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "monthly_stock",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "№",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "C": {
+              "expected": "Номенклатура.Код",
+              "matched": true
+            },
+            "D": {
+              "expected": "Ед.изм",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [
+            {
+              "column": "E",
+              "period": "2024-01",
+              "expected_period": "2024-01"
+            },
+            {
+              "column": "F",
+              "period": "2024-02",
+              "expected_period": "2024-02"
+            },
+            {
+              "column": "G",
+              "period": "2024-03",
+              "expected_period": "2024-03"
+            },
+            {
+              "column": "H",
+              "period": "2024-04",
+              "expected_period": "2024-04"
+            },
+            {
+              "column": "I",
+              "period": "2024-05",
+              "expected_period": "2024-05"
+            },
+            {
+              "column": "J",
+              "period": "2024-06",
+              "expected_period": "2024-06"
+            },
+            {
+              "column": "K",
+              "period": "2024-07",
+              "expected_period": "2024-07"
+            },
+            {
+              "column": "L",
+              "period": "2024-08",
+              "expected_period": "2024-08"
+            },
+            {
+              "column": "M",
+              "period": "2024-09",
+              "expected_period": "2024-09"
+            },
+            {
+              "column": "N",
+              "period": "2024-10",
+              "expected_period": "2024-10"
+            },
+            {
+              "column": "O",
+              "period": "2024-11",
+              "expected_period": "2024-11"
+            },
+            {
+              "column": "P",
+              "period": "2024-12",
+              "expected_period": "2024-12"
+            },
+            {
+              "column": "Q",
+              "period": "2025-01",
+              "expected_period": "2025-01"
+            },
+            {
+              "column": "R",
+              "period": "2025-02",
+              "expected_period": "2025-02"
+            },
+            {
+              "column": "S",
+              "period": "2025-03",
+              "expected_period": "2025-03"
+            },
+            {
+              "column": "T",
+              "period": "2025-04",
+              "expected_period": "2025-04"
+            },
+            {
+              "column": "U",
+              "period": "2025-05",
+              "expected_period": "2025-05"
+            },
+            {
+              "column": "V",
+              "period": "2025-06",
+              "expected_period": "2025-06"
+            },
+            {
+              "column": "W",
+              "period": "2025-07",
+              "expected_period": "2025-07"
+            },
+            {
+              "column": "X",
+              "period": "2025-08",
+              "expected_period": "2025-08"
+            },
+            {
+              "column": "Y",
+              "period": "2025-09",
+              "expected_period": "2025-09"
+            },
+            {
+              "column": "Z",
+              "period": "2025-10",
+              "expected_period": "2025-10"
+            },
+            {
+              "column": "AA",
+              "period": "2025-11",
+              "expected_period": "2025-11"
+            },
+            {
+              "column": "AB",
+              "period": "2025-12",
+              "expected_period": "2025-12"
+            },
+            {
+              "column": "AC",
+              "period": "2026-01",
+              "expected_period": "2026-01"
+            },
+            {
+              "column": "AD",
+              "period": "2026-02",
+              "expected_period": "2026-02"
+            },
+            {
+              "column": "AE",
+              "period": "2026-03",
+              "expected_period": "2026-03"
+            },
+            {
+              "column": "AF",
+              "period": "2026-04",
+              "expected_period": "2026-04"
+            },
+            {
+              "column": "AG",
+              "period": "2026-05",
+              "expected_period": "2026-05"
+            },
+            {
+              "column": "AH",
+              "period": "2026-06",
+              "expected_period": "2026-06"
+            },
+            {
+              "column": "AI",
+              "period": "2026-07",
+              "expected_period": "2026-07"
+            },
+            {
+              "column": "AJ",
+              "period": "2026-08",
+              "expected_period": "2026-08"
+            },
+            {
+              "column": "AK",
+              "period": "2026-09",
+              "expected_period": "2026-09"
+            }
+          ],
+          "counts": {
+            "rows_in_xml": 704,
+            "cells_in_xml": 26048,
+            "rows_without_sku_below_header_including_footers": 2
+          },
+          "identified_rows": 701,
+          "unique_sku_count": 701,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "A": {
+              "numeric": 701,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AA": {
+              "numeric": 601,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 100
+            },
+            "AB": {
+              "numeric": 577,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 124
+            },
+            "AC": {
+              "numeric": 575,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 126
+            },
+            "AD": {
+              "numeric": 574,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 127
+            },
+            "AE": {
+              "numeric": 569,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 132
+            },
+            "AF": {
+              "numeric": 569,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 132
+            },
+            "AG": {
+              "numeric": 573,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 128
+            },
+            "AH": {
+              "numeric": 567,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 134
+            },
+            "AI": {
+              "numeric": 570,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 131
+            },
+            "AJ": {
+              "numeric": 565,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 136
+            },
+            "AK": {
+              "numeric": 566,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 135
+            },
+            "E": {
+              "numeric": 366,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 335
+            },
+            "F": {
+              "numeric": 357,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 344
+            },
+            "G": {
+              "numeric": 366,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 335
+            },
+            "H": {
+              "numeric": 370,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 331
+            },
+            "I": {
+              "numeric": 373,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 328
+            },
+            "J": {
+              "numeric": 382,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 319
+            },
+            "K": {
+              "numeric": 384,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 317
+            },
+            "L": {
+              "numeric": 475,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 226
+            },
+            "M": {
+              "numeric": 620,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 81
+            },
+            "N": {
+              "numeric": 630,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 71
+            },
+            "O": {
+              "numeric": 642,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 59
+            },
+            "P": {
+              "numeric": 648,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 53
+            },
+            "Q": {
+              "numeric": 651,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 50
+            },
+            "R": {
+              "numeric": 592,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 109
+            },
+            "S": {
+              "numeric": 592,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 109
+            },
+            "T": {
+              "numeric": 588,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 113
+            },
+            "U": {
+              "numeric": 597,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 104
+            },
+            "V": {
+              "numeric": 611,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 90
+            },
+            "W": {
+              "numeric": 612,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 89
+            },
+            "X": {
+              "numeric": 614,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 87
+            },
+            "Y": {
+              "numeric": 612,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 89
+            },
+            "Z": {
+              "numeric": 612,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 89
+            }
+          },
+          "units": {
+            "шт": 701
+          },
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/Ежемесячные продажи в кол-м выражении SystemElectric 2024-2026.xlsx",
+      "brand": "SE",
+      "kind": "monthly_sales",
+      "sha256": "f7782ab9ea5c06d68526543953c6fce7ca83a80d1c1a4e8d88fd083de415f9d0",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "monthly_sales",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "Номенклатура",
+              "matched": true
+            },
+            "B": {
+              "expected": "Номенклатура.Код",
+              "matched": true
+            },
+            "C": {
+              "expected": "Артикул",
+              "matched": true
+            },
+            "D": {
+              "expected": "Кратность",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [
+            {
+              "column": "E",
+              "period": "2024-01",
+              "expected_period": "2024-01"
+            },
+            {
+              "column": "F",
+              "period": "2024-02",
+              "expected_period": "2024-02"
+            },
+            {
+              "column": "G",
+              "period": "2024-03",
+              "expected_period": "2024-03"
+            },
+            {
+              "column": "H",
+              "period": "2024-04",
+              "expected_period": "2024-04"
+            },
+            {
+              "column": "I",
+              "period": "2024-05",
+              "expected_period": "2024-05"
+            },
+            {
+              "column": "J",
+              "period": "2024-06",
+              "expected_period": "2024-06"
+            },
+            {
+              "column": "K",
+              "period": "2024-07",
+              "expected_period": "2024-07"
+            },
+            {
+              "column": "L",
+              "period": "2024-08",
+              "expected_period": "2024-08"
+            },
+            {
+              "column": "M",
+              "period": "2024-09",
+              "expected_period": "2024-09"
+            },
+            {
+              "column": "N",
+              "period": "2024-10",
+              "expected_period": "2024-10"
+            },
+            {
+              "column": "O",
+              "period": "2024-11",
+              "expected_period": "2024-11"
+            },
+            {
+              "column": "P",
+              "period": "2024-12",
+              "expected_period": "2024-12"
+            },
+            {
+              "column": "Q",
+              "period": "2025-01",
+              "expected_period": "2025-01"
+            },
+            {
+              "column": "R",
+              "period": "2025-02",
+              "expected_period": "2025-02"
+            },
+            {
+              "column": "S",
+              "period": "2025-03",
+              "expected_period": "2025-03"
+            },
+            {
+              "column": "T",
+              "period": "2025-04",
+              "expected_period": "2025-04"
+            },
+            {
+              "column": "U",
+              "period": "2025-05",
+              "expected_period": "2025-05"
+            },
+            {
+              "column": "V",
+              "period": "2025-06",
+              "expected_period": "2025-06"
+            },
+            {
+              "column": "W",
+              "period": "2025-07",
+              "expected_period": "2025-07"
+            },
+            {
+              "column": "X",
+              "period": "2025-08",
+              "expected_period": "2025-08"
+            },
+            {
+              "column": "Y",
+              "period": "2025-09",
+              "expected_period": "2025-09"
+            },
+            {
+              "column": "Z",
+              "period": "2025-10",
+              "expected_period": "2025-10"
+            },
+            {
+              "column": "AA",
+              "period": "2025-11",
+              "expected_period": "2025-11"
+            },
+            {
+              "column": "AB",
+              "period": "2025-12",
+              "expected_period": "2025-12"
+            },
+            {
+              "column": "AC",
+              "period": "2026-01",
+              "expected_period": "2026-01"
+            },
+            {
+              "column": "AD",
+              "period": "2026-02",
+              "expected_period": "2026-02"
+            },
+            {
+              "column": "AE",
+              "period": "2026-03",
+              "expected_period": "2026-03"
+            },
+            {
+              "column": "AF",
+              "period": "2026-04",
+              "expected_period": "2026-04"
+            },
+            {
+              "column": "AG",
+              "period": "2026-05",
+              "expected_period": "2026-05"
+            },
+            {
+              "column": "AH",
+              "period": "2026-06",
+              "expected_period": "2026-06"
+            },
+            {
+              "column": "AI",
+              "period": "2026-07",
+              "expected_period": "2026-07"
+            },
+            {
+              "column": "AJ",
+              "period": "2026-08",
+              "expected_period": "2026-08"
+            },
+            {
+              "column": "AK",
+              "period": "2026-09",
+              "expected_period": "2026-09"
+            }
+          ],
+          "counts": {
+            "rows_in_xml": 557,
+            "cells_in_xml": 21166,
+            "rows_without_sku_below_header_including_footers": 2
+          },
+          "identified_rows": 554,
+          "unique_sku_count": 554,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "AA": {
+              "numeric": 364,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 190
+            },
+            "AB": {
+              "numeric": 358,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 196
+            },
+            "AC": {
+              "numeric": 311,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 243
+            },
+            "AD": {
+              "numeric": 317,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 237
+            },
+            "AE": {
+              "numeric": 360,
+              "negative": 72,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 194
+            },
+            "AF": {
+              "numeric": 322,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 232
+            },
+            "AG": {
+              "numeric": 315,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 239
+            },
+            "AH": {
+              "numeric": 332,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 222
+            },
+            "AI": {
+              "numeric": 325,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 229
+            },
+            "AJ": {
+              "numeric": 349,
+              "negative": 10,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 205
+            },
+            "AK": {
+              "numeric": 316,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 238
+            },
+            "AL": {
+              "numeric": 554,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "D": {
+              "numeric": 554,
+              "negative": 0,
+              "zero": 26,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "E": {
+              "numeric": 223,
+              "negative": 2,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 331
+            },
+            "F": {
+              "numeric": 236,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 318
+            },
+            "G": {
+              "numeric": 268,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 286
+            },
+            "H": {
+              "numeric": 286,
+              "negative": 6,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 268
+            },
+            "I": {
+              "numeric": 288,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 266
+            },
+            "J": {
+              "numeric": 293,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 261
+            },
+            "K": {
+              "numeric": 286,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 268
+            },
+            "L": {
+              "numeric": 386,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 168
+            },
+            "M": {
+              "numeric": 434,
+              "negative": 8,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 120
+            },
+            "N": {
+              "numeric": 421,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 133
+            },
+            "O": {
+              "numeric": 402,
+              "negative": 2,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 152
+            },
+            "P": {
+              "numeric": 386,
+              "negative": 39,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 168
+            },
+            "Q": {
+              "numeric": 365,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 189
+            },
+            "R": {
+              "numeric": 365,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 189
+            },
+            "S": {
+              "numeric": 349,
+              "negative": 23,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 205
+            },
+            "T": {
+              "numeric": 355,
+              "negative": 3,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 199
+            },
+            "U": {
+              "numeric": 334,
+              "negative": 1,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 220
+            },
+            "V": {
+              "numeric": 357,
+              "negative": 5,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 197
+            },
+            "W": {
+              "numeric": 352,
+              "negative": 24,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 202
+            },
+            "X": {
+              "numeric": 370,
+              "negative": 34,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 184
+            },
+            "Y": {
+              "numeric": 385,
+              "negative": 64,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 169
+            },
+            "Z": {
+              "numeric": 367,
+              "negative": 10,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 187
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        },
+        {
+          "sheet_index": 2,
+          "role": "seasonality_summary",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "год",
+              "matched": true
+            },
+            "N": {
+              "expected": "ИТОГО",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 35,
+            "cells_in_xml": 525,
+            "formula_cells": 141
+          },
+          "identified_rows": 0,
+          "unique_sku_count": 0,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {},
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "hidden"
+        }
+      ],
+      "expected_sheet_count": 2,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/Товар в пути_SystemElectric на 22.09.2026.xlsx",
+      "brand": "SE",
+      "kind": "inbound",
+      "sha256": "17aa50b7697aba5598997b1b4bba9de3950169bc81e97fd10c4d8b0348bd9a3d",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "inbound",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "№",
+              "matched": true
+            },
+            "B": {
+              "expected": "Артикул поставщика",
+              "matched": true
+            },
+            "C": {
+              "expected": "Код 1с",
+              "matched": true
+            },
+            "D": {
+              "expected": "Наименование",
+              "matched": true
+            },
+            "E": {
+              "expected": "Категория 2026",
+              "matched": true
+            },
+            "F": {
+              "expected": "СС реал",
+              "matched": true
+            },
+            "AP": {
+              "expected": "Сумма последние 12 мес",
+              "matched": true
+            },
+            "AQ": {
+              "expected": "Ср мес за последние 12 мес",
+              "matched": true
+            },
+            "AR": {
+              "expected": "Кэф. Роста",
+              "matched": true
+            },
+            "AS": {
+              "expected": "Кэф. Сез-ти",
+              "matched": true
+            },
+            "AX": {
+              "expected": "Остаток",
+              "matched": true
+            },
+            "AY": {
+              "expected": "Зарезервировано",
+              "matched": true
+            },
+            "AZ": {
+              "expected": "Свободный остаток",
+              "matched": true
+            },
+            "BA": {
+              "expected": "Запас",
+              "matched": true
+            },
+            "BB": {
+              "expected": "Заказ",
+              "matched": true
+            },
+            "BC": {
+              "expected": "СЭ в пути 24.09",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 499,
+            "cells_in_xml": 30012,
+            "formula_cells": 3477,
+            "stock_reserve_free_rows_compared": 497,
+            "stock_minus_reserve_free_mismatches": 0
+          },
+          "identified_rows": 497,
+          "unique_sku_count": 497,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {
+            "A": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AA": {
+              "numeric": 496,
+              "negative": 25,
+              "zero": 150,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AB": {
+              "numeric": 496,
+              "negative": 31,
+              "zero": 141,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AC": {
+              "numeric": 496,
+              "negative": 64,
+              "zero": 119,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AD": {
+              "numeric": 496,
+              "negative": 9,
+              "zero": 144,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AE": {
+              "numeric": 496,
+              "negative": 2,
+              "zero": 160,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AF": {
+              "numeric": 496,
+              "negative": 0,
+              "zero": 156,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AG": {
+              "numeric": 496,
+              "negative": 1,
+              "zero": 198,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AH": {
+              "numeric": 496,
+              "negative": 2,
+              "zero": 190,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AI": {
+              "numeric": 496,
+              "negative": 72,
+              "zero": 142,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "AJ": {
+              "numeric": 497,
+              "negative": 1,
+              "zero": 188,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AK": {
+              "numeric": 497,
+              "negative": 3,
+              "zero": 186,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AL": {
+              "numeric": 497,
+              "negative": 1,
+              "zero": 171,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AM": {
+              "numeric": 497,
+              "negative": 1,
+              "zero": 175,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AN": {
+              "numeric": 497,
+              "negative": 11,
+              "zero": 150,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AO": {
+              "numeric": 497,
+              "negative": 1,
+              "zero": 182,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AP": {
+              "numeric": 497,
+              "negative": 33,
+              "zero": 18,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AQ": {
+              "numeric": 497,
+              "negative": 33,
+              "zero": 18,
+              "fractional": 448,
+              "absent_or_non_numeric": 0
+            },
+            "AR": {
+              "numeric": 497,
+              "negative": 289,
+              "zero": 80,
+              "fractional": 353,
+              "absent_or_non_numeric": 0
+            },
+            "AS": {
+              "numeric": 497,
+              "negative": 274,
+              "zero": 77,
+              "fractional": 365,
+              "absent_or_non_numeric": 0
+            },
+            "AT": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 409,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AU": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 450,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AV": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 497,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AW": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 229,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AX": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 12,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AY": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 401,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "AZ": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 12,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "BA": {
+              "numeric": 497,
+              "negative": 33,
+              "zero": 19,
+              "fractional": 405,
+              "absent_or_non_numeric": 0
+            },
+            "BC": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 490,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "E": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 0,
+              "fractional": 0,
+              "absent_or_non_numeric": 0
+            },
+            "F": {
+              "numeric": 497,
+              "negative": 0,
+              "zero": 5,
+              "fractional": 487,
+              "absent_or_non_numeric": 0
+            },
+            "G": {
+              "numeric": 283,
+              "negative": 2,
+              "zero": 102,
+              "fractional": 0,
+              "absent_or_non_numeric": 214
+            },
+            "H": {
+              "numeric": 283,
+              "negative": 0,
+              "zero": 89,
+              "fractional": 0,
+              "absent_or_non_numeric": 214
+            },
+            "I": {
+              "numeric": 283,
+              "negative": 0,
+              "zero": 55,
+              "fractional": 0,
+              "absent_or_non_numeric": 214
+            },
+            "J": {
+              "numeric": 283,
+              "negative": 6,
+              "zero": 42,
+              "fractional": 0,
+              "absent_or_non_numeric": 214
+            },
+            "K": {
+              "numeric": 304,
+              "negative": 0,
+              "zero": 50,
+              "fractional": 0,
+              "absent_or_non_numeric": 193
+            },
+            "L": {
+              "numeric": 304,
+              "negative": 0,
+              "zero": 46,
+              "fractional": 0,
+              "absent_or_non_numeric": 193
+            },
+            "M": {
+              "numeric": 304,
+              "negative": 1,
+              "zero": 44,
+              "fractional": 0,
+              "absent_or_non_numeric": 193
+            },
+            "N": {
+              "numeric": 476,
+              "negative": 1,
+              "zero": 116,
+              "fractional": 0,
+              "absent_or_non_numeric": 21
+            },
+            "O": {
+              "numeric": 477,
+              "negative": 7,
+              "zero": 66,
+              "fractional": 0,
+              "absent_or_non_numeric": 20
+            },
+            "P": {
+              "numeric": 477,
+              "negative": 3,
+              "zero": 84,
+              "fractional": 0,
+              "absent_or_non_numeric": 20
+            },
+            "Q": {
+              "numeric": 477,
+              "negative": 2,
+              "zero": 93,
+              "fractional": 0,
+              "absent_or_non_numeric": 20
+            },
+            "R": {
+              "numeric": 477,
+              "negative": 40,
+              "zero": 116,
+              "fractional": 0,
+              "absent_or_non_numeric": 20
+            },
+            "S": {
+              "numeric": 496,
+              "negative": 0,
+              "zero": 36,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "T": {
+              "numeric": 496,
+              "negative": 0,
+              "zero": 36,
+              "fractional": 416,
+              "absent_or_non_numeric": 1
+            },
+            "U": {
+              "numeric": 486,
+              "negative": 1,
+              "zero": 142,
+              "fractional": 0,
+              "absent_or_non_numeric": 11
+            },
+            "V": {
+              "numeric": 486,
+              "negative": 0,
+              "zero": 134,
+              "fractional": 0,
+              "absent_or_non_numeric": 11
+            },
+            "W": {
+              "numeric": 486,
+              "negative": 23,
+              "zero": 152,
+              "fractional": 0,
+              "absent_or_non_numeric": 11
+            },
+            "X": {
+              "numeric": 496,
+              "negative": 3,
+              "zero": 147,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "Y": {
+              "numeric": 496,
+              "negative": 1,
+              "zero": 171,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            },
+            "Z": {
+              "numeric": 496,
+              "negative": 4,
+              "zero": 142,
+              "fractional": 0,
+              "absent_or_non_numeric": 1
+            }
+          },
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {
+            "1": 124,
+            "2": 112,
+            "3": 243,
+            "5": 11,
+            "7": 7
+          },
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [
+            {
+              "cell": "AP3",
+              "issue": "label_says_12_months_but_formula_sums_13_columns",
+              "source_range": "AC3:AO3",
+              "period": "2025-09/2026-09"
+            }
+          ],
+          "visibility": "visible"
+        },
+        {
+          "sheet_index": 2,
+          "role": "seasonality_summary",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "год",
+              "matched": true
+            },
+            "N": {
+              "expected": "ИТОГО",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 19,
+            "cells_in_xml": 206,
+            "formula_cells": 141
+          },
+          "identified_rows": 0,
+          "unique_sku_count": 0,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {},
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "hidden"
+        }
+      ],
+      "expected_sheet_count": 2,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    },
+    {
+      "archive": "Systeme electric.zip",
+      "file": "Systeme electric/Сезонность SystemElectric 2024-2026.xlsx",
+      "brand": "SE",
+      "kind": "seasonality",
+      "sha256": "19bdbc1c2331d3643e39294f68f11f7427f625107e8b025f6663bb559af669ab",
+      "sheets": [
+        {
+          "sheet_index": 1,
+          "role": "seasonality_summary",
+          "schema_status": "matched",
+          "headers": {
+            "A": {
+              "expected": "год",
+              "matched": true
+            },
+            "N": {
+              "expected": "ИТОГО",
+              "matched": true
+            }
+          },
+          "schema_errors": [],
+          "monthly_columns": [],
+          "counts": {
+            "rows_in_xml": 35,
+            "cells_in_xml": 525,
+            "formula_cells": 155
+          },
+          "identified_rows": 0,
+          "unique_sku_count": 0,
+          "repeated_sku_rows": 0,
+          "numeric_columns": {},
+          "units": {},
+          "date_start": null,
+          "date_end": null,
+          "warehouse_count": 0,
+          "category_codes": {},
+          "existing_order_eta": [],
+          "excel_errors_first_100": [],
+          "formula_cache_missing_first_100": [],
+          "formula_observations": [],
+          "visibility": "visible"
+        }
+      ],
+      "expected_sheet_count": 1,
+      "schema_status": "matched",
+      "external_link_count": 0,
+      "status": "inspected"
+    }
+  ],
+  "expected_workbooks": 12,
+  "inspected_workbooks": 12,
+  "missing_changed_or_invalid_workbooks": 0,
+  "catalog_coverage": [
+    {
+      "brand": "IEK",
+      "source": "moq",
+      "detail_unique_skus": 2151,
+      "source_unique_skus": 1937,
+      "overlap": 1738,
+      "detail_skus_missing_from_source": 413,
+      "source_skus_absent_from_detail": 199
+    },
+    {
+      "brand": "IEK",
+      "source": "monthly_stock",
+      "detail_unique_skus": 2151,
+      "source_unique_skus": 2853,
+      "overlap": 2151,
+      "detail_skus_missing_from_source": 0,
+      "source_skus_absent_from_detail": 702
+    },
+    {
+      "brand": "IEK",
+      "source": "monthly_sales",
+      "detail_unique_skus": 2151,
+      "source_unique_skus": 2463,
+      "overlap": 2140,
+      "detail_skus_missing_from_source": 11,
+      "source_skus_absent_from_detail": 323
+    },
+    {
+      "brand": "IEK",
+      "source": "inbound",
+      "detail_unique_skus": 2151,
+      "source_unique_skus": 2616,
+      "overlap": 1940,
+      "detail_skus_missing_from_source": 211,
+      "source_skus_absent_from_detail": 676
+    },
+    {
+      "brand": "SE",
+      "source": "moq",
+      "detail_unique_skus": 565,
+      "source_unique_skus": 554,
+      "overlap": 545,
+      "detail_skus_missing_from_source": 20,
+      "source_skus_absent_from_detail": 9
+    },
+    {
+      "brand": "SE",
+      "source": "monthly_stock",
+      "detail_unique_skus": 565,
+      "source_unique_skus": 701,
+      "overlap": 565,
+      "detail_skus_missing_from_source": 0,
+      "source_skus_absent_from_detail": 136
+    },
+    {
+      "brand": "SE",
+      "source": "monthly_sales",
+      "detail_unique_skus": 565,
+      "source_unique_skus": 554,
+      "overlap": 545,
+      "detail_skus_missing_from_source": 20,
+      "source_skus_absent_from_detail": 9
+    },
+    {
+      "brand": "SE",
+      "source": "inbound",
+      "detail_unique_skus": 565,
+      "source_unique_skus": 497,
+      "overlap": 470,
+      "detail_skus_missing_from_source": 95,
+      "source_skus_absent_from_detail": 27
+    }
+  ],
+  "readiness": {
+    "IEK": {
+      "status": "needs_context_and_data_validation",
+      "fields": {
+        "observed_sales": "detected",
+        "monthly_stock_snapshots": "detected",
+        "exact_stockout_intervals": "not_present",
+        "pseudonymous_customer_id": "not_present",
+        "sales_price": "not_present",
+        "new_order_lead_time": "not_present",
+        "existing_order_eta": "detected",
+        "current_stock_reserve_free": "not_present",
+        "raw_category_codes": "not_present",
+        "category_or_service_policy": "not_present",
+        "external_future_growth_forecast": "not_present",
+        "historical_growth_coefficients": "not_present",
+        "confirmed_material_requirements": "not_present",
+        "economic_costs": "not_present",
+        "supplier_moq": "needs_confirmation_of_minimum_shipment_field_and_error_rows",
+        "order_multiple": "needs_confirmation_separate_from_minimum_shipment"
+      },
+      "calculation_blockers": [
+        "new_order_lead_time",
+        "category_or_service_policy",
+        "current_stock_by_warehouse_as_of"
+      ],
+      "mh3_mh4_evidence_gaps": [
+        "exact_stockout_intervals",
+        "pseudonymous_customer_id",
+        "project_ground_truth"
+      ],
+      "interpretation": [
+        "Monthly zero stock does not establish a full month of stockout.",
+        "Missing quantity is unknown, not zero; negative quantity is not converted to abs().",
+        "Existing-order ETA is not lead time of a new purchase.",
+        "Historical growth coefficients are not an external future growth forecast.",
+        "A source field named multiple does not establish a separate MOQ.",
+        "Raw category codes do not establish category policy."
+      ]
+    },
+    "SE": {
+      "status": "needs_context_and_data_validation",
+      "fields": {
+        "observed_sales": "detected",
+        "monthly_stock_snapshots": "detected",
+        "exact_stockout_intervals": "not_present",
+        "pseudonymous_customer_id": "not_present",
+        "sales_price": "not_present",
+        "new_order_lead_time": "not_present",
+        "existing_order_eta": "detected",
+        "current_stock_reserve_free": "detected",
+        "raw_category_codes": "detected",
+        "category_or_service_policy": "not_present",
+        "external_future_growth_forecast": "not_present",
+        "historical_growth_coefficients": "detected",
+        "confirmed_material_requirements": "not_present",
+        "economic_costs": "needs_confirmation_of_SS_real_meaning_and_missing_other_costs",
+        "supplier_moq": "not_present",
+        "order_multiple": "detected"
+      },
+      "calculation_blockers": [
+        "new_order_lead_time",
+        "category_or_service_policy",
+        "confirm_snapshot_date_and_warehouse_scope"
+      ],
+      "mh3_mh4_evidence_gaps": [
+        "exact_stockout_intervals",
+        "pseudonymous_customer_id",
+        "project_ground_truth"
+      ],
+      "interpretation": [
+        "Monthly zero stock does not establish a full month of stockout.",
+        "Missing quantity is unknown, not zero; negative quantity is not converted to abs().",
+        "Existing-order ETA is not lead time of a new purchase.",
+        "Historical growth coefficients are not an external future growth forecast.",
+        "A source field named multiple does not establish a separate MOQ.",
+        "Raw category codes do not establish category policy."
+      ]
+    }
+  },
+  "forecast_evaluation": {
+    "latent_regular_wape_available": false,
+    "reason": "Observed source exports contain neither latent regular demand nor project ground truth.",
+    "observed_sales_backtest_is_distinct": true
+  },
+  "privacy": "No SKU, product/client/document values or raw rows are emitted; only fixed schema labels, cell addresses and aggregates.",
+  "limitations": [
+    "Cached Excel values are inspected without recalculation or freshness proof.",
+    "Formula errors, missing caches and empty cells remain distinct from numeric zero.",
+    "September 2026 is an incomplete month at the supplied September 22 snapshot.",
+    "Source data do not supply ground truth for hidden demand or client project labels.",
+    "Inspection success is not procurement readiness or forecast accuracy."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "audit": "generator repair comparison; development only; no forecast tuning",
+  "base_commit": "771aa8e6e03e245d3501b412ad67837d8d207c8b",
+  "counts": {
+    "baseline_equal_old_generated_case": 72,
+    "event_lists_not_in_chronological_insertion_order": 276,
+    "event_lists_with_data": 276,
+    "new_requests_validated": 72,
+    "observations_equal_except_event_ID_and_order": 72,
+    "opaque_ID_history_and_event_permutation_invariance": 72,
+    "opaque_unique_events_within_cases": 136027,
+    "private_future_mutation_does_not_affect_public_or_baseline": 72,
+    "truth_and_projects_unchanged_cases": 72
+  },
+  "critical_findings": [],
+  "development_seeds": [
+    101,
+    202,
+    303
+  ],
+  "final_seeds_evaluated": [],
+  "limitations": [
+    "Trusted local adapter is not an OS sandbox.",
+    "Fixed SKU demand scales remain a synthetic-generalization limitation.",
+    "No claim of adversarial secrecy of the public generator or its fixed seeds."
+  ],
+  "origins": [
+    "2025-07-01",
+    "2026-04-01"
+  ],
+  "probe_sha256": "0610868a760c5994dae5d55ce7db0987dfe7afe373400b94277d5f554d3593c9",
+  "scenarios": [
+    "stable",
+    "seasonal_growth",
+    "intermittent",
+    "new_product",
+    "full_stockout",
+    "partial_stockout",
+    "single_project",
+    "split_project",
+    "recurring_client",
+    "known_promotion",
+    "demand_shock",
+    "combined"
+  ],
+  "source_sha256": {
+    "model/testbed/adapters.py": "0228e84b6a1f4086469ff2f9691b2463c2b0b6e2425689d22efaac0d860c1b58",
+    "model/testbed/baseline.py": "5461afe6431a1d79b7e660ff267f1c3705786240fc1c59a858da506e96e6754b",
+    "model/testbed/generator.py": "aedbc1846bcb968f1f86626f66a21db21ce641bbb3f29958c7feba30904023b1",
+    "model/testbed/protocol.json": "fd5940fee375db1b75cdd31725afe73eedaf1429833b56bc0067878cf4e29dbb"
+  }
+}

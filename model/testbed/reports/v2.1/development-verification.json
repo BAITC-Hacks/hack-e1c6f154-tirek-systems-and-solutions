@@ -1,0 +1,63 @@
+{
+  "results": [
+    {
+      "report": "model/testbed/reports/v2.1/development",
+      "assertions_passed": 3431,
+      "rows_replayed": 288,
+      "daily_predictions_replayed": 8064,
+      "independent_decimal_metrics": {
+        "rows": 288,
+        "failed_rows": 0,
+        "zero_realized_rows": 2,
+        "realized_regular_quantity": 481944.0,
+        "expected_regular_quantity": 482844.4061712212,
+        "project_quantity": 36840.0,
+        "absolute_error_realized": 117051.47960940342,
+        "wape_realized": 0.24287361106145822,
+        "bias_realized": -0.20623298307474605,
+        "daily_wape_realized": 0.3092811888742497,
+        "mae_realized": 406.4287486437619,
+        "absolute_error_expectation": 115811.00458814822,
+        "wape_expectation": 0.23985160252033766,
+        "bias_expectation": -0.20771319639277694,
+        "daily_wape_expectation": 0.26905006730447123,
+        "mae_expectation": 402.121543708848
+      },
+      "hashes": {
+        "report.json": "629fb66296b8850166c81502df844d2e744c0ea434765c1d8965e0e2abf85e80",
+        "report.md": "21f5596eafa6e34a1e3c6a81800ed6411b20df37588ba18e917f0d41fcb9face",
+        "rows.csv": "cb1752e8d6f1cd63234b8e7629eea2f252e7cbdf8b729b54ef3f2edfc739ec17"
+      }
+    },
+    {
+      "report": "model/testbed/reports/v2.1/baseline-control",
+      "assertions_passed": 3431,
+      "rows_replayed": 288,
+      "daily_predictions_replayed": 8064,
+      "independent_decimal_metrics": {
+        "rows": 288,
+        "failed_rows": 0,
+        "zero_realized_rows": 2,
+        "realized_regular_quantity": 481944.0,
+        "expected_regular_quantity": 482844.4061712212,
+        "project_quantity": 36840.0,
+        "absolute_error_realized": 122207.44761904761,
+        "wape_realized": 0.2535718830798757,
+        "bias_realized": -0.21720790718226105,
+        "daily_wape_realized": 0.43439012922644393,
+        "mae_realized": 424.33141534391535,
+        "absolute_error_expectation": 120341.71522128585,
+        "wape_expectation": 0.24923497856286966,
+        "bias_expectation": -0.21866765450903514,
+        "daily_wape_expectation": 0.3998583381448767,
+        "mae_expectation": 417.853177851687
+      },
+      "hashes": {
+        "report.json": "a3b5844ecf72bc35b0a82f6c3d41ea9de2618b24fa2e79a0e6d39eff0db482e8",
+        "report.md": "0adedc792c988c177e0474d51ab13a38bd989b2450ea8e4785afc2f9e94108f5",
+        "rows.csv": "7fa8a01acc3ec9fe46d032583be7270eed41c7208233a0ebc141a8b679d572d9"
+      }
+    }
+  ],
+  "method": "independent date joins and Decimal ratios; no aggregate import"
+}
