@@ -1,0 +1,139 @@
+{
+  "protocol": {
+    "version": "forecast-v2.1",
+    "horizon_days": 28,
+    "validation_origins": [
+      "2026-05-04",
+      "2026-06-01",
+      "2026-06-29"
+    ],
+    "evaluation_origins": [
+      "2026-07-27",
+      "2026-08-24"
+    ],
+    "evaluation_status": "retrospective: already inspected in v1, not a new independent test",
+    "target": "unaltered positive observed invoice quantities for origin+1 through origin+28",
+    "primary_panel": "SE__pieces",
+    "selection": "minimum pooled validation absolute error, separately per supplier and unit; evaluation cannot change selection",
+    "new_sku_evaluation": "all future-selling unseen SKU scored with zero forecast and reported separately; never passed to model",
+    "monthly_policy": "2024 monthly net sales only as aggregate historical features; from 2025 detailed positive sales take precedence, never added to monthly export",
+    "availability_assumption": "event-time replay; historical ingestion/revision timestamps are unavailable",
+    "group_policy": "past sales only; no current or future stock, supplier categories, client attributes, inbound or externally supplied seasonality tables",
+    "threshold_wape": 0.1,
+    "seed": 42
+  },
+  "protocol_sha256": "18f00db3c942f05bdaf3db0ebe3f23cf338e099a5d98823b4c6d7c6d64f5dec7",
+  "iterations": 500,
+  "threads": 4,
+  "source_hashes": {
+    "Systeme electric/Динамика продаж_Syseme Electric_2025-2026.xlsx": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+    "Systeme electric/Ежемесячные продажи в кол-м выражении SystemElectric 2024-2026.xlsx": "f7782ab9ea5c06d68526543953c6fce7ca83a80d1c1a4e8d88fd083de415f9d0",
+    "IEK/Ежемесячные продажи в количественном выражении за последние 2 года.xlsx": "048a0af940370153511769396570259a1bb28da63709d9b974f99c45081fa255",
+    "IEK/Динамика продаж_2025-2026.xlsx": "7b0100a662eba816fd2e6a477ba56ca2a7846d3489ce1083821c94333ac30e4c"
+  },
+  "panels": {
+    "SE__pieces": {
+      "selected": "mix|cb_scaled_poisson|mean364|0.25",
+      "best_ml": "ridge_100",
+      "best_simple": "mean364",
+      "best_adaptive": "adaptive_group",
+      "static_group_diagnostic": {
+        "erratic": "mean364",
+        "inactive": "zero",
+        "intermittent": "cb_mae_d4",
+        "new": "blend:cb_scaled_mae_nosku:0.5",
+        "regular": "ses_weekly_0.1",
+        "unseen": "zero"
+      },
+      "unit": "шт",
+      "supplier": "SE"
+    },
+    "IEK__metres": {
+      "selected": "mix|cb_mae_d4|cb_scaled_mae_d6|0.25",
+      "best_ml": "cb_scaled_mae_d6",
+      "best_simple": "median3",
+      "best_adaptive": "adaptive_sku_3",
+      "static_group_diagnostic": {
+        "erratic": "cb_scaled_poisson",
+        "inactive": "zero",
+        "intermittent": "cb_scaled_mae_d6",
+        "new": "zero",
+        "regular": "median6",
+        "unseen": "zero"
+      },
+      "unit": "м",
+      "supplier": "IEK"
+    },
+    "IEK__packs": {
+      "selected": "blend:cb_scaled_poisson:0.75",
+      "best_ml": "cb_scaled_poisson",
+      "best_simple": "yearblend_0.25_84",
+      "best_adaptive": "adaptive_sku_3",
+      "static_group_diagnostic": {
+        "erratic": "cb_scaled_mae_nosku",
+        "inactive": "tsb_0.05",
+        "intermittent": "median6",
+        "new": "zero",
+        "regular": "blend:cb_scaled_poisson:0.75",
+        "unseen": "zero"
+      },
+      "unit": "упак",
+      "supplier": "IEK"
+    },
+    "IEK__pieces": {
+      "selected": "mix|cb_scaled_mae_d4|cb_scaled_poisson|0.75",
+      "best_ml": "cb_scaled_mae_d4",
+      "best_simple": "ses_weekly_0.1",
+      "best_adaptive": "adaptive_group",
+      "static_group_diagnostic": {
+        "erratic": "cb_scaled_poisson",
+        "inactive": "adaptive_sku_10",
+        "intermittent": "cb_scaled_mae_d6",
+        "new": "adaptive_sku_10",
+        "regular": "blend:cb_scaled_mae_d4:0.5",
+        "unseen": "zero"
+      },
+      "unit": "шт",
+      "supplier": "IEK"
+    }
+  },
+  "frozen_at_utc": "2026-09-23T10:19:51.028973+00:00",
+  "convex_pair_search": {
+    "base_methods": [
+      "cb_mae_d4",
+      "cb_mae_d6",
+      "cb_rmse_d5",
+      "cb_scaled_mae_d4",
+      "cb_scaled_mae_d6",
+      "cb_scaled_mae_nosku",
+      "cb_scaled_poisson",
+      "ridge_1",
+      "ridge_100",
+      "mean364"
+    ],
+    "weights": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "selection_stage": "validation only; before evaluation",
+    "parent_selection_sha256": "1812381c6a8a184b4ea2b7051c24adf9333b97805025d4fe7e16d9aea6308d6f",
+    "private_validation_sha256": {
+      "SE__pieces": "c1dc55e4554d27673115c11f69e98f2f4b7e33b93bbd00522bb34bdbd5e1d003",
+      "IEK__metres": "4ce2d69594b0833a64bd189b241537d2561fe597956a4170e2e7c70a044a88dd",
+      "IEK__packs": "df716e09b23afd18798fb589c0349e6b3c9564a5393bc0fd70fff762761e2dee",
+      "IEK__pieces": "f2a7ed747ed84f12bcc75b46e25852f18f7995e9b456c61ea9cf1aa938a4ae5f"
+    }
+  },
+  "implementation_sha256": {
+    "methods.py": "52ff03f81b024e848d2099e6762532e6f86264c462228aff0ae475b9ab8b89e3",
+    "refine.py": "b48ec930414cf090464ed99f29292ff1938037ba01cdbe841bddf21460b22c5f",
+    "data.py": "1e07debe30fb9a3f4709900a5a4b2f27a5ab651c884aa66e9215d4f5209a4db3",
+    "verify.py": "360becf97b7feb0b7c71ed83780050be45c5408bef736f96d54108ee8938adee",
+    "ablation.py": "7230a27abc28029ad8c4de7f07d87f2d20237320f56abf7d5d2402c2ca56ca27",
+    "features.py": "fd93c8a64236903529d71544c95353c5bd9bda9cb172b343a6c8656ed0ecfbfe",
+    "__init__.py": "06163bbcf07f95072a31ff6222585b23ce32820e524414a718d715fe85e773e7",
+    "report.py": "0ef43c1867258373a19601d84c4fb51e26bc1db37aeaf908e6e56ac618874432",
+    "run.py": "5188c4c3d7759ca823590322f91528dae3f8ad3e1ca776ab0d69ef906b2a3037"
+  }
+}

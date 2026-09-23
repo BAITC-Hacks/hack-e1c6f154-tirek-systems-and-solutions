@@ -1,0 +1,11 @@
+{
+  "selection_sha256": "66fa1ad2a803cc23af65a4d017608eba42f50de3b550bbe9248c384f1cd78a9a",
+  "source_hashes_verified": true,
+  "raw_xlsx_targets_re_read": true,
+  "target_rows_verified": 13379,
+  "model_files_verified": 7,
+  "training_cutoffs_verified": 132,
+  "v1_baseline_reproduced": true,
+  "forecast_implementation_unchanged_since_freeze": true,
+  "passed": true
+}

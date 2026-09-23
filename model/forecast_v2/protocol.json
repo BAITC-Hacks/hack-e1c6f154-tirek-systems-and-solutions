@@ -1,0 +1,16 @@
+{
+  "version": "forecast-v2.1",
+  "horizon_days": 28,
+  "validation_origins": ["2026-05-04", "2026-06-01", "2026-06-29"],
+  "evaluation_origins": ["2026-07-27", "2026-08-24"],
+  "evaluation_status": "retrospective: already inspected in v1, not a new independent test",
+  "target": "unaltered positive observed invoice quantities for origin+1 through origin+28",
+  "primary_panel": "SE__pieces",
+  "selection": "minimum pooled validation absolute error, separately per supplier and unit; evaluation cannot change selection",
+  "new_sku_evaluation": "all future-selling unseen SKU scored with zero forecast and reported separately; never passed to model",
+  "monthly_policy": "2024 monthly net sales only as aggregate historical features; from 2025 detailed positive sales take precedence, never added to monthly export",
+  "availability_assumption": "event-time replay; historical ingestion/revision timestamps are unavailable",
+  "group_policy": "past sales only; no current or future stock, supplier categories, client attributes, inbound or externally supplied seasonality tables",
+  "threshold_wape": 0.10,
+  "seed": 42
+}

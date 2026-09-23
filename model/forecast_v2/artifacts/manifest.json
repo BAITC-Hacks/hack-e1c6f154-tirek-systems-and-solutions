@@ -1,0 +1,227 @@
+{
+  "selection_sha256": "66fa1ad2a803cc23af65a4d017608eba42f50de3b550bbe9248c384f1cd78a9a",
+  "python": "3.12.14",
+  "panels": {
+    "SE__pieces": {
+      "selected": "mix|cb_scaled_poisson|mean364|0.25",
+      "best_ml": "ridge_100",
+      "trained_as_of": "2026-09-21",
+      "last_unverified_source_day_excluded": "2026-09-22",
+      "models": {
+        "cb_scaled_poisson": {
+          "file": "SE__pieces-cb_scaled_poisson.cbm",
+          "sha256": "5d69faa2278498c51f8198331dc17493274f0b11cbe65e0457e1cf7eb069cf87",
+          "fit": {
+            "rows": 36780,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_scaled_poisson",
+            "spec": {
+              "kind": "cb",
+              "loss": "Poisson",
+              "depth": 6,
+              "scaled": true,
+              "sku": true
+            }
+          }
+        },
+        "ridge_100": {
+          "file": "SE__pieces-ridge_100.json",
+          "sha256": "f434db05d984009efb6bd6fb1bb7ef7e248a0bbf86fd4c4413287045a3a55aca",
+          "fit": {
+            "rows": 36780,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "ridge_100",
+            "spec": {
+              "kind": "ridge",
+              "alpha": 100.0
+            }
+          }
+        }
+      }
+    },
+    "IEK__metres": {
+      "selected": "mix|cb_mae_d4|cb_scaled_mae_d6|0.25",
+      "best_ml": "cb_scaled_mae_d6",
+      "trained_as_of": "2026-09-21",
+      "last_unverified_source_day_excluded": "2026-09-22",
+      "models": {
+        "cb_mae_d4": {
+          "file": "IEK__metres-cb_mae_d4.cbm",
+          "sha256": "0a5ea1ea67aaaeca0debe17952497777b66825ced0375c40b87810fa075ff41d",
+          "fit": {
+            "rows": 7160,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_mae_d4",
+            "spec": {
+              "kind": "cb",
+              "loss": "MAE",
+              "depth": 4,
+              "scaled": false,
+              "sku": true
+            }
+          }
+        },
+        "cb_scaled_mae_d6": {
+          "file": "IEK__metres-cb_scaled_mae_d6.cbm",
+          "sha256": "e270eb140d34b7c131ee8edcc30e673d3ca6682934dc47076d2b16bef3312688",
+          "fit": {
+            "rows": 7160,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_scaled_mae_d6",
+            "spec": {
+              "kind": "cb",
+              "loss": "MAE",
+              "depth": 6,
+              "scaled": true,
+              "sku": true
+            }
+          }
+        }
+      }
+    },
+    "IEK__packs": {
+      "selected": "blend:cb_scaled_poisson:0.75",
+      "best_ml": "cb_scaled_poisson",
+      "trained_as_of": "2026-09-21",
+      "last_unverified_source_day_excluded": "2026-09-22",
+      "models": {
+        "cb_scaled_poisson": {
+          "file": "IEK__packs-cb_scaled_poisson.cbm",
+          "sha256": "869c10658d70b50cf45996466144751fe4b0a6e6116f27102b7231d1754a62f1",
+          "fit": {
+            "rows": 4559,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_scaled_poisson",
+            "spec": {
+              "kind": "cb",
+              "loss": "Poisson",
+              "depth": 6,
+              "scaled": true,
+              "sku": true
+            }
+          }
+        }
+      }
+    },
+    "IEK__pieces": {
+      "selected": "mix|cb_scaled_mae_d4|cb_scaled_poisson|0.75",
+      "best_ml": "cb_scaled_mae_d4",
+      "trained_as_of": "2026-09-21",
+      "last_unverified_source_day_excluded": "2026-09-22",
+      "models": {
+        "cb_scaled_mae_d4": {
+          "file": "IEK__pieces-cb_scaled_mae_d4.cbm",
+          "sha256": "2722ce08791ad6cea87bc92d715582e94869af9d53ec8fd58e8e0dfb3b4dd607",
+          "fit": {
+            "rows": 119065,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_scaled_mae_d4",
+            "spec": {
+              "kind": "cb",
+              "loss": "MAE",
+              "depth": 4,
+              "scaled": true,
+              "sku": true
+            }
+          }
+        },
+        "cb_scaled_poisson": {
+          "file": "IEK__pieces-cb_scaled_poisson.cbm",
+          "sha256": "9fc4b82a4c4ebb033dffbbc9c2531bb9fb015b25725d6a5af6515a4ed17c2edd",
+          "fit": {
+            "rows": 119065,
+            "origin_min": "2025-06-17",
+            "origin_max": "2026-08-24",
+            "label_end_max": "2026-09-21",
+            "cutoff": "2026-09-21",
+            "name": "cb_scaled_poisson",
+            "spec": {
+              "kind": "cb",
+              "loss": "Poisson",
+              "depth": 6,
+              "scaled": true,
+              "sku": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "model_specs": {
+    "ridge_1": {
+      "kind": "ridge",
+      "alpha": 1.0
+    },
+    "ridge_100": {
+      "kind": "ridge",
+      "alpha": 100.0
+    },
+    "cb_mae_d4": {
+      "kind": "cb",
+      "loss": "MAE",
+      "depth": 4,
+      "scaled": false,
+      "sku": true
+    },
+    "cb_mae_d6": {
+      "kind": "cb",
+      "loss": "MAE",
+      "depth": 6,
+      "scaled": false,
+      "sku": true
+    },
+    "cb_scaled_mae_d4": {
+      "kind": "cb",
+      "loss": "MAE",
+      "depth": 4,
+      "scaled": true,
+      "sku": true
+    },
+    "cb_scaled_mae_d6": {
+      "kind": "cb",
+      "loss": "MAE",
+      "depth": 6,
+      "scaled": true,
+      "sku": true
+    },
+    "cb_scaled_mae_nosku": {
+      "kind": "cb",
+      "loss": "MAE",
+      "depth": 5,
+      "scaled": true,
+      "sku": false
+    },
+    "cb_scaled_poisson": {
+      "kind": "cb",
+      "loss": "Poisson",
+      "depth": 6,
+      "scaled": true,
+      "sku": true
+    },
+    "cb_rmse_d5": {
+      "kind": "cb",
+      "loss": "RMSE",
+      "depth": 5,
+      "scaled": false,
+      "sku": true
+    }
+  }
+}
