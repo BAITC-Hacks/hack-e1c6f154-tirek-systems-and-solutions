@@ -1,0 +1,2407 @@
+{
+  "calculator": "model.testbed.business:reference_calculate",
+  "integration_status": "reference_only",
+  "passed": 54,
+  "total": 54,
+  "cases": [
+    {
+      "id": "stock_base",
+      "requirements": [
+        "MH1"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "stock_increased",
+      "requirements": [
+        "MH1"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 180.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 100,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 11,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 18000.0,
+        "total_cost_kzt": 18000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "stock_surplus_no_moq_order",
+      "requirements": [
+        "MH1",
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 500,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": null,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": 0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "reserve_gross",
+      "requirements": [
+        "MH1",
+        "SUPPLY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 230.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 50,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23000.0,
+        "total_cost_kzt": 23000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "reserve_net_not_twice",
+      "requirements": [
+        "SUPPLY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 230.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 50,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23000.0,
+        "total_cost_kzt": 23000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_timely",
+      "requirements": [
+        "MH1",
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 110.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 100,
+            "first_deficit_day": 18,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 11000.0,
+        "total_cost_kzt": 11000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_late_gap",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 150.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 30,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 100,
+            "first_deficit_day": 4,
+            "early_shortfall": 30,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 15000.0,
+        "total_cost_kzt": 15000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_before_gap",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 150.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 30,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 100,
+            "first_deficit_day": 14,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 15000.0,
+        "total_cost_kzt": 15000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ordinary_order_does_not_erase_gap",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 280.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "early_shortfall": 60,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 28000.0,
+        "total_cost_kzt": 28000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_outside_horizon",
+      "requirements": [
+        "MH1",
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_cancelled",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_last_day",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 110.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 100,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 11000.0,
+        "total_cost_kzt": 11000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "moq_and_multiple",
+      "requirements": [
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 15.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 275,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 28,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 1500.0,
+        "total_cost_kzt": 1500.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "multiple_exact",
+      "requirements": [
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "moq_unknown",
+      "requirements": [
+        "SUPPLY-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "needs_review",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-04"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "multiple_unknown",
+      "requirements": [
+        "SUPPLY-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "needs_review",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-04"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "category_A",
+      "requirements": [
+        "MH1",
+        "POLICY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "category_B",
+      "requirements": [
+        "MH1",
+        "POLICY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 350.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 420.0,
+            "target_quantile": 0.9,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 35000.0,
+        "total_cost_kzt": 35000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "external_growth",
+      "requirements": [
+        "MH1",
+        "DEMAND-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 266.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "DEMAND-04",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 336.0,
+            "target_stock": 336.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 2.0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 26600.0,
+        "total_cost_kzt": 26600.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "growth_partial_period",
+      "requirements": [
+        "DEMAND-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 238.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "DEMAND-04",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 308.0,
+            "target_stock": 308.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 2.0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23800.0,
+        "total_cost_kzt": 23800.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "growth_outside_horizon",
+      "requirements": [
+        "DEMAND-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "DEMAND-04",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "growth_already_in_forecast",
+      "requirements": [
+        "DEMAND-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 266.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 336,
+            "target_stock": 336.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 2,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 26600.0,
+        "total_cost_kzt": 26600.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "growth_duplicate_id",
+      "requirements": [
+        "DEMAND-04"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 266.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "DEMAND-04",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 336.0,
+            "target_stock": 336.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 2.0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 26600.0,
+        "total_cost_kzt": 26600.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "material_only_uncovered",
+      "requirements": [
+        "SUPPLY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 260.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 50,
+            "material_uncovered": 30,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 26000.0,
+        "total_cost_kzt": 26000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "material_fully_reserved",
+      "requirements": [
+        "SUPPLY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 230.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 50,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23000.0,
+        "total_cost_kzt": 23000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "material_after_horizon",
+      "requirements": [
+        "SUPPLY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "material_due_before_supply",
+      "requirements": [
+        "SUPPLY-01",
+        "SUPPLY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 310.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 100,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 2,
+            "early_shortfall": 90,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 31000.0,
+        "total_cost_kzt": 31000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_expensive_low_contribution",
+      "requirements": [
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 70.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 140.0,
+            "target_quantile": 0.1,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 10000
+          }
+        ],
+        "known_cost_kzt": 700000.0,
+        "total_cost_kzt": 700000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_cheap_high_contribution",
+      "requirements": [
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 350.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 420.0,
+            "target_quantile": 0.9,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 20
+          }
+        ],
+        "known_cost_kzt": 7000.0,
+        "total_cost_kzt": 7000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_category_floor",
+      "requirements": [
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 350.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 420.0,
+            "target_quantile": 0.9,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 35000.0,
+        "total_cost_kzt": 35000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_rare_high_margin",
+      "requirements": [
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 28,
+            "target_stock": 0.0,
+            "target_quantile": 0.9,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "early_shortfall": 6,
+            "requires_expedite": true,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 5
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": 0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_frequent_low_unit_margin",
+      "requirements": [
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 280.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.5,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "early_shortfall": 60,
+            "requires_expedite": true,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 2
+          }
+        ],
+        "known_cost_kzt": 560.0,
+        "total_cost_kzt": 560.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_project_only_obligation",
+      "requirements": [
+        "SUPPLY-01",
+        "POLICY-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 7.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 0,
+            "target_stock": 0,
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 7,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 19,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 10000
+          }
+        ],
+        "known_cost_kzt": 70000.0,
+        "total_cost_kzt": 70000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "budget_equal",
+      "requirements": [
+        "BUDGET-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": 0,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "budget_exceeded",
+      "requirements": [
+        "BUDGET-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": 1000.0,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-02"
+        ],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "budget_unknown_price",
+      "requirements": [
+        "BUDGET-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": null
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": 0,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-01"
+        ],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "unknown_price_without_budget",
+      "requirements": [
+        "POLICY-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": null
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_stock",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "stock"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "stale_stock",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "current_stock"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_reserve",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "reserved"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_lead",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "lead_time_days"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_policy",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "policy_or_economics"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "invalid_horizon",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "horizon_equals_lead_plus_review"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_demand",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "daily_mean"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "economics_wrong_horizon",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "economics_horizon"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "missing_conversion",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "unit_conversion"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "invalid_multiple",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "valid_order_constraints"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "unit_boxes_to_pieces",
+      "requirements": [
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 40.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 255,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 26,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 4000.0,
+        "total_cost_kzt": 4000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "unit_fractional_meters",
+      "requirements": [
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 0.3,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 279.74,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 28,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "м",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 30.0,
+        "total_cost_kzt": 30.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "unit_missing_quantum",
+      "requirements": [
+        "DATA-01"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "unit_quantum"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "unit_incompatible_multiple",
+      "requirements": [
+        "DATA-01",
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "valid_order_constraints"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "two_suppliers_budget_total",
+      "requirements": [
+        "MH5",
+        "BUDGET-02"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          },
+          {
+            "sku": "0002",
+            "supplier_id": "supplier-B",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 200
+          }
+        ],
+        "known_cost_kzt": 63000.0,
+        "total_cost_kzt": 63000.0,
+        "budget_excess_kzt": 3000.0,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-02"
+        ],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ],
+          "supplier-B": [
+            "0002"
+          ]
+        }
+      }
+    },
+    {
+      "id": "material_unit_mismatch",
+      "requirements": [
+        "DATA-01",
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "material_unit_conversion"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    },
+    {
+      "id": "inbound_unit_mismatch",
+      "requirements": [
+        "DATA-01",
+        "SUPPLY-03"
+      ],
+      "passed": true,
+      "failures": [],
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": null,
+            "status": "needs_data",
+            "rules": [
+              "DATA-01"
+            ],
+            "missing": [
+              "inbound_unit_conversion"
+            ],
+            "reason": "Synthetic reference calculation"
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": null,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      }
+    }
+  ]
+}
