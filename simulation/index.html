@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tirek · Симуляция остатков</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="monitor-core.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar"><a class="brand" href="./index.html">TIREK<span>Склад / симуляция</span></a><span class="demo-label">Синтетические данные</span></header>
+    <main>
+      <div class="intro"><div><p class="eyebrow">Контроль доступного запаса</p><h1>Заметить дефицит вовремя</h1><p>Выдайте товар и проследите, как меняется уровень внимания.</p></div><button id="demo" class="button dark" type="button">Демо: 60 → 39 → 29 → 19</button></div>
+      <div class="workspace">
+        <section class="stock-panel" aria-labelledby="stock-title">
+          <div class="panel-top"><h2 id="stock-title">Доступный остаток</h2><span id="level" class="status normal">Норма</span></div>
+          <label class="field profile-field">Профиль товара<select id="profile"><option value="standard">Товар A · базовые пороги</option><option value="service">Товар B · раннее предупреждение</option><option value="volume">Товар C · большой целевой запас</option></select></label>
+          <div class="balance"><span id="free">60</span><span class="unit">шт.</span><span id="percent">60%</span></div>
+          <p class="reference">От целевого запаса <strong id="reference">100 шт.</strong> · <span id="policy-version">policy-1</span></p>
+          <div id="meter" class="meter" role="meter" aria-label="Остаток от целевого запаса" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"><div id="meter-fill"></div><i id="mark-critical"></i><i id="mark-high"></i><i id="mark-warning"></i></div>
+          <div class="threshold-legend"><span id="legend-critical">≤ 20% · критично</span><span id="legend-high">≤ 30% · высокий</span><span id="legend-warning">≤ 40% · внимание</span></div>
+          <div class="inventory-facts"><span>На складе <strong id="on-hand">60</strong></span><span>В резерве <strong id="reserved">0</strong></span><span>Ревизия <strong id="revision">1</strong></span></div>
+          <div id="notice" class="notice" role="status" aria-live="polite"><strong id="notice-title">Запас выше порогов внимания</strong><span id="notice-text">Сигнал появится при пересечении порога. Товары в пути не увеличивают доступный остаток.</span></div>
+          <p id="hold-note" class="subtle" hidden></p>
+        </section>
+        <section class="actions-panel" aria-labelledby="actions-title">
+          <div class="panel-top"><h2 id="actions-title">Складское событие</h2><span class="local-dot">Локально</span></div>
+          <label class="field">Количество, шт.<input id="quantity" type="number" min="1" step="1" value="10" inputmode="numeric"></label>
+          <div class="action-grid"><button class="button dark" data-action="sale" type="button">Выдать товар</button><button class="button" data-action="receipt" type="button">Принять товар</button><button class="button" data-action="reservation" type="button">В резерв</button><button class="button" data-action="release" type="button">Снять резерв</button><button class="button full" data-action="ship" type="button">Отгрузить из резерва</button></div>
+          <p class="subtle">При отгрузке резерва доступный остаток не уменьшается повторно.</p>
+          <div id="error" class="error" role="alert" hidden></div>
+          <div class="secondary-actions"><button id="replay" class="text-button" type="button" disabled>Повторить последнее событие</button><button id="reset" class="text-button" type="button">Начать заново</button></div>
+          <details id="policy-settings"><summary>Индивидуальные пороги и цель</summary>
+            <form id="policy-form">
+              <label class="field">Целевой запас, шт.<input id="target-input" type="number" min="1" step="1" value="100" placeholder="Неизвестен"></label>
+              <div class="policy-grid"><label class="field">Внимание, %<input id="warning-input" type="number" min="1" max="99" value="40"></label><label class="field">Высокий, %<input id="high-input" type="number" min="1" max="99" value="30"></label><label class="field">Критический, %<input id="critical-input" type="number" min="1" max="99" value="20"></label><label class="field">Гистерезис, п.п.<input id="hysteresis-input" type="number" min="0" max="20" value="3"></label></div>
+              <label class="field">Причина изменения<input id="reason-input" type="text" value="Проверка индивидуального профиля" required></label>
+              <button class="button full" type="submit">Применить политику</button>
+              <p class="subtle">Пустая цель означает «неизвестна». Изменение цели — отдельное событие, не продажа.</p>
+            </form>
+          </details>
+        </section>
+      </div>
+      <section class="journal" aria-labelledby="journal-title"><div class="panel-top"><h2 id="journal-title">Что произошло</h2><span id="event-count" class="subtle">0 событий</span></div><div class="table-wrap"><table><thead><tr><th>Событие</th><th>Доступно</th><th>От цели</th><th>Уровень</th><th>Реакция</th></tr></thead><tbody id="journal-body"></tbody></table></div><p id="empty-journal" class="empty">Выдайте товар или запустите демо — здесь появится история переходов.</p></section>
+      <footer>Все значения сценарные. Нет подключения к учётной системе, ML-прогноза или отправки заказов. Смена профиля начинает новый сценарий.</footer>
+    </main>
+  </div>
+</body>
+</html>

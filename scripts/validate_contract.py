@@ -106,7 +106,7 @@ def main():
         selected_cost += Decimal(str(item["order_cost_kzt"]))
     require(request["budget_kzt"] is None or selected_cost <= Decimal(str(request["budget_kzt"])), "Approval budget")
 
-    markdown_files = [ROOT / "README.md", *sorted((ROOT / "docs").glob("*.md")), CONTRACTS / "README.md"]
+    markdown_files = [ROOT / "README.md", *sorted((ROOT / "docs").glob("*.md")), CONTRACTS / "README.md", ROOT / "simulation" / "README.md"]
     for document in markdown_files:
         content = document.read_text(encoding="utf-8")
         for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", content):
