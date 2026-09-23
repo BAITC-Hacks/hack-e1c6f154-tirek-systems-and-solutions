@@ -4,1018 +4,1028 @@
  */
 
 export interface paths {
-  '/health': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Готовность и реализованные возможности */
-    get: operations['getHealth']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/datasets/import': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Импорт фиксированного набора XLSX и дополнительного контекста */
-    post: operations['importDataset']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/jobs/{job_id}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Статус задачи */
-    get: operations['getJob']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/datasets/{dataset_id}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Отчёт импорта */
-    get: operations['getDataset']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/calculations': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Запустить прогноз и расчёт */
-    post: operations['startCalculation']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/calculations/{calculation_id}/recommendations': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Получить позиции и основания; группировку строить по supplier_id */
-    get: operations['listRecommendations']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/calculations/{calculation_id}/items/{item_id}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Карточка товара */
-    get: operations['getItem']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Сохранить ручное количество с причиной */
-    patch: operations['overrideItem']
-    trace?: never
-  }
-  '/calculations/{calculation_id}/items/{item_id}/ai-review': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /**
-     * Проверить выбранную позицию через настроенный LLM
-     * @description Сохраняет только заключение ИИ. Количества и утверждённые снимки не меняются. При изменении ревизии во время вызова ответ отклоняется.
-     */
-    post: operations['reviewItemWithAI']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/calculations/{calculation_id}/approve': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Проверить и зафиксировать снимок выбранных позиций */
-    post: operations['approveCalculation']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/approvals/{approval_id}/export.csv': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** CSV утверждённого снимка */
-    get: operations['exportApproval']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Готовность и реализованные возможности */
+        get: operations["getHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/datasets/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Импорт фиксированного набора XLSX и дополнительного контекста */
+        post: operations["importDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Статус задачи */
+        get: operations["getJob"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/datasets/{dataset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Отчёт импорта */
+        get: operations["getDataset"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/calculations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Запустить прогноз и расчёт */
+        post: operations["startCalculation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/calculations/{calculation_id}/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Получить позиции и основания; группировку строить по supplier_id */
+        get: operations["listRecommendations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/calculations/{calculation_id}/items/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Карточка товара */
+        get: operations["getItem"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Сохранить ручное количество с причиной */
+        patch: operations["overrideItem"];
+        trace?: never;
+    };
+    "/calculations/{calculation_id}/items/{item_id}/ai-review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Проверить выбранную позицию через настроенный LLM
+         * @description Сохраняет только заключение ИИ. Количества и утверждённые снимки не меняются. При изменении ревизии во время вызова ответ отклоняется.
+         */
+        post: operations["reviewItemWithAI"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/calculations/{calculation_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Проверить и зафиксировать снимок выбранных позиций */
+        post: operations["approveCalculation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}/export.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CSV утверждённого снимка */
+        get: operations["exportApproval"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    Issue: {
-      code: string
-      /** @enum {string} */
-      severity: 'info' | 'warning' | 'error'
-      message: string
-      affected_skus: string[]
-      source_reference: string | null
-    }
-    Evidence: {
-      id: string
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      reference: string
-      label: string
-      value: string | number | boolean | null
-      unit: string | null
-    }
-    Error: {
-      request_id: string
-      error: {
-        code: string
-        message: string
-        details: {
-          field: string | null
-          message: string
-        }[]
-      }
-    }
-    Health: {
-      /** @enum {string} */
-      status: 'ok' | 'degraded'
-      api_version: string
-      supported_suppliers: string[]
-      supported_horizons: number[]
-      llm_available: boolean
-      max_file_count: number
-      max_total_upload_bytes: number
-    }
-    /** @description succeeded требует resource_type/resource_id и error=null; failed требует error. Для queued/running resource_id может быть null. Статус подтверждает выполнение backend. */
-    Job: {
-      job_id: string
-      /** @enum {string} */
-      kind: 'import' | 'calculation'
-      /** @enum {string} */
-      status: 'queued' | 'running' | 'succeeded' | 'failed'
-      stage: string
-      progress_pct: number | null
-      resource_type: ('dataset' | 'calculation') | null
-      resource_id: string | null
-      error: components['schemas']['Error'] | null
-      /** Format: date-time */
-      created_at: string
-      /** Format: date-time */
-      updated_at: string
-    }
-    SourceFile: {
-      /** @enum {string} */
-      role:
-        | 'sales_transactions'
-        | 'sales_monthly'
-        | 'stock_monthly'
-        | 'seasonality'
-        | 'moq'
-        | 'current_stock_inbound'
-        | 'additional_context'
-      filename: string
-      sha256: string
-      rows_read: number
-      rows_used: number
-      data_as_of: string | null
-    }
-    DatasetReport: {
-      dataset_id: string
-      dataset_version: string
-      /** Format: date */
-      data_as_of: string
-      /** @constant */
-      timezone: 'Asia/Almaty'
-      /** @enum {string} */
-      source_kind: 'observed' | 'synthetic' | 'mixed'
-      supplier_ids: string[]
-      sku_count: number
-      sources: components['schemas']['SourceFile'][]
-      issues: components['schemas']['Issue'][]
-      calculation_allowed: boolean
-    }
-    /** @description Только обезличенный ID. Не передавать ФИО, телефон, адрес или необработанный клиентский справочник. */
-    ClientLabel: {
-      source_event_id: string
-      pseudonymous_client_id: string
-    }
-    /** @description Даты включительно; end_date >= start_date, интервал не выходит за доступную историю. Наблюдаемые и синтетические интервалы разделены; месячный нулевой остаток не превращается в точный интервал. */
-    StockoutInterval: {
-      sku: string
-      warehouse_id: string
-      /** Format: date */
-      start_date: string
-      /** Format: date */
-      end_date: string
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      reference: string
-    }
-    PriceObservation: {
-      sku: string
-      /** Format: date */
-      effective_date: string
-      selling_price: number
-      unit_cost: number | null
-      variable_selling_cost: number | null
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      reference: string
-    }
-    /** @description Потребность строки материальной ведомости. already_accounted_quantity <= quantity; в дополнительный спрос входит только неучтённая часть, чтобы не повторять резерв/подтверждённый заказ. */
-    MaterialRequirement: {
-      requirement_id: string
-      sku: string
-      warehouse_id: string
-      quantity: number
-      unit: string
-      /** Format: date */
-      needed_at: string
-      already_accounted_quantity: number
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      reference: string
-    }
-    /** @description Нормализованные дополнительные входы. Отсутствующий массив означает, что источник не передан; его отсутствие отражается в отчёте, а не заполняется выдуманными фактами. */
-    AdditionalContext: {
-      client_labels?: components['schemas']['ClientLabel'][]
-      stockout_intervals?: components['schemas']['StockoutInterval'][]
-      price_observations?: components['schemas']['PriceObservation'][]
-      material_requirements?: components['schemas']['MaterialRequirement'][]
-    }
-    /** @description Затраты на единицу за указанный горизонт. Без unit_cost недоступны стоимость заказа, отдача капитала и проверка денежного бюджета. */
-    EconomicProfile: {
-      sku: string
-      underage_cost: number
-      overage_cost: number
-      unit_cost: number | null
-      /** @constant */
-      currency: 'KZT'
-      horizon_days: number
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      rationale: string
-    }
-    /** @description target_quantile применяется при отсутствии экономического профиля; minimum_target_quantile, если указан, задаёт нижнюю границу также экономического выбора. target_quantile ниже указанного минимума отклоняется. Смысл исходных числовых категорий не угадывается. */
-    CategoryPolicy: {
-      category_raw: string
-      target_quantile: number
-      minimum_target_quantile: number | null
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      rationale: string
-    }
-    /** @description Внешняя поправка прироста: 0.10 = +10%. Применять только на заданный период отдельно от уже учтённого исторического тренда. valid_to >= valid_from. */
-    GrowthAdjustment: {
-      sku: string
-      rate: number
-      /** Format: date */
-      valid_from: string
-      /** Format: date */
-      valid_to: string
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-      rationale: string
-    }
-    /** @description horizon_days = lead_time_days + review_period_days; поддержанный горизонт проверяется через health. Пустой фильтр означает все значения. В operational синтетические параметры и наборы с синтетическими или смешанными наблюдениями запрещены. economic_profiles могут быть пустыми, если задана политика категорий. Дубли/противоречащие профили → 422. */
-    CalculationRequest: {
-      dataset_id: string
-      /** Format: date */
-      as_of_date: string
-      warehouse_ids: string[]
-      category_codes: string[]
-      horizon_days: number
-      lead_time_days: number
-      review_period_days: number
-      /** @enum {string} */
-      mode: 'operational' | 'scenario'
-      category_policies: components['schemas']['CategoryPolicy'][]
-      economic_profiles: components['schemas']['EconomicProfile'][]
-      growth_adjustments: components['schemas']['GrowthAdjustment'][]
-      budget_kzt: number | null
-      request_ai_review: boolean
-    }
-    /** @description Количество за весь горизонт. Если квантили рассчитаны, p10 <= p50 <= p90. Сумма дневных квантилей не является квантилем общего спроса. */
-    Forecast: {
-      horizon_days: number
-      /** Format: date */
-      period_start: string
-      /** Format: date */
-      period_end: string
-      /** @enum {string} */
-      method: 'ml' | 'baseline' | 'contract_example'
-      model_id: string
-      mean: number
-      p10: number | null
-      p50: number | null
-      p90: number | null
-      target_quantile: number | null
-      target_stock: number | null
-      /** @enum {string} */
-      calibration_status: 'measured' | 'insufficient_data' | 'not_applicable'
-      note: string
-    }
-    /** @description reviewed требует verdict и реальный вызов LLM; остальные состояния имеют verdict=null. Не меняет количество. ID доказательств и правил проверяются backend. */
-    AIJudgement: {
-      /** @enum {string} */
-      status: 'reviewed' | 'not_requested' | 'unavailable'
-      verdict: ('supports' | 'needs_review' | 'recalculate') | null
-      reasons: string[]
-      evidence_ids: string[]
-      rule_ids: string[]
-      suggested_action: string | null
-      provider_model: string | null
-    }
-    /** @description order_cost_kzt относится к final_quantity и не включает общую доставку. null — неизвестно/не рассчитано. needs_data не утверждается ручным вводом без устранения критичного пробела. */
-    Recommendation: {
-      item_id: string
-      supplier_id: string
-      supplier_name: string
-      sku: string
-      supplier_article: string | null
-      name: string
-      unit: string
-      warehouse_id: string
-      category_raw: string | null
-      policy_basis: ('economic' | 'service_policy') | null
-      /** @enum {string} */
-      decision_status: 'ready' | 'no_order' | 'needs_data' | 'needs_review'
-      /** @enum {string} */
-      urgency: 'low' | 'normal' | 'high' | 'critical' | 'unknown'
-      free_stock: number | null
-      inbound_within_horizon: number | null
-      material_requirement_uncovered: number | null
-      forecast: components['schemas']['Forecast'] | null
-      min_order_qty: number | null
-      order_multiple: number | null
-      recommended_quantity: number | null
-      final_quantity: number | null
-      override_reason: string | null
-      unit_cost_kzt: number | null
-      order_cost_kzt: number | null
-      marginal_value: number | null
-      economics_source: ('observed' | 'manual' | 'synthetic') | null
-      reason: string
-      issues: components['schemas']['Issue'][]
-      evidence: components['schemas']['Evidence'][]
-      ai: components['schemas']['AIJudgement']
-    }
-    CalculationMetadata: {
-      calculation_id: string
-      dataset_id: string
-      dataset_version: string
-      /** Format: date */
-      data_as_of: string
-      /** Format: date */
-      as_of_date: string
-      /** @enum {string} */
-      mode: 'operational' | 'scenario'
-      revision: number
-      policy_version: string
-      /** Format: date-time */
-      created_at: string
-      horizon_days: number
-      issues: components['schemas']['Issue'][]
-    }
-    RecommendationsResponse: {
-      meta: components['schemas']['CalculationMetadata']
-      summary: {
-        item_count: number
-        ready_count: number
-        no_order_count: number
-        needs_data_count: number
-        needs_review_count: number
-        known_order_cost_kzt: number
-        order_cost_complete: boolean
-      }
-      items: components['schemas']['Recommendation'][]
-    }
-    HistoryPoint: {
-      /** Format: date */
-      period_start: string
-      /** Format: date */
-      period_end: string
-      observed_sales: number | null
-      regular_sales: number | null
-      estimated_lost_demand: number | null
-      /** @enum {string} */
-      source_kind: 'observed' | 'manual' | 'synthetic'
-    }
-    InboundDetail: {
-      order_id: string
-      quantity: number
-      /** Format: date */
-      expected_at: string
-      source_reference: string
-    }
-    ItemDetail: {
-      meta: components['schemas']['CalculationMetadata']
-      item: components['schemas']['Recommendation']
-      history: components['schemas']['HistoryPoint'][]
-      inbound: components['schemas']['InboundDetail'][]
-      economic_profile: components['schemas']['EconomicProfile'] | null
-      applied_rule_ids: string[]
-    }
-    /** @description null исключает позицию из выбора; причина обязательна. Проверки единиц, известных MOQ/кратности выполняются сервером; revision увеличивается. */
-    OverrideRequest: {
-      expected_revision: number
-      final_quantity: number | null
-      reason: string
-    }
-    /** @description Выбранные позиции имеют известное допустимое final_quantity. Подтверждение предупреждений не отменяет жёсткие ограничения и не разрешает отправку поставщику. */
-    ApprovalRequest: {
-      expected_revision: number
-      selected_item_ids: string[]
-      acknowledged_issue_codes: string[]
-    }
-    /** @description Неизменяемый снимок. CSV строится по этому снимку даже после следующей корректировки расчёта. */
-    Approval: {
-      approval_id: string
-      calculation_id: string
-      revision: number
-      /** @enum {string} */
-      mode: 'operational' | 'scenario'
-      /** @constant */
-      status: 'approved'
-      /** Format: date-time */
-      approved_at: string
-      selected_item_ids: string[]
-      export_url: string
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
+    schemas: {
+        Issue: {
+            code: string;
+            /** @enum {string} */
+            severity: "info" | "warning" | "error";
+            message: string;
+            affected_skus: string[];
+            source_reference: string | null;
+        };
+        Evidence: {
+            id: string;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            reference: string;
+            label: string;
+            value: string | number | boolean | null;
+            unit: string | null;
+        };
+        Error: {
+            request_id: string;
+            error: {
+                code: string;
+                message: string;
+                details: {
+                    field: string | null;
+                    message: string;
+                }[];
+            };
+        };
+        Health: {
+            /** @enum {string} */
+            status: "ok" | "degraded";
+            api_version: string;
+            supported_suppliers: string[];
+            supported_horizons: number[];
+            llm_available: boolean;
+            max_file_count: number;
+            max_total_upload_bytes: number;
+        };
+        /** @description succeeded требует resource_type/resource_id и error=null; failed требует error. Для queued/running resource_id может быть null. Статус подтверждает выполнение backend. */
+        Job: {
+            job_id: string;
+            /** @enum {string} */
+            kind: "import" | "calculation";
+            /** @enum {string} */
+            status: "queued" | "running" | "succeeded" | "failed";
+            stage: string;
+            progress_pct: number | null;
+            resource_type: ("dataset" | "calculation") | null;
+            resource_id: string | null;
+            error: components["schemas"]["Error"] | null;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        SourceFile: {
+            /** @enum {string} */
+            role: "sales_transactions" | "sales_monthly" | "stock_monthly" | "seasonality" | "moq" | "current_stock_inbound" | "additional_context";
+            filename: string;
+            sha256: string;
+            rows_read: number;
+            rows_used: number;
+            data_as_of: string | null;
+        };
+        DatasetReport: {
+            dataset_id: string;
+            dataset_version: string;
+            /** Format: date */
+            data_as_of: string;
+            /** @constant */
+            timezone: "Asia/Almaty";
+            /** @enum {string} */
+            source_kind: "observed" | "synthetic" | "mixed";
+            supplier_ids: string[];
+            sku_count: number;
+            sources: components["schemas"]["SourceFile"][];
+            issues: components["schemas"]["Issue"][];
+            calculation_allowed: boolean;
+        };
+        /** @description Только обезличенный ID. Не передавать ФИО, телефон, адрес или необработанный клиентский справочник. */
+        ClientLabel: {
+            source_event_id: string;
+            pseudonymous_client_id: string;
+        };
+        /** @description Даты включительно; end_date >= start_date, интервал не выходит за доступную историю. Наблюдаемые и синтетические интервалы разделены; месячный нулевой остаток не превращается в точный интервал. */
+        StockoutInterval: {
+            sku: string;
+            warehouse_id: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            reference: string;
+        };
+        PriceObservation: {
+            sku: string;
+            /** Format: date */
+            effective_date: string;
+            selling_price: number;
+            unit_cost: number | null;
+            variable_selling_cost: number | null;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            reference: string;
+        };
+        /** @description Потребность строки материальной ведомости. already_accounted_quantity <= quantity; в дополнительный спрос входит только неучтённая часть, чтобы не повторять резерв/подтверждённый заказ. */
+        MaterialRequirement: {
+            requirement_id: string;
+            sku: string;
+            warehouse_id: string;
+            quantity: number;
+            unit: string;
+            /** Format: date */
+            needed_at: string;
+            already_accounted_quantity: number;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            reference: string;
+        };
+        /** @description Нормализованные дополнительные входы. Отсутствующий массив означает, что источник не передан; его отсутствие отражается в отчёте, а не заполняется выдуманными фактами. */
+        AdditionalContext: {
+            client_labels?: components["schemas"]["ClientLabel"][];
+            stockout_intervals?: components["schemas"]["StockoutInterval"][];
+            price_observations?: components["schemas"]["PriceObservation"][];
+            material_requirements?: components["schemas"]["MaterialRequirement"][];
+        };
+        /** @description Затраты на единицу за указанный горизонт. Без unit_cost недоступны стоимость заказа, отдача капитала и проверка денежного бюджета. */
+        EconomicProfile: {
+            sku: string;
+            underage_cost: number;
+            overage_cost: number;
+            unit_cost: number | null;
+            /** @constant */
+            currency: "KZT";
+            horizon_days: number;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            rationale: string;
+        };
+        /** @description target_quantile применяется при отсутствии экономического профиля; minimum_target_quantile, если указан, задаёт нижнюю границу также экономического выбора. target_quantile ниже указанного минимума отклоняется. Смысл исходных числовых категорий не угадывается. */
+        CategoryPolicy: {
+            category_raw: string;
+            target_quantile: number;
+            minimum_target_quantile: number | null;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            rationale: string;
+        };
+        /** @description Внешняя поправка прироста: 0.10 = +10%. Применять только на заданный период отдельно от уже учтённого исторического тренда. valid_to >= valid_from. */
+        GrowthAdjustment: {
+            sku: string;
+            rate: number;
+            /** Format: date */
+            valid_from: string;
+            /** Format: date */
+            valid_to: string;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+            rationale: string;
+        };
+        /** @description horizon_days = lead_time_days + review_period_days; поддержанный горизонт проверяется через health. Пустой фильтр означает все значения. В operational синтетические параметры и наборы с синтетическими или смешанными наблюдениями запрещены. economic_profiles могут быть пустыми, если задана политика категорий. Дубли/противоречащие профили → 422. */
+        CalculationRequest: {
+            dataset_id: string;
+            /** Format: date */
+            as_of_date: string;
+            warehouse_ids: string[];
+            category_codes: string[];
+            horizon_days: number;
+            lead_time_days: number;
+            review_period_days: number;
+            /** @enum {string} */
+            mode: "operational" | "scenario";
+            category_policies: components["schemas"]["CategoryPolicy"][];
+            economic_profiles: components["schemas"]["EconomicProfile"][];
+            growth_adjustments: components["schemas"]["GrowthAdjustment"][];
+            budget_kzt: number | null;
+            request_ai_review: boolean;
+        };
+        /** @description Количество за весь горизонт. Если квантили рассчитаны, p10 <= p50 <= p90. Сумма дневных квантилей не является квантилем общего спроса. */
+        Forecast: {
+            horizon_days: number;
+            /** Format: date */
+            period_start: string;
+            /** Format: date */
+            period_end: string;
+            /** @enum {string} */
+            method: "ml" | "baseline" | "contract_example";
+            model_id: string;
+            mean: number;
+            p10: number | null;
+            p50: number | null;
+            p90: number | null;
+            target_quantile: number | null;
+            target_stock: number | null;
+            /** @enum {string} */
+            calibration_status: "measured" | "insufficient_data" | "not_applicable";
+            note: string;
+        };
+        /** @description reviewed требует verdict и реальный вызов LLM; остальные состояния имеют verdict=null. Не меняет количество. ID доказательств и правил проверяются backend. */
+        AIJudgement: {
+            /** @enum {string} */
+            status: "reviewed" | "not_requested" | "unavailable";
+            verdict: ("supports" | "needs_review" | "recalculate") | null;
+            reasons: string[];
+            evidence_ids: string[];
+            rule_ids: string[];
+            suggested_action: string | null;
+            provider_model: string | null;
+        };
+        /** @description order_cost_kzt относится к final_quantity и не включает общую доставку. null — неизвестно/не рассчитано. needs_data не утверждается ручным вводом без устранения критичного пробела. */
+        Recommendation: {
+            item_id: string;
+            supplier_id: string;
+            supplier_name: string;
+            sku: string;
+            supplier_article: string | null;
+            name: string;
+            unit: string;
+            warehouse_id: string;
+            category_raw: string | null;
+            policy_basis: ("economic" | "service_policy") | null;
+            /** @enum {string} */
+            decision_status: "ready" | "no_order" | "needs_data" | "needs_review";
+            /** @enum {string} */
+            urgency: "low" | "normal" | "high" | "critical" | "unknown";
+            free_stock: number | null;
+            inbound_within_horizon: number | null;
+            material_requirement_uncovered: number | null;
+            forecast: components["schemas"]["Forecast"] | null;
+            min_order_qty: number | null;
+            order_multiple: number | null;
+            recommended_quantity: number | null;
+            final_quantity: number | null;
+            override_reason: string | null;
+            unit_cost_kzt: number | null;
+            order_cost_kzt: number | null;
+            marginal_value: number | null;
+            economics_source: ("observed" | "manual" | "synthetic") | null;
+            reason: string;
+            issues: components["schemas"]["Issue"][];
+            evidence: components["schemas"]["Evidence"][];
+            ai: components["schemas"]["AIJudgement"];
+        };
+        CalculationMetadata: {
+            calculation_id: string;
+            dataset_id: string;
+            dataset_version: string;
+            /** Format: date */
+            data_as_of: string;
+            /** Format: date */
+            as_of_date: string;
+            /** @enum {string} */
+            mode: "operational" | "scenario";
+            revision: number;
+            policy_version: string;
+            /** Format: date-time */
+            created_at: string;
+            horizon_days: number;
+            issues: components["schemas"]["Issue"][];
+        };
+        RecommendationsResponse: {
+            meta: components["schemas"]["CalculationMetadata"];
+            summary: {
+                item_count: number;
+                ready_count: number;
+                no_order_count: number;
+                needs_data_count: number;
+                needs_review_count: number;
+                known_order_cost_kzt: number;
+                order_cost_complete: boolean;
+            };
+            items: components["schemas"]["Recommendation"][];
+        };
+        HistoryPoint: {
+            /** Format: date */
+            period_start: string;
+            /** Format: date */
+            period_end: string;
+            observed_sales: number | null;
+            regular_sales: number | null;
+            estimated_lost_demand: number | null;
+            /** @enum {string} */
+            source_kind: "observed" | "manual" | "synthetic";
+        };
+        InboundDetail: {
+            order_id: string;
+            quantity: number;
+            /** Format: date */
+            expected_at: string;
+            source_reference: string;
+        };
+        ItemDetail: {
+            meta: components["schemas"]["CalculationMetadata"];
+            item: components["schemas"]["Recommendation"];
+            history: components["schemas"]["HistoryPoint"][];
+            inbound: components["schemas"]["InboundDetail"][];
+            economic_profile: components["schemas"]["EconomicProfile"] | null;
+            applied_rule_ids: string[];
+        };
+        /** @description null исключает позицию из выбора; причина обязательна. Неизвестные условия можно явно подтвердить вручную со ссылкой на источник. Проверки единиц, MOQ/кратности выполняются сервером; revision увеличивается. */
+        OverrideRequest: {
+            expected_revision: number;
+            final_quantity: number | null;
+            reason: string;
+            constraint_confirmation?: components["schemas"]["SupplierConstraintConfirmation"] | null;
+            inbound_confirmation?: components["schemas"]["InboundZeroConfirmation"] | null;
+        };
+        /** @description Явное решение менеджера по неизвестным условиям поставки. Оно сохраняется в расчёте и остаётся предупреждением до утверждения позиции. */
+        SupplierConstraintConfirmation: {
+            unit_quantum: number;
+            min_order_qty: number;
+            order_multiple: number;
+            /** @constant */
+            warehouse_scope_confirmed: true;
+            source_reference: string;
+        };
+        /** @description Явное подтверждение менеджера, что открытых поставок для SKU нет. Положительное поступление требует обновить исходный набор и пересчитать заказ. */
+        InboundZeroConfirmation: {
+            /** @constant */
+            no_inbound_confirmed: true;
+            source_reference: string;
+        };
+        /** @description Выбранные позиции имеют известное допустимое final_quantity. Подтверждение предупреждений не отменяет жёсткие ограничения и не разрешает отправку поставщику. */
+        ApprovalRequest: {
+            expected_revision: number;
+            selected_item_ids: string[];
+            acknowledged_issue_codes: string[];
+        };
+        /** @description Неизменяемый снимок. CSV строится по этому снимку даже после следующей корректировки расчёта. */
+        Approval: {
+            approval_id: string;
+            calculation_id: string;
+            revision: number;
+            /** @enum {string} */
+            mode: "operational" | "scenario";
+            /** @constant */
+            status: "approved";
+            /** Format: date-time */
+            approved_at: string;
+            selected_item_ids: string[];
+            export_url: string;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-export type $defs = Record<string, never>
+export type $defs = Record<string, never>;
 export interface operations {
-  getHealth: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Health']
-        }
-      }
-    }
-  }
-  importDataset: {
-    parameters: {
-      query?: never
-      header: {
-        /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
-        'Idempotency-Key': string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'multipart/form-data': {
-          supplier_id: string
-          files: string[]
-          /** @description JSON-строка по схеме AdditionalContext. Схема проверяется сервером после разбора JSON; файл не является командой. */
-          context?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Успешный ответ */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Job']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      413: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      500: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  getJob: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        job_id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Job']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  getDataset: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        dataset_id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['DatasetReport']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  startCalculation: {
-    parameters: {
-      query?: never
-      header: {
-        /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
-        'Idempotency-Key': string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CalculationRequest']
-      }
-    }
-    responses: {
-      /** @description Успешный ответ */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Job']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      500: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  listRecommendations: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        calculation_id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['RecommendationsResponse']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  getItem: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        calculation_id: string
-        item_id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ItemDetail']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  overrideItem: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        calculation_id: string
-        item_id: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['OverrideRequest']
-      }
-    }
-    responses: {
-      /** @description Успешный ответ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ItemDetail']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  reviewItemWithAI: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        calculation_id: string
-        item_id: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          expected_revision: number
-        }
-      }
-    }
-    responses: {
-      /** @description Карточка с заключением или явной причиной недоступности ИИ */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ItemDetail']
-        }
-      }
-      /** @description Позиция не найдена */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ревизия изменилась */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Некорректный запрос */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  approveCalculation: {
-    parameters: {
-      query?: never
-      header: {
-        /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
-        'Idempotency-Key': string
-      }
-      path: {
-        calculation_id: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ApprovalRequest']
-      }
-    }
-    responses: {
-      /** @description Успешный ответ */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Approval']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
-  exportApproval: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        approval_id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description UTF-8 BOM, разделитель ;, без автоматической отправки поставщику */
-      200: {
-        headers: {
-          /** @description attachment; filename="order-<approval_id>.csv" */
-          'Content-Disposition'?: string
-          [name: string]: unknown
-        }
-        content: {
-          'text/csv': string
-        }
-      }
-      /** @description Ошибка с кодом и описанием */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Error']
-        }
-      }
-    }
-  }
+    getHealth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    importDataset: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    supplier_id: string;
+                    files: string[];
+                    /** @description JSON-строка по схеме AdditionalContext. Схема проверяется сервером после разбора JSON; файл не является командой. */
+                    context?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Успешный ответ */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Job"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getJob: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Job"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dataset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatasetReport"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    startCalculation: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalculationRequest"];
+            };
+        };
+        responses: {
+            /** @description Успешный ответ */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Job"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listRecommendations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calculation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationsResponse"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calculation_id: string;
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemDetail"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    overrideItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calculation_id: string;
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OverrideRequest"];
+            };
+        };
+        responses: {
+            /** @description Успешный ответ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemDetail"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    reviewItemWithAI: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calculation_id: string;
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    expected_revision: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Карточка с заключением или явной причиной недоступности ИИ */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemDetail"];
+                };
+            };
+            /** @description Позиция не найдена */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ревизия изменилась */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Некорректный запрос */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    approveCalculation: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Один ключ на логическую операцию. Повтор того же содержимого возвращает тот же результат; другое содержимое с тем же ключом → 409. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                calculation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description Успешный ответ */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Approval"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    exportApproval: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description UTF-8 BOM, разделитель ;, без автоматической отправки поставщику */
+            200: {
+                headers: {
+                    /** @description attachment; filename="order-<approval_id>.csv" */
+                    "Content-Disposition"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+            /** @description Ошибка с кодом и описанием */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
 }

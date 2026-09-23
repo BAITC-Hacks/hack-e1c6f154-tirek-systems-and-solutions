@@ -1,7 +1,12 @@
-fastapi>=0.115,<1
+# The default API adapter imports the model runtime, including CatBoost.
+-r ../model/requirements.txt
+
+# Starlette 1.7 TestClient deadlocks during lifespan startup on Linux in the
+# resolved stack. Keep the verified 0.115/0.46 pair until that boundary is fixed.
+fastapi>=0.115,<0.116
+starlette==0.46.2
 uvicorn>=0.34,<1
 python-multipart>=0.0.20,<1
-openpyxl>=3.1.5,<4
 PyYAML>=6.0.2,<7
 jsonschema>=4.23,<5
 httpx>=0.28,<1

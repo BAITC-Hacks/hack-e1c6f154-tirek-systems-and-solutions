@@ -187,6 +187,32 @@ class StockEventTests(unittest.TestCase):
         with self.assertRaises(EventConflict):
             reduce_stock_event(state, {**first, "event_id": "other"}, ledger)
 
+    def test_current_revision_cannot_apply_older_absolute_snapshot(self):
+        start = initial()
+        first = {**event(start), "occurred_at": "2026-09-23T07:01:00Z"}
+        state, ledger, _ = reduce_stock_event(start, first)
+        saved = deepcopy(state)
+        with self.assertRaisesRegex(EventConflict, "timestamp"):
+            reduce_stock_event(state, event(state, "older", 99), ledger)
+        self.assertEqual(state, saved)
+        # The same instant in a different timezone is not an older event.
+        equal = {**event(state, "same-instant", 30), "occurred_at": "2026-09-23T12:01:00+05:00"}
+        current, ledger, _ = reduce_stock_event(state, equal, ledger)
+        current, ledger, _ = reduce_stock_event(current, {
+            **event(current, "later", 15), "occurred_at": "2026-09-23T07:02:00Z"}, ledger)
+        replayed, _, result = reduce_stock_event(current, first, ledger)
+        self.assertTrue(result["deduplicated"])
+        self.assertEqual(replayed, current)
+
+    def test_policy_timestamp_cannot_roll_back_state(self):
+        state = initial()
+        with self.assertRaisesRegex(EventConflict, "timestamp"):
+            change_stock_policy(state, policy=policy("policy-2"), expected_revision=1,
+                                reason="Old policy event", evaluated_at="2026-09-23T06:59:59Z")
+        result = change_stock_policy(state, policy=policy("policy-2"), expected_revision=1,
+                                     reason="Same instant", evaluated_at="2026-09-23T07:00:00Z")
+        self.assertEqual(result["state"]["revision"], 2)
+
     def test_reserved_shipment_deducts_reserve_once_and_receipt_is_absolute(self):
         state = initial(60, 20)
         state, ledger, _ = reduce_stock_event(state, event(state, on_hand=50, reserved=10))
@@ -289,6 +315,15 @@ class MockJudgementValidationTests(unittest.TestCase):
                         {"provider_model": "fabricated-model"}]:
             with self.subTest(changes=changes):
                 self.assertEqual(validate_mock(mock_response(**changes))["status"], "unavailable")
+
+    def test_nonreviewed_status_cannot_carry_provider_or_action(self):
+        for status in ("not_requested", "unavailable"):
+            for changes in ({"provider_model": "MOCK-NOT-A-REAL-CALL", "suggested_action": None},
+                            {"provider_model": None, "suggested_action": "Проверить данные"}):
+                result = validate_mock(mock_response(status=status, verdict=None, **changes))
+                self.assertEqual(result["status"], "unavailable")
+                self.assertIsNone(result["provider_model"])
+                self.assertIsNone(result["suggested_action"])
 
     def test_wrong_types_and_missing_fields_rejected(self):
         for field in mock_response():

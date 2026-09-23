@@ -49,12 +49,13 @@ def _exact_keys(value: Any, keys: set[str], name: str) -> None:
         raise ValueError(f"{name}: missing or unknown fields")
 
 
-def _timestamp(value: Any) -> None:
+def _timestamp(value: Any) -> datetime:
     if not _text(value):
         raise ValueError("timestamp must be an ISO date-time with timezone")
     parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if parsed.tzinfo is None:
         raise ValueError("timestamp must include timezone")
+    return parsed
 
 
 def _revision(value: Any) -> None:
@@ -231,7 +232,8 @@ def reduce_stock_event(state: Mapping[str, Any], event: dict[str, Any],
     _revision(event["expected_revision"])
     if event["expected_revision"] != state["revision"]:
         raise EventConflict("stale expected_revision")
-    _timestamp(event["occurred_at"])
+    if _timestamp(event["occurred_at"]) < _timestamp(state["evaluated_at"]):
+        raise EventConflict("event timestamp precedes current stock state")
     if event["event_type"] not in ("sale", "receipt", "reservation", "release", "adjustment"):
         raise ValueError("invalid event_type")
     if not all(_number(event[key]) and event[key] >= 0 for key in ("on_hand", "reserved")):
@@ -266,7 +268,8 @@ def change_stock_policy(state: Mapping[str, Any], *, policy: dict[str, Any],
         raise EventConflict("stale expected_revision")
     if not _text(reason):
         raise ValueError("policy change reason is required")
-    _timestamp(evaluated_at)
+    if _timestamp(evaluated_at) < _timestamp(state["evaluated_at"]):
+        raise EventConflict("policy timestamp precedes current stock state")
     thresholds = _policy(policy, state["mode"])
     if policy["policy_version"] == state["policy"]["policy_version"]:
         raise EventConflict("policy change requires a new policy_version")
@@ -382,6 +385,9 @@ def validate_ai_judgement(raw: str | dict[str, Any] | None, *, request_context: 
         if response["verdict"] is not None and response["verdict"] not in ("supports", "needs_review", "recalculate"):
             raise ValueError("invalid_verdict")
         if (response["status"] == "reviewed") != (response["verdict"] is not None):
+            raise ValueError("status_verdict_mismatch")
+        if response["status"] != "reviewed" and (response["suggested_action"] is not None
+                                                  or response["provider_model"] is not None):
             raise ValueError("status_verdict_mismatch")
         for key in ("reasons", "evidence_ids", "rule_ids"):
             if not isinstance(response[key], list) or not all(_text(value) for value in response[key]):

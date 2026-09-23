@@ -1,13 +1,46 @@
 openapi: 3.1.0
 info:
   title: Tirek Stock Monitoring Extension
-  version: 0.1.0
-  description: ТЗ API мониторинга; HTTP-сервер ещё не реализован. Синтетическая симуляция
-    не является подключением к системе учёта.
+  version: 0.2.0
+  description: HTTP API мониторинга с хранением состояния, событий и запросов на
+    перерасчёт в SQLite. Обработчик очереди перерасчёта и интеграция с учётной системой
+    не подключены. Синтетическая симуляция не является наблюдаемыми данными.
 servers:
 - url: http://127.0.0.1:8000/api/v1
 security: []
 paths:
+  /stock-monitoring:
+    post:
+      operationId: initializeStockState
+      summary: Явно зарегистрировать начальный снимок и индивидуальную политику
+      description: Начальная revision=1. Повторная инициализация существующего склада/артикула
+        возвращает 409; обновления выполняются событиями. Начальный снимок не создаёт
+        события продажи или уведомления о переходе.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitialState'
+      responses:
+        '201':
+          description: Начальное состояние сохранено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '409':
+          description: Состояние уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Некорректный снимок или политика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /stock-monitoring/{warehouse_id}/{sku}:
     get:
       operationId: getStockState
@@ -129,6 +162,36 @@ paths:
               $ref: '#/components/schemas/StockEvent'
 components:
   schemas:
+    InitialState:
+      type: object
+      additionalProperties: false
+      properties:
+        sku:
+          type: string
+          minLength: 1
+        warehouse_id:
+          type: string
+          minLength: 1
+        unit:
+          type: string
+          minLength: 1
+        mode:
+          type: string
+          enum: [operational, scenario]
+        on_hand:
+          type: [number, 'null']
+          minimum: 0
+        reserved:
+          type: [number, 'null']
+          minimum: 0
+        policy:
+          $ref: '#/components/schemas/Policy'
+        evaluated_at:
+          type: string
+          format: date-time
+      required: [sku, warehouse_id, unit, mode, on_hand, reserved, policy, evaluated_at]
+      description: Количества заданы в одной единице; null означает неизвестный учёт.
+        Противоречивые известные остатки дают unknown, без вымышленного процента.
     Thresholds:
       type: object
       additionalProperties: false
@@ -296,7 +359,8 @@ components:
       - reserved
       - source_reference
       description: АБСОЛЮТНЫЙ снимок после события; reserved <= on_hand. Хронология
-        принятия определяется revision, occurred_at служит для аудита. Одинаковый
+        принятия определяется revision; occurred_at не может быть раньше текущего
+        state.evaluated_at (сравнение с учётом часового пояса), иначе 409. Одинаковый
         event_id+payload идемпотентен, другой payload →409. Продажа зарезервированного
         товара меняет оба значения.
     Transition:
@@ -369,7 +433,8 @@ components:
       - reason
       description: Новая policy_version обязательна. Атомарно повышает общую revision
         и переоценивает уровень без старого гистерезиса; переход помечен policy_changed,
-        даже если уровень не изменился.
+        даже если уровень не изменился. Время применения evaluated_at не может быть
+        раньше текущего state.evaluated_at; иначе 409.
     Error:
       type: object
       additionalProperties: false

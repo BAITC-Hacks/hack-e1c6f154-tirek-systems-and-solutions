@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import httpx
 from model.decision.rules import build_ai_context, validate_ai_judgement
+from .contracts import validate
 
 
 def configuration():
@@ -29,19 +30,16 @@ def review(detail):
     if not config['available']:
         return unavailable('ИИ-провайдер не настроен. Укажите TIREK_LLM_BASE_URL, TIREK_LLM_MODEL и ключ в backend/.env.')
     item, meta = detail['item'], detail['meta']
+    # Use the same public, versioned evidence boundary as the semantic pipeline.
+    # Ephemeral facts would make a later audit unable to reproduce the review.
     evidence = deepcopy(item['evidence'])
-    for label, key in [('Свободный остаток', 'free_stock'), ('Поступление на горизонт', 'inbound_within_horizon'), ('Итоговое количество', 'final_quantity')]:
-        evidence.append({'id': item['item_id'] + '-' + key, 'source_kind': 'manual',
-                         'reference': 'calculation:' + meta['calculation_id'], 'label': label,
-                         'value': item[key], 'unit': item['unit']})
     context = build_ai_context(
         evidence=evidence,
         versions={'dataset_version': meta['dataset_version'], 'policy_version': meta['policy_version'],
                   'calculation_revision': meta['revision']},
-        recommended_quantity=item['final_quantity'],
-        product_text=json.dumps({'name': item['name'], 'decision_status': item['decision_status'],
-                                 'reason': item['reason'], 'issues': [issue['message'] for issue in item['issues']]}, ensure_ascii=False),
-        allowed_rule_ids=list(dict.fromkeys([*detail['applied_rule_ids'], 'AI-01'])),
+        recommended_quantity=item['recommended_quantity'],
+        product_text=item['name'],
+        allowed_rule_ids=detail['applied_rule_ids'],
     )
     instruction = context['instruction'] + (
         '\nОтветь только JSON на русском. Поля: status="reviewed", verdict (supports/needs_review/recalculate), '
@@ -84,10 +82,16 @@ def review(detail):
 def review_calculation(result):
     # Explicit request only; avoid thousands of unbounded provider calls per import.
     for index, item in enumerate(result['response']['items']):
+        # Adapters may already carry a reviewed verdict with server-owned call
+        # provenance. The semantic boundary validated it above; never replace it
+        # with a second provider call.
+        if item['ai']['status'] in ('reviewed', 'unavailable'):
+            continue
         judgement = review(result['details'][item['item_id']]) if index < 5 else {
             'status': 'not_requested', 'verdict': None,
             'reasons': ['Пакетная проверка ограничена первыми пятью позициями. Остальные можно проверить в карточке.'],
             'evidence_ids': [], 'rule_ids': [], 'suggested_action': None, 'provider_model': None,
         }
+        validate('AIJudgement', judgement)
         item['ai'] = judgement
         result['details'][item['item_id']]['item']['ai'] = deepcopy(judgement)

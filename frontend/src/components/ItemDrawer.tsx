@@ -27,6 +27,13 @@ export default function ItemDrawer({
   const [formError, setFormError] = useState('')
   const [quantity, setQuantity] = useState('')
   const [reason, setReason] = useState('')
+  const [confirmConstraints, setConfirmConstraints] = useState(false)
+  const [unitQuantum, setUnitQuantum] = useState('1')
+  const [minimum, setMinimum] = useState('')
+  const [multiple, setMultiple] = useState('')
+  const [constraintSource, setConstraintSource] = useState('')
+  const [confirmZeroInbound, setConfirmZeroInbound] = useState(false)
+  const [inboundSource, setInboundSource] = useState('')
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState('overview')
   const [reload, setReload] = useState(0)
@@ -45,7 +52,16 @@ export default function ItemDrawer({
       .detail(calculationId, itemId, controller.signal)
       .then((value) => {
         setDetail(value)
-        setQuantity(value.item.final_quantity == null ? '' : String(value.item.final_quantity))
+        setQuantity(value.item.final_quantity == null
+          ? value.item.recommended_quantity == null ? '' : String(value.item.recommended_quantity)
+          : String(value.item.final_quantity))
+        setConfirmConstraints(false)
+        setUnitQuantum(value.item.unit === 'шт' ? '1' : '')
+        setMinimum(value.item.min_order_qty == null ? '' : String(value.item.min_order_qty))
+        setMultiple(value.item.order_multiple == null ? '' : String(value.item.order_multiple))
+        setConstraintSource('')
+        setConfirmZeroInbound(false)
+        setInboundSource('')
       })
       .catch((e) => {
         if (e.name !== 'AbortError') setError(e.message)
@@ -79,6 +95,19 @@ export default function ItemDrawer({
       setFormError('Введите корректное количество.')
       return
     }
+    if (confirmConstraints && (
+      !Number.isFinite(Number(unitQuantum)) || Number(unitQuantum) <= 0 ||
+      !Number.isFinite(Number(minimum)) || Number(minimum) < 0 ||
+      !Number.isFinite(Number(multiple)) || Number(multiple) <= 0 ||
+      !constraintSource.trim()
+    )) {
+      setFormError('Заполните единицу округления, MOQ, кратность и ссылку на источник условий.')
+      return
+    }
+    if (confirmZeroInbound && !inboundSource.trim()) {
+      setFormError('Укажите реестр или другой источник подтверждения отсутствия поступлений.')
+      return
+    }
     setSaving(true)
     setFormError('')
     try {
@@ -86,6 +115,17 @@ export default function ItemDrawer({
         expected_revision: detail.meta.revision,
         final_quantity: exclude ? null : Number(quantity),
         reason,
+        constraint_confirmation: confirmConstraints ? {
+          unit_quantum: Number(unitQuantum),
+          min_order_qty: Number(minimum),
+          order_multiple: Number(multiple),
+          warehouse_scope_confirmed: true,
+          source_reference: constraintSource.trim(),
+        } : null,
+        inbound_confirmation: confirmZeroInbound ? {
+          no_inbound_confirmed: true,
+          source_reference: inboundSource.trim(),
+        } : null,
       })
       setDetail(updated)
       await onSaved()
@@ -104,6 +144,20 @@ export default function ItemDrawer({
       setSaving(false)
     }
   }
+
+  const resolvableIssueCodes = new Set([
+    'REQUIRED_INBOUND_QUANTITY', 'REQUIRED_INBOUND_ETA', 'REQUIRED_MIN_ORDER_QTY',
+    'REQUIRED_ORDER_MULTIPLE', 'REQUIRED_WAREHOUSE_SCOPE_CONFIRMATION',
+  ])
+  const hasConstraintGap = detail?.item.issues.some((issue) =>
+    ['REQUIRED_MIN_ORDER_QTY', 'REQUIRED_ORDER_MULTIPLE', 'REQUIRED_WAREHOUSE_SCOPE_CONFIRMATION']
+      .includes(issue.code)) ?? false
+  const hasOtherCriticalGap = detail?.item.issues.some((issue) =>
+    issue.severity === 'error' && !resolvableIssueCodes.has(issue.code)) ?? false
+  const canResolveNeedsData = !!detail && detail.item.decision_status === 'needs_data'
+    && detail.item.recommended_quantity != null && confirmZeroInbound
+    && (!hasConstraintGap || confirmConstraints) && !hasOtherCriticalGap
+  const quantityBlocked = detail?.item.decision_status === 'needs_data' && !canResolveNeedsData
 
   return (
     <Dialog.Root
@@ -192,6 +246,51 @@ export default function ItemDrawer({
                         </strong>
                       </div>
                     </div>
+                    <h3>Как получен результат</h3>
+                    <div className="calculation-trace">
+                      <div>
+                        <span>1 · Прогноз на {detail.item.forecast?.horizon_days ?? 28} дней</span>
+                        <strong>
+                          {number(detail.item.forecast?.mean)} {detail.item.unit}
+                        </strong>
+                        <small>
+                          {detail.item.forecast?.method === 'ml'
+                            ? 'ML-модель'
+                            : detail.item.forecast?.method === 'baseline'
+                              ? 'Статистический baseline'
+                              : detail.item.forecast?.method === 'contract_example'
+                                ? 'Демо-значение — ML не запускался'
+                                : 'Прогноз недоступен'}
+                        </small>
+                      </div>
+                      <ArrowRight size={22} />
+                      <div>
+                        <span>2 · Запас и поставки</span>
+                        <strong>
+                          {number(detail.item.free_stock)} + {number(detail.item.inbound_within_horizon)}
+                        </strong>
+                        <small>свободный остаток + товар в пути</small>
+                      </div>
+                      <ArrowRight size={22} />
+                      <div>
+                        <span>3 · Закупочная логика</span>
+                        <strong>
+                          {detail.item.recommended_quantity == null
+                            ? 'Нужны данные'
+                            : `${number(detail.item.recommended_quantity)} ${detail.item.unit}`}
+                        </strong>
+                        <small>
+                          {detail.item.forecast?.target_stock == null
+                            ? 'целевой запас не рассчитан'
+                            : `целевой запас ${number(detail.item.forecast.target_stock)} ${detail.item.unit}`}
+                        </small>
+                      </div>
+                    </div>
+                    {detail.item.forecast?.model_id && (
+                      <p className="model-trace-id">
+                        Модель: <code>{detail.item.forecast.model_id}</code>
+                      </p>
+                    )}
                     <h3>История и прогноз спроса</h3>
                     <DemandChart detail={detail} />
                     <div className="fact-grid">
@@ -380,9 +479,62 @@ export default function ItemDrawer({
                         step="1"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        disabled={detail.item.decision_status === 'needs_data'}
+                        disabled={quantityBlocked}
                       />
                     </label>
+                    {detail.item.issues.some((issue) => issue.code === 'REQUIRED_INBOUND_QUANTITY') && (
+                      <div className="constraint-confirmation">
+                        <label className="check-line">
+                          <input type="checkbox" checked={confirmZeroInbound}
+                            onChange={(e) => setConfirmZeroInbound(e.target.checked)} />
+                          Подтвердить отсутствие открытых поступлений
+                        </label>
+                        {confirmZeroInbound && (
+                          <label className="field">
+                            Источник проверки inbound
+                            <input value={inboundSource} onChange={(e) => setInboundSource(e.target.value)}
+                              placeholder="Реестр открытых заказов / 1С" />
+                          </label>
+                        )}
+                        <p className="field-hint">
+                          Если товар в пути есть, обновите выгрузку и пересчитайте заказ.
+                        </p>
+                      </div>
+                    )}
+                    {(detail.item.decision_status === 'needs_review' || hasConstraintGap) && (
+                      <div className="constraint-confirmation">
+                        <label className="check-line">
+                          <input type="checkbox" checked={confirmConstraints}
+                            onChange={(e) => setConfirmConstraints(e.target.checked)} />
+                          Подтвердить условия партии и складскую область вручную
+                        </label>
+                        {confirmConstraints && (
+                          <>
+                            <div className="form-grid">
+                              <label className="field">Физический шаг, {detail.item.unit}
+                                <input type="number" min="0" step="any" value={unitQuantum}
+                                  onChange={(e) => setUnitQuantum(e.target.value)} />
+                              </label>
+                              <label className="field">MOQ, {detail.item.unit}
+                                <input type="number" min="0" step="any" value={minimum}
+                                  onChange={(e) => setMinimum(e.target.value)} />
+                              </label>
+                              <label className="field">Кратность, {detail.item.unit}
+                                <input type="number" min="0" step="any" value={multiple}
+                                  onChange={(e) => setMultiple(e.target.value)} />
+                              </label>
+                              <label className="field">Источник подтверждения
+                                <input value={constraintSource} onChange={(e) => setConstraintSource(e.target.value)}
+                                  placeholder="Карточка поставщика / договор" />
+                              </label>
+                            </div>
+                            <p className="field-hint">
+                              Подтверждение сохраняется в ревизии и останется предупреждением при утверждении.
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    )}
                     <label className="field">
                       Причина корректировки
                       <textarea
@@ -400,14 +552,15 @@ export default function ItemDrawer({
                     )}
                     {detail.item.decision_status === 'needs_data' && (
                       <div className="notice warning">
-                        Количество нельзя задать без критичных исходных данных. Позицию можно
-                        исключить с указанием причины.
+                        {canResolveNeedsData
+                          ? 'После сохранения позиция останется на ручной проверке; все подтверждения попадут в ревизию.'
+                          : 'Количество нельзя задать без критичных исходных данных. Заполните доступные подтверждения или исключите позицию.'}
                       </div>
                     )}
                     <div className="form-actions">
                       <button
                         className="button button-primary"
-                        disabled={saving || detail.item.decision_status === 'needs_data'}
+                        disabled={saving || quantityBlocked}
                       >
                         {saving ? <CircleNotch className="spin" size={17} /> : <Check size={17} />}
                         Сохранить

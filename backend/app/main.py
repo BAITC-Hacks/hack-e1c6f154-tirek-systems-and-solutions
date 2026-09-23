@@ -23,6 +23,7 @@ from .pipeline import calculate
 from .storage import Store
 from .runtime import DEFAULT_INGESTOR, capabilities, load_adapter
 from .ai_review import configuration as ai_configuration, review as review_ai
+from .stock import register_stock_routes
 
 load_dotenv(ROOT / 'backend' / '.env', override=False)
 
@@ -129,9 +130,10 @@ def create_app(db_path=None):
 
     app = FastAPI(title='Tirek Platform API', version='1.0.0', lifespan=lifespan)
     app.state.store = store
+    register_stock_routes(app, store)
     app.add_middleware(CORSMiddleware,
                        allow_origins=['http://127.0.0.1:5173', 'http://localhost:5173'],
-                       allow_methods=['GET', 'POST', 'PATCH'], allow_headers=['Content-Type', 'Idempotency-Key'])
+                       allow_methods=['GET', 'POST', 'PATCH', 'PUT'], allow_headers=['Content-Type', 'Idempotency-Key'])
 
     @app.exception_handler(DomainError)
     async def domain_error(request, exc):
@@ -317,7 +319,91 @@ def create_app(db_path=None):
                 raise DomainError('STALE_REVISION', 'Рекомендации изменились. Данные обновлены; проверьте количество и повторите сохранение.', 409)
             if item_id not in result['details']:
                 raise DomainError('NOT_FOUND', 'Товар не найден.', 404)
-            item = result['details'][item_id]['item']
+            detail = result['details'][item_id]
+            item = detail['item']
+            inbound_confirmation = payload.get('inbound_confirmation')
+            if inbound_confirmation is not None:
+                if not inbound_confirmation['source_reference'].strip():
+                    raise DomainError('INVALID_PARAMETERS', 'Укажите источник проверки открытых поступлений.')
+                required_inbound = {'REQUIRED_INBOUND_QUANTITY', 'REQUIRED_INBOUND_ETA'}
+                if not any(issue['code'] in required_inbound for issue in item['issues']):
+                    raise DomainError('INVALID_PARAMETERS', 'Для позиции нет неизвестного inbound, требующего подтверждения.')
+                item['issues'] = [issue for issue in item['issues'] if issue['code'] not in required_inbound]
+                item['issues'].append({
+                    'code': 'MANUAL_ZERO_INBOUND_CONFIRMATION', 'severity': 'warning',
+                    'message': 'Менеджер подтвердил отсутствие открытых поступлений для этой позиции.',
+                    'affected_skus': [item['sku']],
+                    'source_reference': inbound_confirmation['source_reference'].strip(),
+                })
+                item['inbound_within_horizon'] = 0
+                item['evidence'].append({
+                    'id': f"{item_id}-manual-inbound-zero-r{response['meta']['revision']}",
+                    'source_kind': 'manual',
+                    'reference': inbound_confirmation['source_reference'].strip(),
+                    'label': 'Подтверждённое поступление на горизонт', 'value': 0,
+                    'unit': item['unit'],
+                })
+                if 'MANUAL-INBOUND-01' not in detail['applied_rule_ids']:
+                    detail['applied_rule_ids'].append('MANUAL-INBOUND-01')
+                result.setdefault('inbound_confirmations', {})[item_id] = {
+                    **deepcopy(inbound_confirmation), 'reason': payload['reason'].strip(),
+                    'confirmed_at': now(),
+                }
+            confirmation = payload.get('constraint_confirmation')
+            if confirmation is not None:
+                if not confirmation['source_reference'].strip():
+                    raise DomainError('INVALID_PARAMETERS', 'Укажите источник условий поставщика.')
+                constraints = approval_constraints(result, item)
+                constraint_gaps = {
+                    'REQUIRED_MIN_ORDER_QTY', 'REQUIRED_ORDER_MULTIPLE',
+                    'REQUIRED_WAREHOUSE_SCOPE_CONFIRMATION', 'WAREHOUSE_SCOPE_UNVERIFIED',
+                }
+                if (constraints['constraints_complete'] is True
+                        and not any(issue['code'] in constraint_gaps for issue in item['issues'])):
+                    raise DomainError('INVALID_PARAMETERS', 'Подтверждённые ограничения нельзя заменить ручным допущением; обновите источник и пересчитайте заказ.')
+                # A manual confirmation may fill missing fields, but it must not
+                # weaken values already captured by the calculation sidecar.
+                # In particular, an unknown MOQ must not become a way to change
+                # a known physical quantum or supplier multiple.
+                for key, label in (
+                        ('unit_quantum', 'физическая единица'),
+                        ('min_order_qty', 'MOQ'),
+                        ('order_multiple', 'кратность')):
+                    known = constraints.get(key)
+                    if (known is not None and _nonnegative_decimal(known, label) != _nonnegative_decimal(confirmation[key], label)):
+                        raise DomainError(
+                            'INVALID_PARAMETERS',
+                            f'Ручное подтверждение не совпадает с уже известным значением «{label}». Обновите источник и пересчитайте заказ.')
+                if item['unit'] == 'шт' and _nonnegative_decimal(confirmation['unit_quantum'], 'физическая единица') != Decimal(1):
+                    raise DomainError('INVALID_PARAMETERS', 'Штучный товар подтверждается только с физическим шагом 1 шт.')
+                constraints.update(
+                    unit_quantum=confirmation['unit_quantum'],
+                    min_order_qty=confirmation['min_order_qty'],
+                    order_multiple=confirmation['order_multiple'],
+                    constraints_complete=True,
+                )
+                item['min_order_qty'] = confirmation['min_order_qty']
+                item['order_multiple'] = confirmation['order_multiple']
+                item['issues'] = [issue for issue in item['issues'] if issue['code'] not in constraint_gaps]
+                item['issues'].append({
+                    'code': 'MANUAL_CONSTRAINT_CONFIRMATION', 'severity': 'warning',
+                    'message': 'Условия партии и складская область подтверждены менеджером вручную.',
+                    'affected_skus': [item['sku']],
+                    'source_reference': confirmation['source_reference'].strip(),
+                })
+                if item['decision_status'] != 'needs_data':
+                    item['decision_status'] = 'needs_review'
+                if 'MANUAL-CONSTRAINT-01' not in detail['applied_rule_ids']:
+                    detail['applied_rule_ids'].append('MANUAL-CONSTRAINT-01')
+                result.setdefault('constraint_confirmations', {})[item_id] = {
+                    **deepcopy(confirmation), 'reason': payload['reason'].strip(),
+                    'confirmed_at': now(),
+                }
+            if (item['decision_status'] == 'needs_data'
+                    and item['recommended_quantity'] is not None
+                    and not any(issue['severity'] == 'error' for issue in item['issues'])):
+                item['decision_status'] = 'needs_review'
+                item['issues'] = [issue for issue in item['issues'] if issue['code'] != 'PROVISIONAL_QUANTITY']
             quantity = payload['final_quantity']
             if item['decision_status'] == 'needs_data' and quantity is not None:
                 raise DomainError('MISSING_CRITICAL_DATA', 'Сначала добавьте недостающие исходные данные.')

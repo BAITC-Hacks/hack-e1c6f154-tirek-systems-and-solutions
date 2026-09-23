@@ -1537,6 +1537,41 @@ kbd {
 .form-grid .field {
   margin: 8px 0;
 }
+.stock-simulator {
+  margin: 18px 0;
+}
+.stock-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #f6f8f2;
+}
+.stock-result strong {
+  font-size: 20px;
+  color: #405336;
+}
+.stock-result span:last-child {
+  color: #687660;
+}
+.constraint-confirmation {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid #dfe6d9;
+  border-radius: 8px;
+  background: #fafbf8;
+}
+.check-line {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #4f6147;
+  font-size: 12px;
+  font-weight: 650;
+}
 .horizon-breakdown {
   display: flex;
   gap: 10px;
@@ -1726,6 +1761,32 @@ progress {
 }
 .recommendation-callout > svg {
   color: #a7bd94;
+}
+.calculation-trace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e5e8e1;
+  border-radius: 14px;
+  background: #fafbf8;
+}
+.calculation-trace > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.calculation-trace span,
+.calculation-trace small,
+.model-trace-id {
+  color: #687660;
+}
+.calculation-trace strong {
+  font-size: 16px;
+}
+.model-trace-id code {
+  overflow-wrap: anywhere;
 }
 .drawer-scroll .chart-block {
   padding: 8px 0 15px;
@@ -2545,6 +2606,12 @@ progress {
   }
   .recommendation-callout strong {
     font-size: 27px;
+  }
+  .calculation-trace {
+    grid-template-columns: 1fr;
+  }
+  .calculation-trace > svg {
+    transform: rotate(90deg);
   }
   .drawer-footer {
     padding: 15px 20px;

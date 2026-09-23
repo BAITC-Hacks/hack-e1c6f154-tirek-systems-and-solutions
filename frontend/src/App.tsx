@@ -43,6 +43,7 @@ import { Badge, date, Empty, ErrorState, Loading, Modal, number } from './compon
 import DemandChart from './components/DemandChart'
 import ItemDrawer from './components/ItemDrawer'
 import RecommendationTable from './components/RecommendationTable'
+import StockSimulator from './components/StockSimulator'
 import DataPage from './pages/DataPage'
 
 const navigation = [
@@ -1395,12 +1396,13 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           </div>
         </section>
       </div>
+      <StockSimulator />
       <section className="panel explanation-panel">
         <span className="explanation-icon">
           <Sparkle size={30} weight="light" />
         </span>
         <div>
-          <h2>Готово к следующему этапу</h2>
+          <h2>Расчётный контур подключён</h2>
           <p>
             Сейчас вы можете пройти весь сценарий закупщика на демонстрационных данных: изучить
             рекомендацию, изменить количество, утвердить решение и выгрузить заказ.

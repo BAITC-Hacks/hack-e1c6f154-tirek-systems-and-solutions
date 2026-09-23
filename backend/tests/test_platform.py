@@ -179,6 +179,107 @@ def test_incomplete_constraints_cannot_be_overridden_even_with_acknowledgement(c
     assert excluded.status_code == 200
 
 
+def test_manager_can_explicitly_confirm_missing_supplier_constraints_in_scenario(client):
+    review = next(item for item in recommendations(client)['items']
+                  if item['decision_status'] == 'needs_review')
+    _set_saved_constraints(client, review['item_id'])
+    url = '/api/v1/calculations/demo-calc-001'
+    confirmation = {
+        'unit_quantum': 1, 'min_order_qty': 0, 'order_multiple': 1,
+        'warehouse_scope_confirmed': True,
+        'source_reference': 'Менеджер сверил карточку поставщика SUP-42',
+    }
+    edited = client.patch(url + '/items/' + review['item_id'], json={
+        'expected_revision': 1, 'final_quantity': 12,
+        'reason': 'Условия поставки подтверждены ответственным менеджером',
+        'constraint_confirmation': confirmation,
+    })
+    assert edited.status_code == 200, edited.text
+    item = edited.json()['item']
+    assert item['min_order_qty'] == 0
+    assert item['order_multiple'] == 1
+    assert any(issue['code'] == 'MANUAL_CONSTRAINT_CONFIRMATION' for issue in item['issues'])
+    store = client.app.state.store
+    with store.transaction() as db:
+        saved = store.get(db, 'calculation', 'demo-calc-001')
+    assert saved['approval_constraints'][review['item_id']]['constraints_complete'] is True
+    assert saved['constraint_confirmations'][review['item_id']]['source_reference'] == confirmation['source_reference']
+    issue_codes = [issue['code'] for issue in item['issues']]
+    approved = client.post(url + '/approve', json={
+        'expected_revision': 2, 'selected_item_ids': [review['item_id']],
+        'acknowledged_issue_codes': issue_codes,
+    }, headers=headers())
+    assert approved.status_code == 201, approved.text
+
+
+def test_manager_can_confirm_zero_inbound_and_constraints_without_silent_default(client):
+    item = recommendations(client)['items'][0]
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        saved = result['details'][item['item_id']]['item']
+        saved.update(decision_status='needs_data', final_quantity=None, inbound_within_horizon=None)
+        saved['issues'].append({
+            'code': 'REQUIRED_INBOUND_QUANTITY', 'severity': 'error',
+            'message': 'Нужно уточнить: inbound_quantity', 'affected_skus': [saved['sku']],
+            'source_reference': None,
+        })
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    _set_saved_constraints(client, item['item_id'], min_order_qty=None, constraints_complete=False)
+    response = client.patch('/api/v1/calculations/demo-calc-001/items/' + item['item_id'], json={
+        'expected_revision': 1, 'final_quantity': item['recommended_quantity'],
+        'reason': 'Менеджер сверил открытые поставки и карточку поставщика',
+        'inbound_confirmation': {
+            'no_inbound_confirmed': True, 'source_reference': 'Реестр открытых заказов на 23.09.2026',
+        },
+        'constraint_confirmation': {
+            'unit_quantum': 1, 'min_order_qty': 0, 'order_multiple': 12,
+            'warehouse_scope_confirmed': True, 'source_reference': 'Договор SUP-42',
+        },
+    })
+    assert response.status_code == 200, response.text
+    changed = response.json()['item']
+    assert changed['decision_status'] == 'needs_review'
+    assert changed['inbound_within_horizon'] == 0
+    assert {issue['code'] for issue in changed['issues']} >= {
+        'MANUAL_ZERO_INBOUND_CONFIRMATION', 'MANUAL_CONSTRAINT_CONFIRMATION'}
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+    assert result['inbound_confirmations'][item['item_id']]['no_inbound_confirmed'] is True
+
+
+def test_manual_confirmation_cannot_replace_already_confirmed_supplier_constraints(client):
+    item = recommendations(client)['items'][0]
+    response = client.patch('/api/v1/calculations/demo-calc-001/items/' + item['item_id'], json={
+        'expected_revision': 1, 'final_quantity': item['recommended_quantity'],
+        'reason': 'Попытка заменить известные условия ручным значением',
+        'constraint_confirmation': {
+            'unit_quantum': 1, 'min_order_qty': 0, 'order_multiple': 1,
+            'warehouse_scope_confirmed': True, 'source_reference': 'manual-guess',
+        },
+    })
+    assert response.status_code == 422
+    assert response.json()['error']['code'] == 'INVALID_PARAMETERS'
+
+
+def test_manual_confirmation_cannot_weaken_known_quantum_or_multiple(client):
+    item = recommendations(client)['items'][0]
+    _set_saved_constraints(client, item['item_id'], min_order_qty=None, constraints_complete=False)
+    base = {
+        'expected_revision': 1, 'final_quantity': 0.1,
+        'reason': 'Попытка ослабить известные ограничения',
+        'constraint_confirmation': {
+            'unit_quantum': 0.1, 'min_order_qty': 0, 'order_multiple': 0.1,
+            'warehouse_scope_confirmed': True, 'source_reference': 'manual-guess',
+        },
+    }
+    response = client.patch(
+        '/api/v1/calculations/demo-calc-001/items/' + item['item_id'], json=base)
+    assert response.status_code == 422
+    assert response.json()['error']['code'] == 'INVALID_PARAMETERS'
+    assert recommendations(client)['meta']['revision'] == 1
+
+
 def test_saved_constraint_completeness_and_missing_model_sidecar_fail_closed(client):
     item_id = recommendations(client)['items'][0]['item_id']
     url = '/api/v1/calculations/demo-calc-001/items/' + item_id

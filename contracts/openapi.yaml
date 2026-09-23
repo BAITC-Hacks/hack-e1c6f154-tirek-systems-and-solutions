@@ -1500,12 +1500,61 @@ components:
         reason:
           type: string
           minLength: 1
+        constraint_confirmation:
+          anyOf:
+          - $ref: '#/components/schemas/SupplierConstraintConfirmation'
+          - type: 'null'
+        inbound_confirmation:
+          anyOf:
+          - $ref: '#/components/schemas/InboundZeroConfirmation'
+          - type: 'null'
       required:
       - expected_revision
       - final_quantity
       - reason
-      description: null исключает позицию из выбора; причина обязательна. Проверки
-        единиц, известных MOQ/кратности выполняются сервером; revision увеличивается.
+      description: null исключает позицию из выбора; причина обязательна. Неизвестные
+        условия можно явно подтвердить вручную со ссылкой на источник. Проверки
+        единиц, MOQ/кратности выполняются сервером; revision увеличивается.
+    SupplierConstraintConfirmation:
+      type: object
+      additionalProperties: false
+      properties:
+        unit_quantum:
+          type: number
+          exclusiveMinimum: 0
+        min_order_qty:
+          type: number
+          minimum: 0
+        order_multiple:
+          type: number
+          exclusiveMinimum: 0
+        warehouse_scope_confirmed:
+          const: true
+        source_reference:
+          type: string
+          minLength: 1
+      required:
+      - unit_quantum
+      - min_order_qty
+      - order_multiple
+      - warehouse_scope_confirmed
+      - source_reference
+      description: Явное решение менеджера по неизвестным условиям поставки. Оно
+        сохраняется в расчёте и остаётся предупреждением до утверждения позиции.
+    InboundZeroConfirmation:
+      type: object
+      additionalProperties: false
+      properties:
+        no_inbound_confirmed:
+          const: true
+        source_reference:
+          type: string
+          minLength: 1
+      required:
+      - no_inbound_confirmed
+      - source_reference
+      description: Явное подтверждение менеджера, что открытых поставок для SKU нет.
+        Положительное поступление требует обновить исходный набор и пересчитать заказ.
     ApprovalRequest:
       type: object
       additionalProperties: false

@@ -15,6 +15,7 @@ import shutil
 
 import numpy as np
 import pandas as pd
+from openpyxl import load_workbook
 
 from model.decision.core import (
     EconomicProfile, GrowthAdjustment, Inbound, InventorySnapshot,
@@ -26,6 +27,7 @@ from model.forecast_v2.features import features_at
 from model.forecast_v2.methods import MODEL_SPECS, load_model
 from model.forecast_v2.run import forecast_methods, verify_prediction_implementation
 from model.lab.sources import PATH_PATTERNS, load_se
+from model.regular_forecast.predictor import VERSION as REGULAR_VERSION, forecast_with_audit
 
 from .contracts import DomainError, ROOT
 from .demo import now, summary
@@ -127,7 +129,9 @@ def normalize_dataset(directory: Path, report: dict, context: dict | None) -> di
         "sales_transactions": audit["transactions"]["used_rows"],
         "sales_monthly": audit["monthly_sales"]["sku_count"],
         "stock_monthly": audit["monthly_stock"]["sku_count"],
-        "seasonality": 3,  # three annual source rows; raw_months is a cell count
+        # One source row per year with retained raw observations. raw_months
+        # counts cells and must not be presented as a number of workbook rows.
+        "seasonality": len({pd.Timestamp(stamp).year for stamp in sources["turnover"]}),
         "moq": audit["moq_profiles"],
         "current_stock_inbound": audit["current_profiles"],
     }
@@ -161,17 +165,17 @@ def normalize_dataset(directory: Path, report: dict, context: dict | None) -> di
         _issue("CURRENT_STOCK_PARTIAL", "warning",
                f"У {missing_profiles} продававшихся SKU нет текущего профиля; для них количество останется неизвестным.",
                reference="normalized/audit.json"),
-        _issue("CURRENT_PROFILE_WITHOUT_HISTORY_EXCLUDED", "warning",
+        _issue("CURRENT_PROFILE_WITHOUT_HISTORY", "warning",
                f"{audit['coverage']['current_profile']['additional_skus']} SKU текущего снимка не имеют дневной истории "
-               "в подтверждённой единице и не включены в список заказа.",
+               "в подтверждённой единице: они будут показаны с forecast=null и needs_data.",
                reference="normalized/audit.json"),
-        _issue("CONTEXT_STOCKOUT_NOT_APPLIED" if context.get("stockout_intervals") else "NO_DAILY_STOCKOUT", "warning",
-               "Переданные интервалы stockout пока не входят в frozen forecast; скрытый спрос не восстановлен."
+        _issue("CONTEXT_STOCKOUT_READY" if context.get("stockout_intervals") else "NO_DAILY_STOCKOUT", "info" if context.get("stockout_intervals") else "warning",
+               "Переданные интервалы stockout будут применены отдельной exposure-aware моделью; результат останется needs_review."
                if context.get("stockout_intervals") else
                "Точных интервалов отсутствия товара нет; скрытый спрос на реальных данных не восстановлен.",
                reference="normalized/audit.json"),
-        _issue("CONTEXT_CLIENT_LABELS_NOT_APPLIED" if context.get("client_labels") else "NO_CLIENT_LABELS", "warning",
-               "Переданные клиентские метки пока не связаны со строками исходной выгрузки; клиентские выбросы не классифицированы."
+        _issue("CONTEXT_CLIENT_LABELS_READY" if context.get("client_labels") else "NO_CLIENT_LABELS", "info" if context.get("client_labels") else "warning",
+               "Переданные клиентские метки будут связаны с номером документа или ID «номер:строка» и применены к регулярному спросу."
                if context.get("client_labels") else
                "В исходной выгрузке нет обезличенных клиентов; клиентские разовые заказы нельзя подтвердить на реальных данных.",
                reference="normalized/audit.json"),
@@ -183,8 +187,10 @@ def normalize_dataset(directory: Path, report: dict, context: dict | None) -> di
                f"{reconciliation['compared_complete_sku_months']} сопоставимых SKU-месяцев; они не суммируются.",
                reference="normalized/audit.json"),
         _issue("NEGATIVE_SALES_EXCLUDED", "warning",
-               f"Исключены {audit['transactions']['negative_rows']} отрицательных строк и "
-               f"{audit['monthly_sales']['negative_cells_excluded']} отрицательных месячных ячеек.",
+               f"Нормализатор исключил {audit['transactions']['negative_rows']} отрицательных строк продаж и "
+               f"{audit['monthly_sales']['negative_cells_excluded']} отрицательных месячных ячеек из своего представления. "
+               "Отдельный frozen forecast v2 сохраняет отрицательные месячные net-значения 2024 года в источнике "
+               "и ограничивает их вклад нулём только в агрегированном прогнозном признаке; его целевые продажи не меняются.",
                reference="normalized/audit.json"),
         _issue("UNKNOWN_UNIT", "warning", f"У {unknown_units} текущих SKU не подтверждена единица.",
                reference="normalized/audit.json"),
@@ -265,6 +271,97 @@ def _context_maps(context, as_of, warehouse_id):
     return prices, materials
 
 
+def _transaction_events(path, labels, origin):
+    """Map pseudonymous labels to positive invoice rows without exposing clients.
+
+    A label may reference the exported document number (applies to all its rows)
+    or the stable ``document:excel-row`` ID written to the audit output.
+    """
+    workbook = load_workbook(path, read_only=True, data_only=True, keep_links=False)
+    try:
+        sheet = workbook.worksheets[0]
+        rows = sheet.iter_rows(values_only=True)
+        header = next(rows, ())
+        expected = ("Дата", "Номер", "Документ", "Код", "Номенклатура", "Ед.", "Склад", "Количество")
+        if tuple(str(value).strip() for value in header[:8]) != expected:
+            raise ValueError("Unexpected transaction schema for client label mapping")
+        events, matched = {}, set()
+        for row_number, row in enumerate(rows, 2):
+            if len(row) < 8 or row[1] is None or row[3] is None:
+                continue
+            stamp = pd.to_datetime(row[0], format="mixed", dayfirst=True, errors="coerce")
+            quantity = row[7]
+            if (pd.isna(stamp) or stamp.normalize() > pd.Timestamp(origin)
+                    or not str(row[2]).startswith("Расходная накладная")
+                    or isinstance(quantity, bool) or not isinstance(quantity, (int, float))
+                    or not np.isfinite(quantity) or quantity <= 0 or str(row[5]).strip() != "шт"):
+                continue
+            document = str(row[1]).strip()
+            event_id = f"{document}:{row_number}"
+            label_key = event_id if event_id in labels else document if document in labels else None
+            if label_key is None:
+                continue
+            matched.add(label_key)
+            sku = str(row[3]).strip()
+            events.setdefault(sku, []).append({
+                "event_id": event_id, "date": str(stamp.date()),
+                "client_id": labels[label_key], "quantity": float(quantity),
+            })
+        return events, matched
+    finally:
+        workbook.close()
+
+
+def _context_forecasts(panel, origin, context, transaction_path):
+    """Return reviewed daily forecasts only for SKUs affected by supplied context."""
+    context = context or {}
+    intervals = [row for row in context.get("stockout_intervals", [])
+                 if row["warehouse_id"] in {"almaty", "Алматы"}]
+    label_rows = context.get("client_labels", [])
+    labels = {}
+    for row in label_rows:
+        key = row["source_event_id"]
+        if key in labels and labels[key] != row["pseudonymous_client_id"]:
+            raise DomainError("INVALID_PARAMETERS", f"Для события {key} переданы разные клиентские метки.")
+        labels[key] = row["pseudonymous_client_id"]
+    if labels and transaction_path is None:
+        raise DomainError("MISSING_CRITICAL_DATA", "Нет источника строк продаж для клиентских меток.")
+    events, matched = _transaction_events(transaction_path, labels, origin) if labels else ({}, set())
+    unmatched = sorted(set(labels) - matched)
+    if unmatched:
+        sample = ", ".join(unmatched[:3])
+        raise DomainError("MISSING_CRITICAL_DATA", f"Клиентские метки не связаны с продажами до даты расчёта: {sample}.")
+    interval_skus = {row["sku"] for row in intervals}
+    affected = sorted((interval_skus | set(events)) & set(panel.daily.index.astype(str)))
+    daily, audits = {}, {}
+    for sku in affected:
+        series = panel.daily.loc[sku, :pd.Timestamp(origin)]
+        availability = pd.Series(1.0, index=series.index)
+        for row in intervals:
+            if row["sku"] != sku:
+                continue
+            start, end = pd.Timestamp(row["start_date"]), pd.Timestamp(row["end_date"])
+            availability.loc[(availability.index >= start) & (availability.index <= end)] = 0.0
+        history = [{
+            "date": str(stamp.date()), "observed_quantity": float(value),
+            "availability_fraction": float(availability.loc[stamp]),
+            "complete": stamp < pd.Timestamp(origin),
+        } for stamp, value in series.items()]
+        request = {"schema_version": "forecast-input-v2", "as_of": str(pd.Timestamp(origin).date()),
+                   "horizon_days": 28, "items": [{
+                       "sku": sku, "unit": "шт", "warehouse_id": "almaty",
+                       "supplier_id": "systeme-electric", "category_raw": None,
+                       "launch_date": str(series.index[0].date()), "history": history,
+                       "events": events.get(sku, []), "known_promotions": [], "analogue_history": [],
+                   }]}
+        try:
+            result, audit = forecast_with_audit(request)
+        except ValueError as exc:
+            raise DomainError("MISSING_CRITICAL_DATA", f"Контекст регулярного спроса для {sku} противоречив: {exc}.") from exc
+        daily[sku], audits[sku] = result[sku], audit[sku]
+    return daily, audits
+
+
 def _history(panel, sku, origin):
     end = pd.Timestamp(origin)
     values = []
@@ -283,6 +380,9 @@ def _policy_maps(request):
     for row in request["category_policies"]:
         if row["category_raw"] in policies:
             raise DomainError("INVALID_PARAMETERS", "Политика категории передана дважды.")
+        minimum = row["minimum_target_quantile"]
+        if minimum is not None and row["target_quantile"] < minimum:
+            raise DomainError("INVALID_PARAMETERS", "Целевой квантиль категории не может быть ниже её обязательного минимума.")
         policies[row["category_raw"]] = row
     economics = {}
     for row in request["economic_profiles"]:
@@ -291,6 +391,11 @@ def _policy_maps(request):
         economics[row["sku"]] = row
     growth = {}
     for row in request["growth_adjustments"]:
+        if row["valid_to"] < row["valid_from"]:
+            raise DomainError("INVALID_PARAMETERS", "Окончание периода прироста не может предшествовать началу.")
+        for previous in growth.get(row["sku"], []):
+            if row["valid_from"] <= previous["valid_to"] and previous["valid_from"] <= row["valid_to"]:
+                raise DomainError("INVALID_PARAMETERS", "Повторяющиеся или пересекающиеся периоды прироста одного SKU не допускаются; передайте одну согласованную поправку.")
         growth.setdefault(row["sku"], []).append(row)
     return policies, economics, growth
 
@@ -299,6 +404,8 @@ class TirekCalculationPipeline:
     """Use frozen forecast weights and the production decision core."""
 
     def calculate(self, dataset: dict, request: dict, calculation_id: str) -> dict:
+        # Validate contradictions for every supplier adapter before dispatch.
+        policies, economics, growth = _policy_maps(request)
         if dataset.get('supplier_ids') == ['iek']:
             from .iek_adapter import IEKForecastPipeline
             return IEKForecastPipeline().calculate(dataset, request, calculation_id)
@@ -313,8 +420,16 @@ class TirekCalculationPipeline:
         if origin > panel.daily.columns[-1]:
             raise DomainError("MISSING_CRITICAL_DATA", "История продаж не доходит до даты расчёта.")
         frame, point_forecasts, model_entry, selection_hash = _load_forecast(panel, origin)
-        policies, economics, growth = _policy_maps(request)
         prices, material_rows = _context_maps(context, request["as_of_date"], "almaty")
+        transaction_path = None
+        if context.get("client_labels"):
+            transaction_dir = directory / metadata["model_input_root"] / "Systeme electric"
+            transaction_paths = sorted(transaction_dir.glob(PATH_PATTERNS["sales_transactions"]))
+            if len(transaction_paths) != 1:
+                raise DomainError("MISSING_CRITICAL_DATA", "Не найден единственный источник строк продаж для контекста.")
+            transaction_path = transaction_paths[0]
+        context_daily, context_audits = _context_forecasts(
+            panel, origin, context, transaction_path)
         meta = {
             "calculation_id": calculation_id, "dataset_id": dataset["dataset_id"],
             "dataset_version": dataset["dataset_version"], "data_as_of": dataset["data_as_of"],
@@ -324,26 +439,40 @@ class TirekCalculationPipeline:
             "created_at": now(), "horizon_days": request["horizon_days"], "issues": deepcopy(dataset["issues"]),
         }
         details, approval_constraints = {}, {}
-        for position, row in frame.reset_index(drop=True).iterrows():
-            sku, forecast_total = str(row["sku"]), float(point_forecasts[position])
+        forecast_by_sku = {str(sku): float(value) for sku, value in zip(frame.sku, point_forecasts)}
+        forecast_by_sku.update({sku: float(sum(values)) for sku, values in context_daily.items()})
+        # Stock/material-only products must remain reviewable. No zero forecast
+        # or fabricated daily history is substituted for an unavailable model.
+        skus = list(forecast_by_sku) + sorted((set(current_profiles) | set(material_rows)) - set(forecast_by_sku))
+        for sku in skus:
+            forecast_total = forecast_by_sku.get(sku)
+            context_audit = context_audits.get(sku)
             profile = current_profiles.get(sku)
             category = profile.get("category") if profile else None
             if request["category_codes"] and category not in request["category_codes"]:
                 continue
             if request["warehouse_ids"] and not set(request["warehouse_ids"]) & {"almaty", "Алматы"}:
                 continue
+            material_units = {value["unit"] for value in material_rows.get(sku, [])}
+            unit = ("шт" if forecast_total is not None else
+                    (profile or {}).get("unit") or (next(iter(material_units)) if len(material_units) == 1 else "unknown"))
             inventory = None
-            if profile and profile.get("inventory_as_of") <= request["as_of_date"]:
+            if profile and profile.get("inventory_as_of") and profile["inventory_as_of"] <= request["as_of_date"]:
                 inventory = InventorySnapshot(date.fromisoformat(profile["inventory_as_of"]),
                                               profile.get("on_hand"), profile.get("reserved"),
                                               profile.get("free_stock"), profile.get("source", "snapshot"))
             inbound = []
-            if profile and profile.get("inbound_quantity") is not None and profile.get("inbound_eta"):
+            inbound_missing = []
+            if profile is None or profile.get("inbound_quantity") is None:
+                inbound_missing.append("inbound_quantity")
+            elif profile["inbound_quantity"] != 0 and not profile.get("inbound_eta"):
+                inbound_missing.append("inbound_eta")
+            elif profile["inbound_quantity"] != 0:
                 inbound.append(Inbound(f"inbound-{sku}", profile["inbound_quantity"],
-                                       date.fromisoformat(profile["inbound_eta"]), "шт", profile["source"]))
+                                       date.fromisoformat(profile["inbound_eta"]), unit, profile["source"]))
             constraint = None
             if profile:
-                constraint = SupplierConstraint("шт", None, profile.get("order_multiple"), 1,
+                constraint = SupplierConstraint(unit, profile.get("min_order_qty"), profile.get("order_multiple"), 1,
                                                 profile.get("source", "supplier export"))
             econ_row = economics.get(sku)
             price = prices.get(sku)
@@ -370,10 +499,13 @@ class TirekCalculationPipeline:
                          else price.get("unit_cost") if price else None)
             mapped_policies = {category: policy} if category is not None and policy is not None else {}
             decision_input = RecommendationInput(
-                sku=sku, warehouse_id="almaty", supplier_id="systeme-electric", unit="шт",
+                sku=sku, warehouse_id="almaty", supplier_id="systeme-electric", unit=unit,
                 as_of=date.fromisoformat(request["as_of_date"]), forecast_as_of=date.fromisoformat(request["as_of_date"]),
-                scenarios=[_daily_path(panel, sku, origin, forecast_total)],
-                forecast_id=f"forecast-v2-{selection_hash[:12]}", unit_quantum=1,
+                scenarios=None if forecast_total is None else
+                          [context_daily[sku] if sku in context_daily else _daily_path(panel, sku, origin, forecast_total)],
+                forecast_id=(f"{REGULAR_VERSION}:{context_audit['selected_method']}" if context_audit else
+                             f"forecast-v2-{selection_hash[:12]}"),
+                unit_quantum=1 if unit == "шт" else None,
                 inventory=inventory, lead_time_days=request["lead_time_days"],
                 review_period_days=request["review_period_days"], constraints=constraint,
                 economics=econ, service_policy=None,
@@ -385,22 +517,66 @@ class TirekCalculationPipeline:
             try:
                 result = recommend(decision_input)
             except ValueError as exc:
-                result = Recommendation(sku, "almaty", "systeme-electric", "шт",
+                result = Recommendation(sku, "almaty", "systeme-electric", unit,
                                         date.fromisoformat(request["as_of_date"]), "needs_data", None, None,
                                         f"Расчёт отклонён из-за качества входа: {exc}", "unknown", (),
                                         ("valid_source_values",), unit_cost, "KZT" if unit_cost is not None else None,
                                         {"free_stock": profile.get("free_stock") if profile else None,
-                                         "inbound_in_horizon": 0, "dated_material_demand": 0,
-                                         "unit_quantum": 1, "min_order_qty_inventory_units": None,
+                                         "inbound_in_horizon": None, "dated_material_demand": None,
+                                         "unit_quantum": 1 if unit == "шт" else None,
+                                         "min_order_qty_inventory_units": profile.get("min_order_qty") if profile else None,
                                          "order_multiple_inventory_units": profile.get("order_multiple") if profile else None,
                                         "service_floor_quantity": 0, "hard_material_floor_quantity": 0})
-            if profile and not profile.get("warehouse_scope_verified", False) and result.quantity is not None:
+            if inbound_missing:
+                # Keep the no-inbound path inspectable as an explicitly
+                # provisional upper bound. It cannot become final until a
+                # manager confirms that no open inbound exists or reimports a
+                # dated inbound quantity.
+                provisional_without_inbound = (result.quantity if result.quantity is not None
+                                               else result.provisional_quantity)
                 result = replace(
-                    result, status="needs_review", quantity=None,
-                    provisional_quantity=result.quantity,
+                    result, status="needs_data", quantity=None,
+                    provisional_quantity=provisional_without_inbound,
+                    required_fields=tuple(dict.fromkeys((*result.required_fields, *inbound_missing))),
+                    reason="Неизвестны данные о поступлениях: " + ", ".join(inbound_missing)
+                           + ". Показана предварительная верхняя оценка при нулевом inbound; "
+                             "она заблокирована до явного подтверждения или повторного расчёта.",
+                    diagnostics={**result.diagnostics, "inbound_in_horizon": None},
+                )
+            if forecast_total is None:
+                result = replace(result, status="needs_data", quantity=None, provisional_quantity=None,
+                                 reason="Нет подтверждённого прогноза для SKU: нужна история или явный прогноз аналога. "
+                                        "Материальная потребность и складской профиль сохранены; спрос не заменён нулём.",
+                                 required_fields=tuple(dict.fromkeys((*result.required_fields, "forecast_history"))))
+            if profile and not profile.get("warehouse_scope_verified", False):
+                result = replace(
+                    result, status="needs_data" if result.status == "needs_data" else "needs_review", quantity=None,
+                    provisional_quantity=result.quantity if result.quantity is not None else result.provisional_quantity,
                     warnings=tuple(dict.fromkeys((*result.warnings, "warehouse_scope_unverified"))),
                     required_fields=tuple(dict.fromkeys((*result.required_fields, "warehouse_scope_confirmation"))),
                 )
+            if forecast_total is not None:
+                # Frozen v2 artifacts contain aggregate errors, not calibrated
+                # out-of-sample joint paths. Do not manufacture uncertainty from
+                # WAPE or reuse residuals belonging to the older v1 model.
+                result = replace(result, status="needs_review" if result.status == "ready" else result.status,
+                                 warnings=tuple(dict.fromkeys((*result.warnings, "uncalibrated_single_forecast_path"))))
+            if context_audit:
+                context_warnings = ["context_adjusted_regular_forecast"]
+                if context_audit["zero_exposure_days"]:
+                    context_warnings.append("stockout_correction_applied")
+                if context_audit["excluded_client_windows"]:
+                    context_warnings.append("client_oneoff_excluded")
+                result = replace(
+                    result, status="needs_review" if result.status == "ready" else result.status,
+                    warnings=tuple(dict.fromkeys((*result.warnings, *context_warnings))),
+                )
+            # Known source quantities remain inspectable even when forecasting
+            # failed. They are not a computed demand forecast or approval floor.
+            material_quantities = [value.quantity for value in materials
+                                   if decision_input.as_of < value.due_at <= decision_input.as_of + timedelta(days=request["horizon_days"])]
+            material_uncovered = (float(sum((Decimal(str(value)) for value in material_quantities), Decimal(0)))
+                                  if all(np.isfinite(value) and value >= 0 for value in material_quantities) else None)
             item_id = "se-" + hashlib_sha256(sku.encode()).hexdigest()[:12]
             shown_quantity = result.quantity if result.quantity is not None else result.provisional_quantity
             decision_status = "no_order" if result.status == "ready" and shown_quantity == 0 else result.status
@@ -413,37 +589,45 @@ class TirekCalculationPipeline:
                 issue_rows.append(_issue("PROVISIONAL_QUANTITY", "warning",
                                          "Показана предварительная потребность; неизвестные условия партии блокируют утверждение.",
                                          [sku], "decision-core-1"))
-            forecast = {
+            model_id = (f"{REGULAR_VERSION}:{context_audit['selected_method']}" if context_audit else
+                        f"forecast-v2-{selection_hash[:12]}")
+            forecast = None if forecast_total is None else {
                 "horizon_days": 28, "period_start": str((origin + pd.Timedelta(days=1)).date()),
                 "period_end": str((origin + pd.Timedelta(days=28)).date()), "method": "ml",
-                "model_id": f"forecast-v2-{selection_hash[:12]}", "mean": forecast_total,
+                "model_id": model_id, "mean": forecast_total,
                 "p10": None, "p50": None, "p90": None,
                 "target_quantile": policy.service_level if policy else None, "target_stock": None,
                 "calibration_status": "insufficient_data",
-                "note": "Точечный прогноз наблюдаемых продаж; дневная траектория оценена по прошлым дням недели. Квантили не калиброваны.",
+                "note": (("Регулярный прогноз пересчитан по доступным дням и обезличенным клиентским окнам. "
+                          if context_audit else "Точечный прогноз наблюдаемых продаж; используется одна дневная траектория по прошлым дням недели. ")
+                         + "Артефакты не содержат проверенных совместных сценариев ошибок: вероятностный экономический выбор "
+                           "и гарантии service level не подтверждены. Квантили не калиброваны."),
             }
             selected_method = model_entry["selected"]
-            forecast["method"] = "baseline" if selected_method.startswith(("mean", "median", "snaive", "croston", "tsb")) else "ml"
+            if forecast is not None:
+                forecast["method"] = ("baseline" if context_audit else
+                                      "ml" if (selected_method in MODEL_SPECS or selected_method.startswith(("mix|", "blend:"))) else "baseline")
             order_cost = None if shown_quantity is None or unit_cost is None else float(Decimal(str(shown_quantity)) * Decimal(str(unit_cost)))
             ai = {"status": "unavailable" if request["request_ai_review"] else "not_requested", "verdict": None,
                   "reasons": ["LLM-провайдер не настроен; детерминированный расчёт сохранён."] if request["request_ai_review"] else [],
                   "evidence_ids": [], "rule_ids": ["AI-01"] if request["request_ai_review"] else [],
                   "suggested_action": None, "provider_model": None}
-            evidence = [
-                {"id": f"{item_id}-forecast", "source_kind": "observed", "reference": f"forecast-v2:{selection_hash}",
+            evidence = ([
+                {"id": f"{item_id}-forecast", "source_kind": "observed", "reference": model_id,
                  "label": "Прогноз на 28 дней", "value": forecast_total, "unit": "шт"},
+            ] if forecast_total is not None else []) + [
                 {"id": f"{item_id}-stock", "source_kind": "observed", "reference": profile.get("source") if profile else "missing-current-profile",
-                 "label": "Свободный остаток", "value": result.diagnostics.get("free_stock"), "unit": "шт"},
+                 "label": "Свободный остаток", "value": result.diagnostics.get("free_stock"), "unit": unit if unit != "unknown" else None},
             ]
             item = {
                 "item_id": item_id, "supplier_id": "systeme-electric", "supplier_name": "Systeme Electric",
                 "sku": sku, "supplier_article": profile.get("supplier_article") if profile else None,
-                "name": profile.get("name", sku) if profile else sku, "unit": "шт", "warehouse_id": "almaty",
+                "name": profile.get("name", sku) if profile else sku, "unit": unit, "warehouse_id": "almaty",
                 "category_raw": category, "policy_basis": "economic" if econ else "service_policy" if policy else None,
                 "decision_status": decision_status, "urgency": "critical" if result.urgency == "expedite" else result.urgency,
                 "free_stock": result.diagnostics.get("free_stock"),
                 "inbound_within_horizon": result.diagnostics.get("inbound_in_horizon"),
-                "material_requirement_uncovered": result.diagnostics.get("dated_material_demand"),
+                "material_requirement_uncovered": material_uncovered,
                 "forecast": forecast, "min_order_qty": result.diagnostics.get("min_order_qty_inventory_units"),
                 "order_multiple": result.diagnostics.get("order_multiple_inventory_units"),
                 "recommended_quantity": shown_quantity, "final_quantity": result.quantity,
@@ -452,13 +636,18 @@ class TirekCalculationPipeline:
                 "reason": result.reason, "issues": issue_rows, "evidence": evidence, "ai": ai,
             }
             applied = (["POLICY-01"] if econ else ["POLICY-02"] if policy else ["DATA-01"])
-            details[item_id] = {"meta": meta, "item": item, "history": _history(panel, sku, origin),
+            if context_audit:
+                if context_audit["zero_exposure_days"]:
+                    applied.append("DEMAND-01")
+                if context_audit["excluded_client_windows"]:
+                    applied.append("DEMAND-02")
+            details[item_id] = {"meta": meta, "item": item, "history": _history(panel, sku, origin) if forecast_total is not None else [],
                                 "inbound": [{"order_id": value.event_id, "quantity": value.quantity,
                                              "expected_at": str(value.expected_at), "source_reference": value.source}
                                             for value in inbound],
                                 "economic_profile": deepcopy(econ_row), "applied_rule_ids": applied}
             approval_constraints[item_id] = {
-                "unit_quantum": result.diagnostics.get("unit_quantum", 1),
+                "unit_quantum": result.diagnostics.get("unit_quantum"),
                 "min_order_qty": result.diagnostics.get("min_order_qty_inventory_units"),
                 "order_multiple": result.diagnostics.get("order_multiple_inventory_units"),
                 "minimum_safe_quantity": max(result.diagnostics.get("service_floor_quantity", 0),

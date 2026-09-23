@@ -20,6 +20,36 @@ export type Workspace = {
     ml_error?: string | null
   }
 }
+export type StockLevel = 'normal' | 'warning' | 'high' | 'critical' | 'stockout' | 'unknown'
+export type StockState = {
+  sku: string
+  warehouse_id: string
+  unit: string
+  mode: 'operational' | 'scenario'
+  revision: number
+  on_hand: number | null
+  reserved: number | null
+  free_stock: number | null
+  remaining_pct: number | null
+  observed_level: StockLevel
+  active_level: StockLevel
+  evaluated_at: string
+  issues: string[]
+  policy: {
+    reference_stock: number | null
+    reference_kind: 'manual' | 'calculation' | 'unavailable'
+    reference_id: string | null
+    source_kind: 'observed' | 'manual' | 'synthetic'
+    policy_version: string
+    thresholds: { warning_pct: number; high_pct: number; critical_pct: number; hysteresis_pp: number }
+  }
+}
+export type StockEventResult = {
+  state: StockState
+  transition: null | { from_level: StockLevel; to_level: StockLevel; kind: string; created_at: string }
+  deduplicated: boolean
+  recalculation_requested: boolean
+}
 
 const base = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/$/, '')
 export class ApiError extends Error {
@@ -48,7 +78,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     const body = await response.json().catch(() => null)
     throw new ApiError(
       [
-        body?.error?.message || 'Сервер не смог выполнить запрос.',
+        body?.error?.message || body?.message || 'Сервер не смог выполнить запрос.',
         ...(Array.isArray(body?.error?.details)
           ? body.error.details.map(
               (detail: { field?: string; message?: string }) =>
@@ -56,7 +86,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
             )
           : []),
       ].join(' '),
-      body?.error?.code || 'HTTP_ERROR',
+      body?.error?.code || body?.code || 'HTTP_ERROR',
       response.status,
     )
   }
@@ -105,6 +135,11 @@ export const api = {
     request<Job>('/calculations', json(payload, 'POST', key)),
   approve: (id: string, payload: components['schemas']['ApprovalRequest'], key: string) =>
     request<Approval>(`/calculations/${id}/approve`, json(payload, 'POST', key)),
+  initializeStock: (payload: unknown) =>
+    request<StockState>('/stock-monitoring', json(payload)),
+  stockState: (warehouse: string, sku: string) =>
+    request<StockState>(`/stock-monitoring/${encodeURIComponent(warehouse)}/${encodeURIComponent(sku)}`),
+  stockEvent: (payload: unknown) => request<StockEventResult>('/stock-events', json(payload)),
   upload: (files: File[], context: string, key: string, supplier = 'systeme-electric') => {
     const body = new FormData()
     files.forEach((file) => body.append('files', file))
