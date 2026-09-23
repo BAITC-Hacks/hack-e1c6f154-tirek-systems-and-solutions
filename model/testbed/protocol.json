@@ -1,5 +1,5 @@
 {
-  "version": "testbed-v2.0",
+  "version": "testbed-v3.0-corrections",
   "mode": "synthetic",
   "development_seeds": [101, 202, 303],
   "final_seeds": [909, 1337, 2027, 4099],
@@ -12,10 +12,13 @@
   "project_quantity_tolerance_fraction": 0.1,
   "project_minimum_batch": 1,
   "baseline": {"window_days": 56, "client_window_days": 7, "recurring_weeks": 3, "project_daily_multiplier": 8},
+  "default_adapter": "model.testbed.seasonal:forecast",
+  "candidate_selection": {"methods": ["mean56", "mean168", "seasonal_trend"], "inner_origin_days_before_cutoff": [84, 56, 28], "inner_horizon_days": 28, "selection_target": "observed sales on complete available historical days, exposure weighted predictions; no hidden truth", "tie_break": "method list order", "seasonal_features": "intercept, linear log trend, two annual Fourier harmonics; past weekday calibration"},
+  "event_identifiers": "opaque 128-bit independent stream; no class/date/SKU suffix",
   "scenarios": ["stable", "seasonal_growth", "intermittent", "new_product", "full_stockout", "partial_stockout", "single_project", "split_project", "recurring_client", "known_promotion", "demand_shock", "combined"],
   "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
   "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",
   "zero_denominator": "null (undefined); retain absolute error, zero-target count and row",
   "failure_policy": "retain failed rows; aggregate metrics null if any prediction missing; never score only successful subset as complete",
-  "final_policy": "Freeze code, protocol, fixtures and adapter before final seeds. Do not tune from final outcomes. A rerun of frozen code is a reproducibility check, not a new holdout."
+  "final_policy": "These final seeds were already inspected in v2. Freeze the corrected candidate before retrospective comparison, never call it an independent holdout and do not tune from the comparison. Historical v2 reproduction requires its original commit."
 }

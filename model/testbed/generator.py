@@ -56,6 +56,9 @@ def generate(scenario, seed, origin):
         censor_rng = rng_for(seed, origin, index, "availability")
         project_rng = rng_for(seed, origin, index, "project")
         client_rng = rng_for(seed, origin, index, "client-identities")
+        # A separate stream gives every event the same opaque identifier format.
+        # Neither the historical class nor SKU/date is encoded in a suffix.
+        event_rng = rng_for(seed, origin, index, "opaque-event-identities-v3")
         client_ids = {key: f"client-{client_rng.getrandbits(80):020x}" for key in list(range(11)) + [77, 93]}
         phase = rng_for(seed, origin, index, "phase").uniform(-math.pi, math.pi)
         item = {"sku": sku, "unit": "шт", "warehouse_id": "synthetic-almaty",
@@ -126,22 +129,25 @@ def generate(scenario, seed, origin):
             # No event is labeled with the evaluator's project/regular classification.
             normal = sold_regular - recurring
             if normal > 0:
-                item["events"].append({"event_id": f"{sku}-{stamp}-0", "date": stamp,
+                item["events"].append({"event_id": f"event-{event_rng.getrandbits(128):032x}", "date": stamp,
                     "client_id": client_ids[day.toordinal() % 11], "quantity": normal})
             if recurring:
-                item["events"].append({"event_id": f"{sku}-{stamp}-1", "date": stamp,
+                item["events"].append({"event_id": f"event-{event_rng.getrandbits(128):032x}", "date": stamp,
                     "client_id": client_ids[77], "quantity": recurring})
             if sold_project:
                 pieces = 5 if scenario in {"split_project", "combined"} else 1
                 for piece in range(pieces):
                     amount = sold_project // pieces + (piece < sold_project % pieces)
-                    item["events"].append({"event_id": f"{sku}-{stamp}-{piece + 2}", "date": stamp,
+                    item["events"].append({"event_id": f"event-{event_rng.getrandbits(128):032x}", "date": stamp,
                         "client_id": client_ids[93], "quantity": amount})
         if scenario == "new_product":
             analog_rng = rng_for(seed, origin, index, "analogue")
             for offset in range(-83, 1):
                 item["analogue_history"].append({"date": (cutoff + timedelta(days=offset)).isoformat(),
                     "quantity": poisson(analog_rng, base * 1.12), "source": "synthetic-category-analogue"})
+        # Event position is not a hidden regular/project label either. Consumers
+        # group by explicit dates and client IDs, not generator insertion order.
+        event_rng.shuffle(item["events"])
         observed["items"].append(item)
         truth[sku] = {"dates": [(cutoff + timedelta(days=d)).isoformat() for d in range(-history + 1, horizon + 1)],
                       "regular_realized": regular, "regular_expectation": expectation}

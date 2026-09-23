@@ -1,0 +1,77 @@
+development {'rows': 288, 'wape_realized': 0.2535718830798757, 'wape_expectation': 0.24923497856286966, 'mae_realized': 424.33141534391535, 'bias_realized': -0.21720790718226105, 'mean_signed_error_units': -363.47933201058197, 'target_wape': 0.1, 'target_met': False, 'daily_wape_realized': 0.43439012922644393}
+final {'rows': 384, 'wape_realized': 0.2584883819605464, 'wape_expectation': 0.2469086687484208, 'mae_realized': 441.5688368055556, 'bias_realized': -0.20702274186878067, 'mean_signed_error_units': -353.65145089285716, 'target_wape': 0.1, 'target_met': False, 'daily_wape_realized': 0.4425167643090136}
+{
+  "audited_base_commit": "c3dbd52",
+  "python_version": "3.14.4",
+  "frozen_candidate_commit": "710714a4344a54dc082886c62931d67a824cf097",
+  "manifest_sha256": "54d0b8ed33887b0114c54fb45d62d88300dc20224d0afa35263fa7044282c6d6",
+  "existing_unit_tests": {
+    "passed": 25,
+    "total": 25
+  },
+  "replays": {
+    "development": {
+      "exit_code": 0,
+      "byte_identical": true,
+      "report_sha256": {
+        "report.json": "a54b6e159b3c57da3e58bec1b93fb6575cf2329619f6ca68209b1142e9ce5b9b",
+        "rows.csv": "a5a1331da184ce5e0ba042f9f96e89d492c63f7f34b6da1225203ddeb587ada8",
+        "report.md": "a5e89e644b3ba4a4ad59310c82751f81b7a4179246ece7e9b739588ee3250df6"
+      },
+      "forecast_quality": {
+        "rows": 288,
+        "wape_realized": 0.2535718830798757,
+        "wape_expectation": 0.24923497856286966,
+        "mae_realized": 424.33141534391535,
+        "bias_realized": -0.21720790718226105,
+        "mean_signed_error_units": -363.47933201058197,
+        "target_wape": 0.1,
+        "target_met": false,
+        "daily_wape_realized": 0.43439012922644393
+      },
+      "business_checks": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      },
+      "paired_checks": {
+        "passed": 48,
+        "total": 48
+      }
+    },
+    "final": {
+      "exit_code": 3,
+      "byte_identical": true,
+      "report_sha256": {
+        "report.json": "e4aaf2fa2a7975e3a784a25ac9c0a2f6852c0c7ae8a9ee9dc40732480e38ebf3",
+        "rows.csv": "3374ddee2f49cf2fe16e2fab708cad0fca9adb8a31ee9628a2d9afad2ba6a4e4",
+        "report.md": "4cffc65ce824aab311b8bc4f56e15c944cd7a86ccbd56c5808a0cdc2ed8c2359"
+      },
+      "forecast_quality": {
+        "rows": 384,
+        "wape_realized": 0.2584883819605464,
+        "wape_expectation": 0.2469086687484208,
+        "mae_realized": 441.5688368055556,
+        "bias_realized": -0.20702274186878067,
+        "mean_signed_error_units": -353.65145089285716,
+        "target_wape": 0.1,
+        "target_met": false,
+        "daily_wape_realized": 0.4425167643090136
+      },
+      "business_checks": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      },
+      "paired_checks": {
+        "passed": 64,
+        "total": 64
+      }
+    }
+  },
+  "forecast_quality_is_separate_from_test_pass_rate": true,
+  "seeds_status": "previously inspected; replay is not a new holdout",
+  "frozen_source_unchanged": true,
+  "final_threshold_exit_code_correct": true,
+  "audit_execution_success": true
+}
