@@ -113,8 +113,168 @@ def test_budget_unknown_prices_and_review_acknowledgement(client):
     review = next(i for i in items if i['decision_status'] == 'needs_review')
     url = '/api/v1/calculations/demo-calc-001/approve'
     payload['selected_item_ids'] = [review['item_id']]
-    assert client.post(url, json=payload, headers=headers()).json()['error']['code'] == 'REVIEW_REQUIRED'
+    assert client.post(url, json=payload, headers=headers()).json()['error']['code'] == 'UNCONFIRMED_CONSTRAINTS'
     payload['acknowledged_issue_codes'] = [issue['code'] for issue in review['issues']]
+    assert client.post(url, json=payload, headers=headers()).json()['error']['code'] == 'UNCONFIRMED_CONSTRAINTS'
+
+
+def _set_saved_constraints(client, item_id, **changes):
+    """Persist only synthetic server-owned sidecars, matching ml_adapter's format."""
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        result['approval_constraints'] = {
+            key: {'unit_quantum': 1, 'min_order_qty': value['item']['min_order_qty'],
+                  'order_multiple': value['item']['order_multiple'], 'minimum_safe_quantity': 0,
+                  'constraints_complete': value['item']['min_order_qty'] is not None and value['item']['order_multiple'] is not None}
+            for key, value in result['details'].items()
+        }
+        result['approval_constraints'][item_id].update(changes)
+        store.put(db, 'calculation', 'demo-calc-001', result)
+
+
+def test_model_floor_is_checked_on_override_and_again_on_approval(client):
+    url = '/api/v1/calculations/demo-calc-001'
+    item_id = recommendations(client)['items'][0]['item_id']
+    _set_saved_constraints(client, item_id, minimum_safe_quantity=48)
+    for quantity in (0, 36):
+        response = client.patch(url + '/items/' + item_id, json={
+            'expected_revision': 1, 'final_quantity': quantity, 'reason': 'Проверка обязательного минимума'})
+        assert response.status_code == 422
+        assert response.json()['error']['code'] == 'MINIMUM_QUANTITY_VIOLATION'
+    assert recommendations(client)['meta']['revision'] == 1
+    # Simulate a stored legacy/incorrect provider value. Approval must repeat
+    # the guard instead of assuming that every record came through PATCH.
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        result['details'][item_id]['item']['final_quantity'] = 36
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    rejected = client.post(url + '/approve', json={
+        'expected_revision': 1, 'selected_item_ids': [item_id], 'acknowledged_issue_codes': []}, headers=headers())
+    assert rejected.json()['error']['code'] == 'MINIMUM_QUANTITY_VIOLATION'
+    accepted = client.patch(url + '/items/' + item_id, json={
+        'expected_revision': 1, 'final_quantity': 48, 'reason': 'Соблюдаем подтверждённый минимум'})
+    assert accepted.status_code == 200, accepted.text
+    approved = client.post(url + '/approve', json={
+        'expected_revision': 2, 'selected_item_ids': [item_id], 'acknowledged_issue_codes': []}, headers=headers())
+    assert approved.status_code == 201, approved.text
+
+
+def test_incomplete_constraints_cannot_be_overridden_even_with_acknowledgement(client):
+    items = recommendations(client)['items']
+    review = next(item for item in items if item['decision_status'] == 'needs_review')
+    url = '/api/v1/calculations/demo-calc-001'
+    _set_saved_constraints(client, review['item_id'])
+    for quantity in (0, 12):
+        edited = client.patch(url + '/items/' + review['item_id'], json={
+            'expected_revision': 1, 'final_quantity': quantity, 'reason': 'Текст не заменяет условия'})
+        assert edited.json()['error']['code'] == 'UNCONFIRMED_CONSTRAINTS'
+    approved = client.post(url + '/approve', json={
+        'expected_revision': 1, 'selected_item_ids': [review['item_id']],
+        'acknowledged_issue_codes': [issue['code'] for issue in review['issues']]}, headers=headers())
+    assert approved.json()['error']['code'] == 'UNCONFIRMED_CONSTRAINTS'
+    excluded = client.patch(url + '/items/' + review['item_id'], json={
+        'expected_revision': 1, 'final_quantity': None, 'reason': 'Исключить до уточнения условий'})
+    assert excluded.status_code == 200
+
+
+def test_saved_constraint_completeness_and_missing_model_sidecar_fail_closed(client):
+    item_id = recommendations(client)['items'][0]['item_id']
+    url = '/api/v1/calculations/demo-calc-001/items/' + item_id
+    body = {'expected_revision': 1, 'final_quantity': 144, 'reason': 'Проверка ограничений модели'}
+    _set_saved_constraints(client, item_id, constraints_complete=False)
+    assert client.patch(url, json=body).json()['error']['code'] == 'UNCONFIRMED_CONSTRAINTS'
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        del result['approval_constraints']
+        result['details'][item_id]['item']['forecast']['method'] = 'ml'
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    assert client.patch(url, json=body).json()['error']['code'] == 'RECALCULATION_REQUIRED'
+
+
+def test_physical_quantum_and_public_supplier_constraint_consistency(client):
+    item_id = recommendations(client)['items'][0]['item_id']
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        result['details'][item_id]['item'].update(unit='м', min_order_qty=0, order_multiple=.1)
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    _set_saved_constraints(client, item_id, unit_quantum=.1, min_order_qty=0, order_multiple=.1)
+    url = '/api/v1/calculations/demo-calc-001/items/' + item_id
+    body = {'expected_revision': 1, 'final_quantity': .15, 'reason': 'Дробная физическая единица'}
+    assert client.patch(url, json=body).json()['error']['code'] == 'INVALID_PARAMETERS'
+    assert client.patch(url, json={**body, 'final_quantity': .2}).status_code == 200
+    _set_saved_constraints(client, item_id, unit_quantum=.1, min_order_qty=0, order_multiple=.2)
+    assert client.patch(url, json={**body, 'expected_revision': 2, 'final_quantity': .4}).json()['error']['code'] == 'RECALCULATION_REQUIRED'
+
+
+def test_revision_change_invalidates_all_reviewed_ai_but_preserves_recommendations(client):
+    items = recommendations(client)['items']
+    first, second = items[0]['item_id'], items[1]['item_id']
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        for item_id in (first, second):
+            # Explicit MOCK; no real provider call is made in this test.
+            result['details'][item_id]['item']['ai'].update(
+                status='reviewed', verdict='supports', reasons=['MOCK old revision'],
+                provider_model='MOCK-NOT-A-REAL-CALL')
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    response = client.patch('/api/v1/calculations/demo-calc-001/items/' + first, json={
+        'expected_revision': 1, 'final_quantity': 156, 'reason': 'Новая ревизия расчёта'})
+    assert response.status_code == 200
+    result = recommendations(client)
+    assert result['meta']['revision'] == 2
+    for item_id in (first, second):
+        item = next(row for row in result['items'] if row['item_id'] == item_id)
+        assert item['ai']['status'] == 'unavailable'
+        assert item['ai']['verdict'] is None
+        assert item['ai']['provider_model'] is None
+        assert item['ai']['evidence_ids'] == []
+    assert result['items'][0]['recommended_quantity'] == items[0]['recommended_quantity']
+    assert result['items'][2]['ai']['status'] == 'not_requested'
+    validate('RecommendationsResponse', result)
+
+
+@pytest.mark.parametrize('budget,cached_cost,expected_status', [(.3, 999, 201), (.299, 0, 422)])
+def test_approval_recomputes_decimal_budget_from_quantity_and_price(client, budget, cached_cost, expected_status):
+    item_id = recommendations(client)['items'][0]['item_id']
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        result['request']['budget_kzt'] = budget
+        result['details'][item_id]['item'].update(
+            final_quantity=3, min_order_qty=0, order_multiple=1, unit_cost_kzt=.1, order_cost_kzt=cached_cost)
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    _set_saved_constraints(client, item_id)
+    response = client.post('/api/v1/calculations/demo-calc-001/approve', json={
+        'expected_revision': 1, 'selected_item_ids': [item_id], 'acknowledged_issue_codes': []}, headers=headers())
+    assert response.status_code == expected_status, response.text
+    if expected_status == 201:
+        with store.transaction() as db:
+            saved = store.get(db, 'approval', response.json()['approval_id'])
+        assert saved['items'][0]['order_cost_kzt'] == .3
+    else:
+        assert response.json()['error']['code'] == 'BUDGET_EXCEEDED'
+
+
+def test_acknowledgement_still_allows_reviewable_warning_with_complete_constraints(client):
+    item = recommendations(client)['items'][0]
+    store = client.app.state.store
+    with store.transaction() as db:
+        result = store.get(db, 'calculation', 'demo-calc-001')
+        target = result['details'][item['item_id']]['item']
+        target['decision_status'] = 'needs_review'
+        target['issues'] = [{'code': 'SHORTAGE_BEFORE_NEW_ORDER_ARRIVAL', 'severity': 'warning',
+                             'message': 'Нужна проверка ускорения', 'affected_skus': [target['sku']],
+                             'source_reference': 'synthetic-test'}]
+        store.put(db, 'calculation', 'demo-calc-001', result)
+    payload = {'expected_revision': 1, 'selected_item_ids': [item['item_id']], 'acknowledged_issue_codes': []}
+    url = '/api/v1/calculations/demo-calc-001/approve'
+    assert client.post(url, json=payload, headers=headers()).json()['error']['code'] == 'REVIEW_REQUIRED'
+    payload['acknowledged_issue_codes'] = ['SHORTAGE_BEFORE_NEW_ORDER_ARRIVAL']
     assert client.post(url, json=payload, headers=headers()).status_code == 201
 
 

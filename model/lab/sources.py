@@ -165,6 +165,8 @@ def _read_current(path, multiples, units):
             audit["component_sum_equals_on_hand"] += int(np.isclose(sum(parts), on_hand, rtol=0, atol=1e-8))
         result[code] = {
             "sku": code, "supplier_id": "systeme-electric", "unit": units.get(code),
+            "supplier_article": str(row[1]).strip() if row[1] is not None else None,
+            "name": str(row[3]).strip() if row[3] is not None else code,
             "category": str(row[4]).strip() if row[4] is not None else None,
             "category_semantics_verified": False,
             "on_hand": on_hand, "reserved": reserved, "free_stock": free,

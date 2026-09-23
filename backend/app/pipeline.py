@@ -3,7 +3,10 @@ import importlib
 import os
 from typing import Protocol
 from .contracts import DomainError, validate
-from .demo import make_demo
+from .demo import make_demo, summary
+
+
+DEFAULT_PIPELINE = 'backend.app.ml_adapter:TirekCalculationPipeline'
 
 
 class CalculationPipeline(Protocol):
@@ -26,13 +29,25 @@ def calculate(dataset, request, calculation_id):
             raise DomainError('INVALID_PARAMETERS', 'Демонстрационный сценарий подготовлен для срока 7 дней и пересмотра 21 день.')
         result = make_demo(calculation_id, request)
     else:
-        target = os.getenv('TIREK_PIPELINE')
-        if not target:
-            raise DomainError('PIPELINE_NOT_CONFIGURED', 'Источники сохранены. Подключите модуль нормализации и прогноза для расчёта на реальных данных.')
+        target = os.getenv('TIREK_PIPELINE', DEFAULT_PIPELINE)
         module, name = target.split(':', 1)
         result = getattr(importlib.import_module(module), name)().calculate(dataset, request, calculation_id)
+    if not isinstance(result, dict) or not isinstance(result.get('response'), dict) or not isinstance(result.get('details'), dict):
+        raise DomainError('INVALID_PIPELINE_RESULT', 'Расчётный модуль вернул неполный результат.', 500)
     validate('RecommendationsResponse', result['response'])
-    for detail in result['details'].values():
+    items = result['response']['items']
+    item_ids = [item['item_id'] for item in items]
+    if len(item_ids) != len(set(item_ids)) or set(result['details']) != set(item_ids):
+        raise DomainError('INVALID_PIPELINE_RESULT', 'Строки рекомендации и детализации не согласованы.', 500)
+    if result['response']['summary'] != summary(items):
+        raise DomainError('INVALID_PIPELINE_RESULT', 'Итоги расчёта не совпадают со строками.', 500)
+    for item in items:
+        detail = result['details'][item['item_id']]
         validate('ItemDetail', detail)
+        if detail['item'] != item or detail['meta'] != result['response']['meta']:
+            raise DomainError('INVALID_PIPELINE_RESULT', 'Публичная строка расходится с детализацией.', 500)
+    meta = result['response']['meta']
+    if meta['calculation_id'] != calculation_id or meta['dataset_id'] != dataset['dataset_id']:
+        raise DomainError('INVALID_PIPELINE_RESULT', 'Расчётный модуль вернул неверную идентичность результата.', 500)
     result['request'] = request
     return result

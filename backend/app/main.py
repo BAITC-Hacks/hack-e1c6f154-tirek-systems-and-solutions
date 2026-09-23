@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from copy import deepcopy
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from io import StringIO
 from pathlib import Path
@@ -23,6 +23,9 @@ from .pipeline import calculate
 from .storage import Store
 
 
+DEFAULT_INGESTOR = 'backend.app.ml_adapter:normalize_dataset'
+
+
 def error_body(error):
     return {'request_id': str(uuid4()), 'error': {'code': error.code, 'message': error.message, 'details': error.details}}
 
@@ -31,17 +34,78 @@ def digest(value):
     return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
-def validate_quantity(item, quantity):
+def _nonnegative_decimal(value, name):
+    try:
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(name)
+        number = Decimal(str(value))
+        if not number.is_finite() or number < 0:
+            raise ValueError(name)
+        return number
+    except (InvalidOperation, ValueError, TypeError) as exc:
+        raise DomainError('INVALID_PARAMETERS', f'Некорректное значение: {name}.') from exc
+
+
+def approval_constraints(result, item):
+    """Read server-owned decision constraints; never accept them from an override."""
+    saved = result.get('approval_constraints')
+    if saved is not None:
+        value = saved.get(item['item_id']) if isinstance(saved, dict) else None
+        required = {'unit_quantum', 'min_order_qty', 'order_multiple',
+                    'minimum_safe_quantity', 'constraints_complete'}
+        if not isinstance(value, dict) or not required.issubset(value):
+            raise DomainError('RECALCULATION_REQUIRED', 'Нет сохранённых ограничений позиции. Повторите расчёт.')
+        return value
+    if (item.get('forecast') or {}).get('method') != 'contract_example':
+        raise DomainError('RECALCULATION_REQUIRED', 'Для проверки изменения нужен новый расчёт с ограничениями модели.')
+    # The explicit legacy demo has integer pieces and no model service/material
+    # floor. Real/model rows must carry the private sidecar produced by ml_adapter.
+    return {'unit_quantum': 1 if item['unit'] == 'шт' else None,
+            'min_order_qty': item['min_order_qty'], 'order_multiple': item['order_multiple'],
+            'minimum_safe_quantity': 0,
+            'constraints_complete': item['min_order_qty'] is not None and item['order_multiple'] is not None}
+
+
+def validate_quantity(item, quantity, constraints):
     if quantity is None:
         return
-    q = Decimal(str(quantity))
-    if not q.is_finite() or q < 0 or (item['unit'] == 'шт' and q != q.to_integral_value()):
-        raise DomainError('INVALID_PARAMETERS', 'Количество должно быть целым неотрицательным числом.')
+    q = _nonnegative_decimal(quantity, 'количество')
+    if (constraints['constraints_complete'] is not True
+            or constraints['min_order_qty'] is None or constraints['order_multiple'] is None):
+        raise DomainError('UNCONFIRMED_CONSTRAINTS', 'Уточните MOQ, кратность и единицы поставки; подтверждение предупреждения не заменяет эти данные.')
+    if constraints['unit_quantum'] is None:
+        raise DomainError('RECALCULATION_REQUIRED', 'Неизвестна физическая единица округления. Повторите расчёт.')
+    quantum = _nonnegative_decimal(constraints['unit_quantum'], 'единица округления')
+    minimum = _nonnegative_decimal(constraints['min_order_qty'], 'минимальная партия')
+    multiple = _nonnegative_decimal(constraints['order_multiple'], 'кратность')
+    floor = _nonnegative_decimal(constraints['minimum_safe_quantity'], 'минимальная допустимая потребность')
+    if not quantum or not multiple:
+        raise DomainError('RECALCULATION_REQUIRED', 'Единица округления и кратность должны быть положительными.')
+    if (item['min_order_qty'] is None or item['order_multiple'] is None
+            or _nonnegative_decimal(item['min_order_qty'], 'публичный MOQ') != minimum
+            or _nonnegative_decimal(item['order_multiple'], 'публичная кратность') != multiple):
+        raise DomainError('RECALCULATION_REQUIRED', 'Ограничения позиции расходятся с сохранённым расчётом.')
+    if q % quantum:
+        raise DomainError('INVALID_PARAMETERS', f'Количество должно быть кратно физической единице {quantum} {item["unit"]}.')
+    if q < floor:
+        raise DomainError('MINIMUM_QUANTITY_VIOLATION', 'Количество ниже обязательной потребности или минимума политики. Измените исходные данные и повторите расчёт.')
     if q > 0:
-        if item['min_order_qty'] is not None and q < Decimal(str(item['min_order_qty'])):
-            raise DomainError('MOQ_VIOLATION', f"Минимальная партия: {item['min_order_qty']} {item['unit']}.")
-        if item['order_multiple'] is not None and q % Decimal(str(item['order_multiple'])):
-            raise DomainError('MOQ_VIOLATION', f"Количество должно быть кратно {item['order_multiple']}.")
+        if q < minimum:
+            raise DomainError('MOQ_VIOLATION', f"Минимальная партия: {minimum} {item['unit']}.")
+        if q % multiple:
+            raise DomainError('MOQ_VIOLATION', f'Количество должно быть кратно {multiple}.')
+
+
+def order_cost(item, quantity):
+    """Compute cost from current quantity and price, never a cached line total."""
+    if quantity is None:
+        return None
+    q = _nonnegative_decimal(quantity, 'количество')
+    if q == 0:
+        return Decimal(0)
+    if item['unit_cost_kzt'] is None:
+        return None
+    return q * _nonnegative_decimal(item['unit_cost_kzt'], 'закупочная цена')
 
 
 def create_app(db_path=None):
@@ -95,7 +159,7 @@ def create_app(db_path=None):
             return {'latest_calculation_id': calculations[0]['response']['meta']['calculation_id'] if calculations else None,
                     'datasets': store.all(db, 'dataset'), 'approvals': [a['public'] for a in store.all(db, 'approval')],
                     'calculations': [c['response']['meta'] for c in calculations],
-                    'capabilities': {'demo': True, 'ml_connected': bool(os.getenv('TIREK_PIPELINE')), 'real_import': 'inspection_only'}}
+                    'capabilities': {'demo': True, 'ml_connected': True, 'real_import': 'normalized'}}
 
     @app.get(prefix + '/datasets/{dataset_id}')
     def dataset(dataset_id: str):
@@ -169,15 +233,14 @@ def create_app(db_path=None):
             for source, (_, content) in zip(report['sources'], loaded):
                 (target / (source['role'] + '.xlsx')).write_bytes(content)
             (target / 'manifest.json').write_text(json.dumps({'report': report, 'context': extra}, ensure_ascii=False, indent=2), encoding='utf-8')
-            normalizer = os.getenv('TIREK_INGESTOR')
-            if normalizer:
-                module, name = normalizer.split(':', 1)
-                normalized = getattr(importlib.import_module(module), name)(target, deepcopy(report), extra)
-                validate('DatasetReport', normalized)
-                if normalized['dataset_id'] != report['dataset_id']:
-                    raise DomainError('INVALID_PARAMETERS', 'Нормализатор изменил ID исходного набора.')
-                report = normalized
-                (target / 'manifest.json').write_text(json.dumps({'report': report, 'context': extra}, ensure_ascii=False, indent=2), encoding='utf-8')
+            normalizer = os.getenv('TIREK_INGESTOR', DEFAULT_INGESTOR)
+            module, name = normalizer.split(':', 1)
+            normalized = getattr(importlib.import_module(module), name)(target, deepcopy(report), extra)
+            validate('DatasetReport', normalized)
+            if normalized['dataset_id'] != report['dataset_id']:
+                raise DomainError('INVALID_PARAMETERS', 'Нормализатор изменил ID исходного набора.')
+            report = normalized
+            (target / 'manifest.json').write_text(json.dumps({'report': report, 'context': extra}, ensure_ascii=False, indent=2), encoding='utf-8')
             return report['dataset_id'], report
 
         return queue(background, 'import', idempotency_key, fingerprint, 'import', worker, 'dataset')
@@ -193,7 +256,8 @@ def create_app(db_path=None):
             source = store.get(db, 'dataset', payload['dataset_id'])
         if not source['calculation_allowed']:
             raise DomainError('MISSING_CRITICAL_DATA', 'Набор ещё не нормализован. Сначала подключите адаптер данных и расчётный модуль.')
-        if payload['mode'] == 'operational' and (source['source_kind'] != 'observed' or any(
+        synthetic_context = any(issue['code'] == 'SYNTHETIC_CONTEXT_BLOCKS_OPERATIONAL' for issue in source['issues'])
+        if payload['mode'] == 'operational' and (source['source_kind'] != 'observed' or synthetic_context or any(
                 entry.get('source_kind') == 'synthetic' for key in ('category_policies', 'economic_profiles', 'growth_adjustments') for entry in payload[key])):
             raise DomainError('INVALID_PARAMETERS', 'Операционный режим не допускает синтетические данные и параметры.')
         if payload['as_of_date'] < source['data_as_of']:
@@ -231,13 +295,23 @@ def create_app(db_path=None):
             quantity = payload['final_quantity']
             if item['decision_status'] == 'needs_data' and quantity is not None:
                 raise DomainError('MISSING_CRITICAL_DATA', 'Сначала добавьте недостающие исходные данные.')
-            validate_quantity(item, quantity)
+            if quantity is not None:
+                validate_quantity(item, quantity, approval_constraints(result, item))
+            cost = order_cost(item, quantity)
             item.update(final_quantity=quantity, override_reason=payload['reason'].strip(),
-                        order_cost_kzt=None if quantity is None or item['unit_cost_kzt'] is None else
-                        float((Decimal(str(quantity)) * Decimal(str(item['unit_cost_kzt']))).quantize(Decimal('.01'))))
+                        order_cost_kzt=None if cost is None else float(cost))
             response['meta']['revision'] += 1
             for detail in result['details'].values():
                 detail['meta'] = response['meta']
+                if detail['item']['ai']['status'] == 'reviewed':
+                    # The LLM context contains calculation_revision, so every
+                    # review belongs to the previous revision, even on other rows.
+                    detail['item']['ai'] = {
+                        'status': 'unavailable', 'verdict': None,
+                        'reasons': ['AI-01: расчёт изменён; заключение предыдущей ревизии больше не актуально.'],
+                        'evidence_ids': [], 'rule_ids': ['AI-01'],
+                        'suggested_action': None, 'provider_model': None,
+                    }
             response['items'] = [result['details'][i['item_id']]['item'] for i in response['items']]
             response['summary'] = summary(response['items'])
             store.put(db, 'calculation', calculation_id, result)
@@ -261,23 +335,29 @@ def create_app(db_path=None):
             selected = payload['selected_item_ids']
             if not selected or len(selected) != len(set(selected)):
                 raise DomainError('INVALID_PARAMETERS', 'Выберите хотя бы одну позицию без повторов.')
-            items = []
+            items, total_cost, prices_complete = [], Decimal(0), True
             for item_id in selected:
                 if item_id not in result['details']:
                     raise DomainError('NOT_FOUND', 'Выбранный товар не найден.', 404)
                 item = result['details'][item_id]['item']
                 if item['decision_status'] == 'needs_data' or item['final_quantity'] is None:
                     raise DomainError('MISSING_CRITICAL_DATA', f"Нельзя утвердить {item['sku']}: недостаточно данных.")
-                validate_quantity(item, item['final_quantity'])
+                validate_quantity(item, item['final_quantity'], approval_constraints(result, item))
                 if item['decision_status'] == 'needs_review':
                     if any(issue['code'] not in payload['acknowledged_issue_codes'] for issue in item['issues']):
                         raise DomainError('REVIEW_REQUIRED', f"Подтвердите предупреждения по {item['sku']}.")
-                items.append(item)
+                cost = order_cost(item, item['final_quantity'])
+                prices_complete = prices_complete and cost is not None
+                if cost is not None:
+                    total_cost += cost
+                selected_item = deepcopy(item)
+                selected_item['order_cost_kzt'] = None if cost is None else float(cost)
+                items.append(selected_item)
             budget = result['request'].get('budget_kzt')
             if budget is not None:
-                if any(i['final_quantity'] > 0 and i['unit_cost_kzt'] is None for i in items):
+                if not prices_complete:
                     raise DomainError('PRICE_REQUIRED_FOR_BUDGET', 'Для проверки бюджета нужны закупочные цены всех выбранных позиций.')
-                if sum(Decimal(str(i['order_cost_kzt'] or 0)) for i in items) > Decimal(str(budget)):
+                if total_cost > _nonnegative_decimal(budget, 'бюджет'):
                     raise DomainError('BUDGET_EXCEEDED', 'Сумма выбранных позиций превышает бюджет. Измените состав заказа.')
             approval_id = str(uuid4())
             public = {'approval_id': approval_id, 'calculation_id': calculation_id, 'revision': meta['revision'],

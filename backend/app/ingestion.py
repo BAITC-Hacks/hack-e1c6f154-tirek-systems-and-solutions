@@ -58,7 +58,9 @@ def inspect_upload(files, supplier_id, context):
             raise DomainError('INVALID_FILE', f'Не удалось прочитать XLSX «{filename}». Проверьте файл.', 400) from exc
         sources.append({'role': role, 'filename': Path(filename).name, 'sha256': sha256(content).hexdigest(),
                         'rows_read': rows, 'rows_used': 0, 'data_as_of': None})
-    fingerprint = sha256(json.dumps({'supplier': supplier_id, 'sources': sorted([(s['role'], s['sha256']) for s in sources]),
+    # The snapshot date can be encoded in the original filename. Identical
+    # bytes with different dated names must not overwrite the same dataset.
+    fingerprint = sha256(json.dumps({'supplier': supplier_id, 'sources': sorted([(s['role'], s['filename'], s['sha256']) for s in sources]),
                                       'context': context}, sort_keys=True).encode()).hexdigest()
     issues = [{'code': 'NORMALIZATION_REQUIRED', 'severity': 'warning',
                'message': 'Файлы проверены и сохранены. Даты, коды и строки ещё не нормализованы; прогноз не запускался.',
