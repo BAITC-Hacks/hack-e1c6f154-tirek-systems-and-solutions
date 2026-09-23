@@ -151,7 +151,7 @@ def evaluate(args):
     output = Path(args.output)
     dump(output / "report.json", report)
     with (output / "rows.csv").open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     (output / "report.md").write_text(markdown(report), encoding="utf-8")
