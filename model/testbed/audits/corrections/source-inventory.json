@@ -1,0 +1,503 @@
+{
+  "kind": "partner_source_inventory_not_forecast_evaluation",
+  "workbooks": [
+    {
+      "file": "IEK/MOQ  ИЭК.xlsx",
+      "sha256": "4705b5bbbaa7c55541a151f146270bcbdc72a4ce28686fdb3378575733c4a446",
+      "sheets": [
+        {
+          "name": "Лист7",
+          "xml_rows": 1939,
+          "header": [
+            "№",
+            "Код 1с",
+            "Артикул поставщика",
+            "Наименование",
+            "Мин. разр. к отгр."
+          ]
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "IEK/Динамика продаж_2025-2026.xlsx",
+      "sha256": "7b0100a662eba816fd2e6a477ba56ca2a7846d3489ce1083821c94333ac30e4c",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 171605,
+          "header": [
+            "Дата",
+            "Номер",
+            "Документ",
+            "Код",
+            "Номенклатура",
+            "Ед.",
+            "Склад",
+            "Количество"
+          ],
+          "date_min": "2023-07-20",
+          "date_max": "2026-09-22",
+          "distinct_transaction_dates": 549,
+          "transaction_rows": 171585,
+          "units": {
+            "шт": 149593,
+            "м": 12657,
+            "упак": 9335
+          },
+          "quantity_sign_rows": {
+            "negative": 115,
+            "positive": 171470
+          },
+          "rows_before_2025": 104,
+          "client_id_column_present": false,
+          "price_column_present": false
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "IEK/Ежемесячные остатки продукции за последние 2 года  ИЭК.xlsx",
+      "sha256": "ad8a8df9cbb242a3df60a147fb4011b146ca7cdd9e98c1247b1b19fd517f4a30",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 2857,
+          "header": [
+            "Номенклатура",
+            "Ед.",
+            "Номенклатура.Код",
+            "янв. 2024",
+            "февр. 2024",
+            "март 2024",
+            "апр. 2024",
+            "май 2024",
+            "июнь 2024",
+            "июль 2024",
+            "авг. 2024",
+            "сент. 2024",
+            "окт. 2024",
+            "нояб. 2024",
+            "дек. 2024",
+            "янв. 2025",
+            "февр. 2025",
+            "март 2025",
+            "апр. 2025",
+            "май 2025",
+            "июнь 2025",
+            "июль 2025",
+            "авг. 2025",
+            "сент. 2025",
+            "окт. 2025",
+            "нояб. 2025",
+            "дек. 2025",
+            "янв. 2026",
+            "февр. 2026",
+            "март 2026",
+            "апр. 2026",
+            "май 2026",
+            "июнь 2026",
+            "июль 2026",
+            "авг. 2026",
+            "сент. 2026",
+            "Итого"
+          ]
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "IEK/Ежемесячные продажи в количественном выражении за последние 2 года.xlsx",
+      "sha256": "048a0af940370153511769396570259a1bb28da63709d9b974f99c45081fa255",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 2466,
+          "header": [
+            "Номенклатура",
+            "Номенклатура.Код",
+            "янв. 2024",
+            "февр. 2024",
+            "март 2024",
+            "апр. 2024",
+            "май 2024",
+            "июнь 2024",
+            "июль 2024",
+            "авг. 2024",
+            "сент. 2024",
+            "окт. 2024",
+            "нояб. 2024",
+            "дек. 2024",
+            "янв. 2025",
+            "февр. 2025",
+            "март 2025",
+            "апр. 2025",
+            "май 2025",
+            "июнь 2025",
+            "июль 2025",
+            "авг. 2025",
+            "сент. 2025",
+            "окт. 2025",
+            "нояб. 2025",
+            "дек. 2025",
+            "янв. 2026",
+            "февр. 2026",
+            "март 2026",
+            "апр. 2026",
+            "май 2026",
+            "июнь 2026",
+            "июль 2026",
+            "авг. 2026",
+            "сент. 2026",
+            "Итого"
+          ]
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "IEK/Путь ИЭК 22.09.2026.xlsx",
+      "sha256": "751fd3c2cbdfabe32f9c20c7f0289135273f007471f39101f03f9c6e1231ce7d",
+      "sheets": [
+        {
+          "name": "Лист4",
+          "xml_rows": 2642,
+          "header": [
+            "Код 1с",
+            "Артикул ИЭК",
+            "Наименование",
+            "Плановое поступление с датой ETA",
+            "Плановое поступление с датой ETA",
+            "Плановое поступление с датой ETA",
+            "Плановое поступление с датой ETA",
+            "Плановое поступление с датой ETA",
+            "Плановое поступление с датой ETA"
+          ]
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "IEK/Сезонность ИЭК.xlsx",
+      "sha256": "d4d9a8f208884c5197d0dcea0eb60d3972e9382cb3530675d0760fe9a8339635",
+      "sheets": [
+        {
+          "name": "Сезонность",
+          "xml_rows": 38,
+          "header": []
+        }
+      ],
+      "archive": "IEK.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/MOQ SystemElectric.xlsx",
+      "sha256": "4fc809ecf9c0a73d97f13f7a16e7dbb20425ab97a6b2d9a0f6be0bbe1a326a7b",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 557,
+          "header": [
+            "№",
+            "Номенклатура",
+            "Номенклатура.Код",
+            "Артикул",
+            "Кратность"
+          ]
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/Динамика продаж_Syseme Electric_2025-2026.xlsx",
+      "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 77314,
+          "header": [
+            "Дата",
+            "Номер",
+            "Документ",
+            "Код",
+            "Номенклатура",
+            "Ед.",
+            "Склад",
+            "Количество"
+          ],
+          "date_min": "2023-01-18",
+          "date_max": "2026-09-22",
+          "distinct_transaction_dates": 539,
+          "transaction_rows": 77299,
+          "units": {
+            "шт": 77299
+          },
+          "quantity_sign_rows": {
+            "negative": 302,
+            "positive": 76997
+          },
+          "rows_before_2025": 298,
+          "client_id_column_present": false,
+          "price_column_present": false
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/Ежемесячные остатки SystemElectric 2024-2026.xlsx",
+      "sha256": "45d55eb244966ef9fdba1aa09c666e9dbc4c0b05c1088f4041edcd86b908c85e",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 704,
+          "header": [
+            "№",
+            "Номенклатура",
+            "Номенклатура.Код",
+            "Ед.изм",
+            "янв. 2024",
+            "февр. 2024",
+            "март 2024",
+            "апр. 2024",
+            "май 2024",
+            "июнь 2024",
+            "июль 2024",
+            "авг. 2024",
+            "сент. 2024",
+            "окт. 2024",
+            "нояб. 2024",
+            "дек. 2024",
+            "янв. 2025",
+            "февр. 2025",
+            "март 2025",
+            "апр. 2025",
+            "май 2025",
+            "июнь 2025",
+            "июль 2025",
+            "авг. 2025",
+            "сент. 2025",
+            "окт. 2025",
+            "нояб. 2025",
+            "дек. 2025",
+            "янв. 2026",
+            "февр. 2026",
+            "март 2026",
+            "апр. 2026",
+            "май 2026",
+            "июнь 2026",
+            "июль 2026",
+            "авг. 2026",
+            "сент. 2026"
+          ]
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/Ежемесячные продажи в кол-м выражении SystemElectric 2024-2026.xlsx",
+      "sha256": "f7782ab9ea5c06d68526543953c6fce7ca83a80d1c1a4e8d88fd083de415f9d0",
+      "sheets": [
+        {
+          "name": "Лист_1",
+          "xml_rows": 557,
+          "header": [
+            "Номенклатура",
+            "Номенклатура.Код",
+            "Артикул",
+            "Кратность",
+            "янв. 2024",
+            "февр. 2024",
+            "март 2024",
+            "апр. 2024",
+            "май 2024",
+            "июнь 2024",
+            "июль 2024",
+            "авг. 2024",
+            "сент. 2024",
+            "окт. 2024",
+            "нояб. 2024",
+            "дек. 2024",
+            "янв. 2025",
+            "февр. 2025",
+            "март 2025",
+            "апр. 2025",
+            "май 2025",
+            "июнь 2025",
+            "июль 2025",
+            "авг. 2025",
+            "сент. 2025",
+            "окт. 2025",
+            "нояб. 2025",
+            "дек. 2025",
+            "янв. 2026",
+            "февр. 2026",
+            "март 2026",
+            "апр. 2026",
+            "май 2026",
+            "июнь 2026",
+            "июль 2026",
+            "авг. 2026",
+            "сент. 2026",
+            "Итого"
+          ]
+        },
+        {
+          "name": "Лист1",
+          "xml_rows": 35,
+          "header": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/Сезонность SystemElectric 2024-2026.xlsx",
+      "sha256": "19bdbc1c2331d3643e39294f68f11f7427f625107e8b025f6663bb559af669ab",
+      "sheets": [
+        {
+          "name": "Лист1",
+          "xml_rows": 35,
+          "header": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    },
+    {
+      "file": "Systeme electric/Товар в пути_SystemElectric на 22.09.2026.xlsx",
+      "sha256": "17aa50b7697aba5598997b1b4bba9de3950169bc81e97fd10c4d8b0348bd9a3d",
+      "sheets": [
+        {
+          "name": "TDSheet",
+          "xml_rows": 499,
+          "header": [
+            "№",
+            "Артикул поставщика",
+            "Код 1с",
+            "Наименование",
+            "Категория 2026",
+            "СС реал",
+            "Январь 2024 г.",
+            "Февраль 2024 г.",
+            "Март 2024 г.",
+            "Апрель 2024 г.",
+            "Май 2024 г.",
+            "Июнь 2024 г.",
+            "Июль 2024 г.",
+            "Август 2024 г.",
+            "Сентябрь 2024 г.",
+            "Октябрь 2024 г.",
+            "Ноябрь 2024 г.",
+            "Декабрь 2024 г.",
+            "Продажи 2024",
+            "Ср мес 2024",
+            "Январь 2025 г.",
+            "Февраль 2025 г.",
+            "Март 2025 г.",
+            "Апрель 2025 г.",
+            "Май 2025 г.",
+            "Июнь 2025 г.",
+            "Июль 2025 г.",
+            "Август 2025 г.",
+            "Сентябрь 2025 г.",
+            "Октябрь 2025 г.",
+            "Ноябрь 2025 г.",
+            "Декабрь 2025 г.",
+            "Январь 2026 г.",
+            "Февраль 2026 г.",
+            "Март 2026 г.",
+            "Апрель 2026 г.",
+            "Май 2026 г.",
+            "Июнь 2026 г.",
+            "Июль 2026 г.",
+            "Август 2026 г.",
+            "Сентябрь 2026 г.",
+            "Сумма последние 12 мес",
+            "Ср мес за последние 12 мес",
+            "Кэф. Роста",
+            "Кэф. Сез-ти",
+            "Витрина",
+            "Остаток ТЗ",
+            "РЦ ЕКТ  Рыскулова",
+            "Розничный склад",
+            "Остаток",
+            "Зарезервировано",
+            "Свободный остаток",
+            "Запас",
+            "Заказ",
+            "СЭ в пути 24.09",
+            "",
+            "",
+            "",
+            "",
+            "Вес"
+          ]
+        },
+        {
+          "name": "Лист1",
+          "xml_rows": 19,
+          "header": []
+        }
+      ],
+      "archive": "Systeme electric.zip",
+      "same_as_previous_input": true
+    }
+  ],
+  "pdfs": [
+    {
+      "file": "HackAlem AI_ Автоматизация формирования заказов поставщикам.docx.pdf",
+      "sha256": "3b76d0ed67f0964e97138529652822a50a5ef76e0eb72eb535ffaaaf7eed0317"
+    }
+  ],
+  "raw_records_exported": false,
+  "interpretation": {
+    "monthly_sales": "Separate monthly observations, not daily labels; overlapping periods cannot be added to detail.",
+    "monthly_stock": "Opening-month stock snapshot, not stockout dates or availability fractions.",
+    "detail": "Document identifiers are not anonymized client IDs. Signed transactions require documented semantics; negatives are not silently clipped.",
+    "inbound": "Snapshot dated 2026-09-22, not a feature for earlier forecast origins; existing ETA is not lead time for a new order. SE contains stock/reserve/free-stock and category headers; date and warehouse semantics need confirmation.",
+    "seasonality": "Published coefficients include later months; derive historical coefficients from past-only quantities.",
+    "moq": "SE header is order multiple; IEK minimum allowed shipment. Neither establishes both MOQ and multiple.",
+    "units": "Pieces, metres and packages must not be pooled as one quantity score.",
+    "readiness": "Missing client identity, exact availability, current inventory context and procurement policy prevent claiming validated real procurement."
+  }
+}

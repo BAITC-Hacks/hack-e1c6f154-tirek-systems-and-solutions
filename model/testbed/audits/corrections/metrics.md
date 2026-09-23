@@ -50,7 +50,9 @@ manifest; проверка старого manifest на изменённом к�
 
 ## Метрики и совместимость CLI
 
-CLI-флаги и значения по умолчанию не менялись. JSON schema стала
+CLI-флаги сохранены. При итоговой интеграции root сменил адаптер по умолчанию на
+`model.testbed.seasonal:forecast`, manifest на `corrected-freeze.json` и добавил
+группировку по SKU. Старый baseline доступен явным `--adapter`. JSON schema стала
 `testbed-report-v2.1`; добавлены `aggregation_failures` на верхнем уровне,
 `units` и `aggregation_error` в агрегатах. Все существующие числовые ключи
 сохраняются. В overall и каждой группе добавлены:

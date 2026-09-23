@@ -1,0 +1,68 @@
+test_failed_rows_keep_denominator_no_partial_accuracy (test_boundary_corrections.MetricCorrectionsTests.test_failed_rows_keep_denominator_no_partial_accuracy) ... ok
+test_full_evaluate_retains_both_overflow_paths (test_boundary_corrections.MetricCorrectionsTests.test_full_evaluate_retains_both_overflow_paths) ... ok
+test_full_evaluate_saves_mae_in_all_groups (test_boundary_corrections.MetricCorrectionsTests.test_full_evaluate_saves_mae_in_all_groups) ... ok
+test_independent_decimal_formulas_and_zero_targets (test_boundary_corrections.MetricCorrectionsTests.test_independent_decimal_formulas_and_zero_targets) ... ok
+test_mixed_units_are_not_pooled (test_boundary_corrections.MetricCorrectionsTests.test_mixed_units_are_not_pooled) ... ok
+test_prediction_horizon_and_aggregate_overflow (test_boundary_corrections.MetricCorrectionsTests.test_prediction_horizon_and_aggregate_overflow) ... ok
+test_zero_denominator_retains_error_and_mae (test_boundary_corrections.MetricCorrectionsTests.test_zero_denominator_retains_error_and_mae) ... ok
+test_canonical_dates_and_chronology (test_boundary_corrections.RequestCorrectionsTests.test_canonical_dates_and_chronology) ... ok
+test_complete_is_boolean (test_boundary_corrections.RequestCorrectionsTests.test_complete_is_boolean) ... ok
+test_horizon_integer_positive_bounded (test_boundary_corrections.RequestCorrectionsTests.test_horizon_integer_positive_bounded) ... ok
+test_promotions_are_known_positive_and_chronological (test_boundary_corrections.RequestCorrectionsTests.test_promotions_are_known_positive_and_chronological) ... ok
+test_structural_and_numeric_errors_are_value_errors (test_boundary_corrections.RequestCorrectionsTests.test_structural_and_numeric_errors_are_value_errors) ... ok
+test_budget_across_suppliers_and_unknown_positive_price (test_business_corrections.ProcurementCorrectionsTests.test_budget_across_suppliers_and_unknown_positive_price) ... ok
+test_checker_rejects_all_changed_invalid_responses (test_business_corrections.ProcurementCorrectionsTests.test_checker_rejects_all_changed_invalid_responses) ... ok
+test_checker_rejects_missing_fields_and_cross_field_conflicts (test_business_corrections.ProcurementCorrectionsTests.test_checker_rejects_missing_fields_and_cross_field_conflicts) ... ok
+test_exact_decimal_batch_boundaries (test_business_corrections.ProcurementCorrectionsTests.test_exact_decimal_batch_boundaries) ... ok
+test_exact_decimal_money_boundaries (test_business_corrections.ProcurementCorrectionsTests.test_exact_decimal_money_boundaries) ... ok
+test_explanation_is_specific_and_orders_require_human_approval (test_business_corrections.ProcurementCorrectionsTests.test_explanation_is_specific_and_orders_require_human_approval) ... ok
+test_explicit_urgency_and_shortage_priority (test_business_corrections.ProcurementCorrectionsTests.test_explicit_urgency_and_shortage_priority) ... ok
+test_invalid_dates_never_reduce_order_or_hide_commitments (test_business_corrections.ProcurementCorrectionsTests.test_invalid_dates_never_reduce_order_or_hide_commitments) ... ok
+test_invalid_numeric_domains_and_types_block_quantity (test_business_corrections.ProcurementCorrectionsTests.test_invalid_numeric_domains_and_types_block_quantity) ... ok
+test_late_inbound_exposes_shortage_after_proposed_order_eta (test_business_corrections.ProcurementCorrectionsTests.test_late_inbound_exposes_shortage_after_proposed_order_eta) ... ok
+test_original_54_fixtures_remain_compatible (test_business_corrections.ProcurementCorrectionsTests.test_original_54_fixtures_remain_compatible) ... ok
+test_quantile_one_with_accepted_mass_normalizes_consistently (test_business_corrections.ProcurementCorrectionsTests.test_quantile_one_with_accepted_mass_normalizes_consistently) ... ok
+test_same_day_normal_arrival_and_early_gap_remain_distinct (test_business_corrections.ProcurementCorrectionsTests.test_same_day_normal_arrival_and_early_gap_remain_distinct) ... ok
+test_unknown_constraint_quantity_is_explicitly_provisional (test_business_corrections.ProcurementCorrectionsTests.test_unknown_constraint_quantity_is_explicitly_provisional) ... ok
+test_zero_probability_support_does_not_set_boundary_quantile (test_business_corrections.ProcurementCorrectionsTests.test_zero_probability_support_does_not_set_boundary_quantile) ... ok
+test_each_inner_fit_uses_only_that_origin_information (test_requirement_corrections.RequirementCorrections.test_each_inner_fit_uses_only_that_origin_information) ... ok
+test_input_order_and_identifier_do_not_change_direct_prediction (test_requirement_corrections.RequirementCorrections.test_input_order_and_identifier_do_not_change_direct_prediction) ... ok
+test_opaque_ids_invariant_to_class_with_exact_public_ledger (test_requirement_corrections.RequirementCorrections.test_opaque_ids_invariant_to_class_with_exact_public_ledger) ... ok
+test_season_and_growth_controls (test_requirement_corrections.RequirementCorrections.test_season_and_growth_controls) ... ok
+test_sparse_purchase_is_not_deleted_as_project (test_requirement_corrections.RequirementCorrections.test_sparse_purchase_is_not_deleted_as_project) ... ok
+test_private_records_not_exported_and_negative_sign_is_preserved (test_source_inventory.SourceInventoryTests.test_private_records_not_exported_and_negative_sign_is_preserved) ... ok
+test_business_fixtures (test_testbed.BaselineAndBusinessTests.test_business_fixtures) ... ok
+test_checker_detects_wrong_quantity_null_and_nonfinite (test_testbed.BaselineAndBusinessTests.test_checker_detects_wrong_quantity_null_and_nonfinite) ... ok
+test_incomplete_day_not_treated_as_zero_or_complete_sales (test_testbed.BaselineAndBusinessTests.test_incomplete_day_not_treated_as_zero_or_complete_sales) ... ok
+test_one_client_split_across_days (test_testbed.BaselineAndBusinessTests.test_one_client_split_across_days) ... ok
+test_regular_large_customer_not_excluded (test_testbed.BaselineAndBusinessTests.test_regular_large_customer_not_excluded) ... ok
+test_stockout_correction_exceeds_raw_sales_forecast (test_testbed.BaselineAndBusinessTests.test_stockout_correction_exceeds_raw_sales_forecast) ... ok
+test_duplicate_import_identifiers_rejected (test_testbed.BoundaryTests.test_duplicate_import_identifiers_rejected) ... ok
+test_future_observations_and_unannounced_promotion_rejected (test_testbed.BoundaryTests.test_future_observations_and_unannounced_promotion_rejected) ... ok
+test_no_hidden_top_level_or_nested_fields (test_testbed.BoundaryTests.test_no_hidden_top_level_or_nested_fields) ... ok
+test_prediction_exact_coverage_length_and_finiteness (test_testbed.BoundaryTests.test_prediction_exact_coverage_length_and_finiteness) ... ok
+test_process_crash_missing_output_timeout (test_testbed.BoundaryTests.test_process_crash_missing_output_timeout) ... ok
+test_process_transport_and_mutation_isolation (test_testbed.BoundaryTests.test_process_transport_and_mutation_isolation) ... ok
+test_all_scenarios_public_boundary (test_testbed.GenerationTests.test_all_scenarios_public_boundary) ... ok
+test_availability_censors_and_never_creates_demand (test_testbed.GenerationTests.test_availability_censors_and_never_creates_demand) ... ok
+test_determinism_and_seed_variation (test_testbed.GenerationTests.test_determinism_and_seed_variation) ... ok
+test_generator_poisson_expectation_sanity_development_only (test_testbed.GenerationTests.test_generator_poisson_expectation_sanity_development_only) ... ok
+test_new_product_has_only_post_launch_history (test_testbed.GenerationTests.test_new_product_has_only_post_launch_history) ... ok
+test_paired_regular_truth_and_projects_separate (test_testbed.GenerationTests.test_paired_regular_truth_and_projects_separate) ... ok
+test_private_future_mutation_cannot_affect_input_or_forecast (test_testbed.GenerationTests.test_private_future_mutation_cannot_affect_input_or_forecast) ... ok
+test_unannounced_shock_not_in_public_context (test_testbed.GenerationTests.test_unannounced_shock_not_in_public_context) ... ok
+test_failed_adapter_stays_in_report (test_testbed.MetricAndFreezeTests.test_failed_adapter_stays_in_report) ... development: seed=101, scenario=stable
+development: seed=101, scenario=single_project
+development: seed=101, scenario=split_project
+ok
+test_failed_rows_make_complete_metric_unavailable (test_testbed.MetricAndFreezeTests.test_failed_rows_make_complete_metric_unavailable) ... ok
+test_freeze_refuses_changed_source_and_overwrite (test_testbed.MetricAndFreezeTests.test_freeze_refuses_changed_source_and_overwrite) ... ok
+test_seed_sets_disjoint_and_fixed (test_testbed.MetricAndFreezeTests.test_seed_sets_disjoint_and_fixed) ... ok
+test_wape_weighting_zero_rows_and_separate_expectation (test_testbed.MetricAndFreezeTests.test_wape_weighting_zero_rows_and_separate_expectation) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 6.096s
+
+OK
+{"output": "/tmp/tmpe9q98i1a", "overall": {"rows": 12, "failed_rows": 12, "units": ["шт"], "aggregation_error": null, "zero_realized_rows": 0, "realized_regular_quantity": 12795.0, "expected_regular_quantity": 13104.0, "project_quantity": 4014.0, "absolute_error_realized": null, "wape_realized": null, "bias_realized": null, "mae_realized": null, "mean_signed_error_realized": null, "daily_wape_realized": null, "daily_mae_realized": null, "absolute_error_expectation": null, "wape_expectation": null, "bias_expectation": null, "mae_expectation": null, "mean_signed_error_expectation": null, "daily_wape_expectation": null, "daily_mae_expectation": null}, "business_passed": 54, "business_total": 54, "forecast_target_met": false}
+Frozen candidate: /tmp/tmp_4oikpm3/freeze.json; sha256=d11d013c6c8bf5f662efafead1edd90b2065d319bc650b003d0d672234dbd47b

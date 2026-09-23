@@ -1,0 +1,102 @@
+{
+  "version": "testbed-v3.0-corrections",
+  "protocol": {
+    "version": "testbed-v3.0-corrections",
+    "mode": "synthetic",
+    "development_seeds": [
+      101,
+      202,
+      303
+    ],
+    "final_seeds": [
+      909,
+      1337,
+      2027,
+      4099
+    ],
+    "origins": [
+      "2025-07-01",
+      "2026-04-01"
+    ],
+    "history_days": 560,
+    "horizon_days": 28,
+    "items_per_case": 4,
+    "forecast_target_wape": 0.1,
+    "project_forecast_tolerance_fraction": 0.1,
+    "project_quantity_tolerance_fraction": 0.1,
+    "project_minimum_batch": 1,
+    "baseline": {
+      "window_days": 56,
+      "client_window_days": 7,
+      "recurring_weeks": 3,
+      "project_daily_multiplier": 8
+    },
+    "default_adapter": "model.testbed.seasonal:forecast",
+    "candidate_selection": {
+      "methods": [
+        "mean56",
+        "mean168",
+        "seasonal_trend"
+      ],
+      "inner_origin_days_before_cutoff": [
+        84,
+        56,
+        28
+      ],
+      "inner_horizon_days": 28,
+      "selection_target": "observed sales on complete available historical days, exposure weighted predictions; no hidden truth",
+      "tie_break": "method list order",
+      "seasonal_features": "intercept, linear log trend, two annual Fourier harmonics; past weekday calibration"
+    },
+    "event_identifiers": "opaque 128-bit independent stream; no class/date/SKU suffix",
+    "scenarios": [
+      "stable",
+      "seasonal_growth",
+      "intermittent",
+      "new_product",
+      "full_stockout",
+      "partial_stockout",
+      "single_project",
+      "split_project",
+      "recurring_client",
+      "known_promotion",
+      "demand_shock",
+      "combined"
+    ],
+    "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
+    "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",
+    "zero_denominator": "null (undefined); retain absolute error, zero-target count and row",
+    "failure_policy": "retain failed rows; aggregate metrics null if any prediction missing; never score only successful subset as complete",
+    "final_policy": "These final seeds were already inspected in v2. Freeze the corrected candidate before retrospective comparison, never call it an independent holdout and do not tune from the comparison. Historical v2 reproduction requires its original commit."
+  },
+  "files": {
+    "__init__.py": "7a4dfed39ef1fcc4015812018cb495188f99da91e1e182281f4fd3d73d0b5ab9",
+    "adapters.py": "8a06b8838bb32b222013fbac726dda8c2bcf0150f86770121216156cac7be285",
+    "baseline.py": "788017be5298812105955f2f23e0eabaeba0a397e2f11ee802a95ceb2017f49a",
+    "business.py": "92c040465f646c894fa853dd2b8a2ba8918cac1940b21b73b1d572bfe4aeee83",
+    "correction_evidence.py": "76156bdcce61a6eddd67c7fbbf09a4aeb96a9c94cae72dd9ad311a05065f4a3c",
+    "generator.py": "57a10a33ed382e79a46726f1b021213ab098a979a6e36bd61c0d719bcaf36f03",
+    "metrics.py": "92580b5d7c6fdda2835ef9b761fe7a544c0bc04f55d868447c997fc5d2a61930",
+    "requirement_checks.py": "1d8282f47e32528604e079116fa89aaf4fa78b525a50f656a25d1f90394e1680",
+    "run.py": "b7540c433763f1a2d70dd1d6aaabef4b151bc2d445d58d63f3ef6d58973123d0",
+    "seasonal.py": "a87f81cbe32f3437ac46cd74e7cc28e0c2252342c27138064324cbb22f23c015",
+    "source_inventory.py": "3e02e221df6556505f97698d6f39130eb772a8c7d2e4405d26ec545a91581c1d",
+    "tests/__init__.py": "385ef9baec426726bc8b4808673161bf1521b08890642d1859f9d0697f013694",
+    "tests/adapter_examples.py": "b46382f531aa232d78caeb8a781fe028fe61e7704c9c97bcd57cc4a3ba182edb",
+    "tests/test_boundary_corrections.py": "e1e1768b0d89fd4b70a2d2af719f341cb2e9bd6a71a1d1d19bbd38ebe178a273",
+    "tests/test_business_corrections.py": "5aa088123f67ba999fec622569165007dd1767d0ca4f9abcd6af6db32e5cea9d",
+    "tests/test_requirement_corrections.py": "7853d4d94da9cecde94c2b061b91e850c568fbe13cb0d3ec90388d286e9c09cc",
+    "tests/test_source_inventory.py": "0d5b669a274056740f0518944e8c3a8d5d852e28b54793abee44236487181583",
+    "tests/test_testbed.py": "a376cf56c32bb788b6ae34c740791d9e99834a926fe6c92c36d54a3eafd39f36",
+    "worker.py": "bab3ce7c702ee423490b54178013b380b47728aabd5f9f3597cb817b0598f230",
+    "protocol.json": "c37f2254aa724b23946e902fd99d943c94ccee32062590e01bff28d087ffbe88",
+    "fixtures/business_cases.json": "dc642d96a5cd925d5fdfb8c37d76230a7a28e5861d49802bede948a9ea5db78a"
+  },
+  "adapter": "model.testbed.seasonal:forecast",
+  "adapter_sha256": "a87f81cbe32f3437ac46cd74e7cc28e0c2252342c27138064324cbb22f23c015",
+  "calculator": "model.testbed.business:reference_calculate",
+  "calculator_sha256": "92c040465f646c894fa853dd2b8a2ba8918cac1940b21b73b1d572bfe4aeee83",
+  "python_version": "3.14.4",
+  "source_commit": "845a76db15854423eaeeafebade87833c3d5b20b",
+  "artifacts": {}
+}
