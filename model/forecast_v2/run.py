@@ -17,6 +17,7 @@ HERE = Path(__file__).resolve().parent
 PROTOCOL = json.loads((HERE / "protocol.json").read_text())
 VALIDATION = PROTOCOL["validation_origins"]
 EVALUATION = PROTOCOL["evaluation_origins"]
+PREDICTION_IMPLEMENTATION_FILES = ("data.py", "features.py", "methods.py")
 
 
 def write_json(path, value):
@@ -27,6 +28,19 @@ def write_json(path, value):
 
 def log(**value):
     print(json.dumps(value, ensure_ascii=False), flush=True)
+
+
+def prediction_implementation_hashes():
+    """Hashes of code that defines features, fitted values and transforms."""
+    return {name: sha256(HERE / name) for name in PREDICTION_IMPLEMENTATION_FILES}
+
+
+def verify_prediction_implementation(frozen):
+    recorded = frozen.get("implementation_sha256", {})
+    actual = prediction_implementation_hashes()
+    mismatches = [name for name, value in actual.items() if recorded.get(name) != value]
+    if mismatches:
+        raise ValueError("Prediction implementation differs from frozen selection: " + ", ".join(mismatches))
 
 
 def metrics(actual, predicted):
@@ -122,8 +136,10 @@ def select(args, state):
                     for weight in (.25, .5, .75):
                         predictions[f"blend:{name}:{weight}"] = weight * prediction + (1-weight) * simple.v1_baseline.to_numpy()
                 fits.append(fit)
+                score = metrics(current.target, prediction)
                 log(panel=panel.name, validation=origin, candidate=name,
-                    wape=round(metrics(current.target, prediction)["wape"], 5), seconds=round(time.monotonic()-started, 2))
+                    wape=None if score["wape"] is None else round(score["wape"], 5),
+                    seconds=round(time.monotonic()-started, 2))
             tables.append(score_rows(panel, current, predictions))
         table = pd.concat(tables, ignore_index=True)
         methods = list(predictions)
@@ -162,6 +178,7 @@ def read_selection(output, state):
         raise ValueError("Evaluation sources differ from frozen selection")
     if frozen["protocol_sha256"] != sha256(HERE / "protocol.json"):
         raise ValueError("Protocol changed after freeze")
+    verify_prediction_implementation(frozen)
     return frozen
 
 
@@ -240,7 +257,8 @@ def evaluate(args, state, frozen):
         unit_tables.setdefault(panel.unit, []).append(table)
     for unit, tables in unit_tables.items():
         report["by_unit"][unit] = summarize(pd.concat(tables, ignore_index=True), "selected")
-    report["threshold_achieved_all_panels"] = all(v["methods"]["selected"]["overall"]["wape"] <= .1 for v in report["panels"].values())
+    scores = [v["methods"]["selected"]["overall"]["wape"] for v in report["panels"].values()]
+    report["threshold_achieved_all_panels"] = bool(scores) and all(value is not None and value <= .1 for value in scores)
     write_json(args.output / "evaluation.json", report)
     return report
 
@@ -273,9 +291,12 @@ def fit_final(args, state, frozen):
 
 
 def infer(args, state, frozen):
+    verify_prediction_implementation(frozen)
     manifest = json.loads((args.output / "manifest.json").read_text())
     if manifest["selection_sha256"] != sha256(args.output / "selection.json"):
         raise ValueError("Model and selection mismatch")
+    if manifest.get("model_specs") != MODEL_SPECS:
+        raise ValueError("Saved model specifications differ from current implementation")
     results = []
     for panel in state["panels"]:
         entry = manifest["panels"][panel.name]

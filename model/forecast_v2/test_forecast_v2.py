@@ -10,7 +10,7 @@ from .data import Panel, load_panels
 from .features import features_at, monthly_projection, scoring_frame
 from .methods import (adaptive_predictions, fit_model, predict_model, simple_predictions,
                       save_model, load_model)
-from .run import metrics, score_rows
+from .run import metrics, score_rows, verify_prediction_implementation
 
 
 class TemporalTests(unittest.TestCase):
@@ -116,6 +116,11 @@ class TemporalTests(unittest.TestCase):
         pooled = metrics([1, 100], [2, 110])
         self.assertAlmostEqual(pooled['wape'], 11/101)
         self.assertEqual(pooled['mae'], 5.5)
+
+    def test_frozen_prediction_implementation_is_checked(self):
+        frozen = {'implementation_sha256': {name: 'wrong' for name in ('data.py', 'features.py', 'methods.py')}}
+        with self.assertRaisesRegex(ValueError, 'Prediction implementation differs'):
+            verify_prediction_implementation(frozen)
 
 
 class SourceTests(unittest.TestCase):

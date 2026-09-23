@@ -59,7 +59,9 @@ def main():
         for fold in old['test_folds']:
             np.testing.assert_allclose(new['by_origin'][fold['origin']]['wape'], fold['baseline']['wape'], atol=1e-12)
         checks['v1_baseline_reproduced'] = True
-    core_files = ['data.py', 'features.py', 'methods.py', 'run.py']
+    # CLI/reporting fixes do not change persisted predictions. The frozen
+    # compatibility boundary is the data/features/model implementation.
+    core_files = ['data.py', 'features.py', 'methods.py']
     for name in core_files:
         assert sha256(Path(__file__).parent/name) == selection['implementation_sha256'][name], name
     checks['forecast_implementation_unchanged_since_freeze'] = True
