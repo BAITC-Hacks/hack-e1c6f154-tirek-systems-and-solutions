@@ -8,14 +8,15 @@
 
 ## Воспроизведение
 
-Из корня worktree. Ниже использован проверенный интерпретатор Python 3.12 этой машины;
-на другой машине замените его своим Python 3.12:
+Из корня репозитория, Python 3.12 и bash (Linux / macOS / WSL).
+Замените `/path/to/partner-inputs` путём к каталогу с исходными файлами SE и IEK.
+Исходные XLSX не входят в Git; без них доступны сохранённые отчёты и тесты.
 
 ```bash
-/home/perricheno/Documents/Codex/2026-09-23/fdf/work/ml-runtime/bin/python -m venv /tmp/forecast-v2-venv
+python3.12 -m venv /tmp/forecast-v2-venv
 /tmp/forecast-v2-venv/bin/pip install -r model/forecast_v2/requirements.txt
 PYTHON=/tmp/forecast-v2-venv/bin/python bash model/forecast_v2/reproduce.sh \
-  '/home/perricheno/Documents/Codex/2026-09-23/fdf/work/inputs' \
+  '/path/to/partner-inputs' \
   /tmp/forecast-v2-private \
   /tmp/forecast-v2-reproduced
 ```
@@ -32,7 +33,7 @@ PYTHON=/tmp/forecast-v2-venv/bin/python bash model/forecast_v2/reproduce.sh \
 
 ```bash
 /tmp/forecast-v2-venv/bin/python -m model.forecast_v2.run infer \
-  --inputs '/home/perricheno/Documents/Codex/2026-09-23/fdf/work/inputs' \
+  --inputs '/path/to/partner-inputs' \
   --output model/forecast_v2/artifacts \
   --private /tmp/forecast-v2-private \
   --cache /tmp/forecast-v2-private/cache.pkl \
