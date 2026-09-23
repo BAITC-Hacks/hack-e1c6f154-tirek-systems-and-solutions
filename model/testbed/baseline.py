@@ -8,7 +8,7 @@ def forecast(request):
     cutoff = date.fromisoformat(request["as_of"])
     output = {}
     for item in request["items"]:
-        rows = item["history"]
+        rows = sorted(item["history"], key=lambda row: row["date"])
         clean = [r["observed_quantity"] / r["availability_fraction"] for r in rows
                  if r["availability_fraction"] and r["complete"]]
         typical = statistics.median(clean) if clean else 0
