@@ -1,0 +1,112 @@
+{
+  "version": "testbed-v4.0-full-fixes",
+  "protocol": {
+    "version": "testbed-v4.0-full-fixes",
+    "mode": "synthetic",
+    "development_seeds": [
+      101,
+      202,
+      303
+    ],
+    "final_seeds": [
+      909,
+      1337,
+      2027,
+      4099
+    ],
+    "origins": [
+      "2025-07-01",
+      "2026-04-01"
+    ],
+    "history_days": 560,
+    "horizon_days": 28,
+    "items_per_case": 4,
+    "forecast_target_wape": 0.1,
+    "project_forecast_tolerance_fraction": 0.1,
+    "project_quantity_tolerance_fraction": 0.1,
+    "project_minimum_batch": 1,
+    "baseline": {
+      "window_days": 56,
+      "client_window_days": 7,
+      "recurring_weeks": 3,
+      "project_daily_multiplier": 8
+    },
+    "default_adapter": "model.testbed.seasonal:forecast",
+    "candidate_selection": {
+      "methods": [
+        "mean56",
+        "mean168",
+        "seasonal_trend"
+      ],
+      "inner_origin_days_before_cutoff": [
+        84,
+        56,
+        28
+      ],
+      "inner_horizon_days": 28,
+      "selection_target": "observed sales on complete available historical days, exposure weighted predictions; no hidden truth",
+      "tie_break": "method list order",
+      "seasonal_features": "intercept, linear log trend, two annual Fourier harmonics; past weekday calibration"
+    },
+    "event_identifiers": "opaque 128-bit independent stream; no class/date/SKU suffix",
+    "history_support": "Recent complete positive exposure or explicitly supplied analogue within 168 days; otherwise explicit insufficient-data error, never invented zero demand",
+    "project_heuristic": "Promotion-normalized client episodes shorter than 7 days and above 8 typical daily units; purchases 7+ days apart are retained as recurring. Heuristic, not ground truth.",
+    "scenarios": [
+      "stable",
+      "seasonal_growth",
+      "intermittent",
+      "new_product",
+      "full_stockout",
+      "partial_stockout",
+      "single_project",
+      "split_project",
+      "recurring_client",
+      "known_promotion",
+      "demand_shock",
+      "combined"
+    ],
+    "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
+    "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",
+    "zero_denominator": "null (undefined); retain absolute error, zero-target count and row",
+    "failure_policy": "retain failed rows; aggregate metrics null if any prediction missing; never score only successful subset as complete",
+    "final_policy": "These final seeds were already inspected in v2. Freeze the corrected candidate before retrospective comparison, never call it an independent holdout and do not tune from the comparison. Historical v2 reproduction requires its original commit."
+  },
+  "files": {
+    "__init__.py": "7a4dfed39ef1fcc4015812018cb495188f99da91e1e182281f4fd3d73d0b5ab9",
+    "adapters.py": "8a06b8838bb32b222013fbac726dda8c2bcf0150f86770121216156cac7be285",
+    "baseline.py": "788017be5298812105955f2f23e0eabaeba0a397e2f11ee802a95ceb2017f49a",
+    "business.py": "31488d18ed412a054281dc8aff429e260ae4aa859035e14d9580d144f7bedd3d",
+    "correction_evidence.py": "76156bdcce61a6eddd67c7fbbf09a4aeb96a9c94cae72dd9ad311a05065f4a3c",
+    "full_evidence.py": "a52b50448b02312ec4e40945f98f996c2c6c21022c25b88207879d2d58d73499",
+    "generator.py": "57a10a33ed382e79a46726f1b021213ab098a979a6e36bd61c0d719bcaf36f03",
+    "metrics.py": "92580b5d7c6fdda2835ef9b761fe7a544c0bc04f55d868447c997fc5d2a61930",
+    "partner_io.py": "056ff9ceaf3402ff51dd6a682d83fbabee3c0e07a3060d60a8207421e4629c73",
+    "real_bridge.py": "00df213da32cedced95acc7abe777c936c00f228f72f310f448f889899cc9335",
+    "real_evidence.py": "ec12630e61831214d731d4553120c149758ed815e6c5e71fe783c001b92c25c8",
+    "replay_real.py": "82b6858fabf32a19ce3511a53798d05a55e70b50c2332cc4699bb922073a4d15",
+    "requirement_checks.py": "1d8282f47e32528604e079116fa89aaf4fa78b525a50f656a25d1f90394e1680",
+    "run.py": "354ebd87aa803f2254d0b0ade4b4e3d8fc9150d78804418c917f767b2a68b946",
+    "seasonal.py": "bbad629eca186d070bb3f829cfad24674e734bcae9856045c47b709759643585",
+    "source_inventory.py": "3e02e221df6556505f97698d6f39130eb772a8c7d2e4405d26ec545a91581c1d",
+    "tests/__init__.py": "385ef9baec426726bc8b4808673161bf1521b08890642d1859f9d0697f013694",
+    "tests/adapter_examples.py": "b46382f531aa232d78caeb8a781fe028fe61e7704c9c97bcd57cc4a3ba182edb",
+    "tests/test_boundary_corrections.py": "e1e1768b0d89fd4b70a2d2af719f341cb2e9bd6a71a1d1d19bbd38ebe178a273",
+    "tests/test_business_corrections.py": "a20f5e5bf87d32b133724c0e8bedbfd7a48af923727cd4dd0104c690715942b3",
+    "tests/test_business_full.py": "00c3bad393108ab1a91d1be7916f5111f0473b18f52738e9625c7aff63dcc0ac",
+    "tests/test_real_workflow.py": "c832082d9a836e22291c3abc9485f9d4fe624a3917d03b28cd49e8d1804ac08f",
+    "tests/test_requirement_corrections.py": "7853d4d94da9cecde94c2b061b91e850c568fbe13cb0d3ec90388d286e9c09cc",
+    "tests/test_seasonal_full.py": "137bb700e8f399fba8800ef7325f8f61ef0b189ee82aef3e4ae5cab2afef0cfd",
+    "tests/test_source_inventory.py": "0d5b669a274056740f0518944e8c3a8d5d852e28b54793abee44236487181583",
+    "tests/test_testbed.py": "a376cf56c32bb788b6ae34c740791d9e99834a926fe6c92c36d54a3eafd39f36",
+    "worker.py": "bab3ce7c702ee423490b54178013b380b47728aabd5f9f3597cb817b0598f230",
+    "protocol.json": "9b8f400f793a98aa77774544fa6d42b038dc1e49c6f5e63f2b12b76e59b0f821",
+    "fixtures/business_cases.json": "dc642d96a5cd925d5fdfb8c37d76230a7a28e5861d49802bede948a9ea5db78a"
+  },
+  "adapter": "model.testbed.seasonal:forecast",
+  "adapter_sha256": "bbad629eca186d070bb3f829cfad24674e734bcae9856045c47b709759643585",
+  "calculator": "model.testbed.business:reference_calculate",
+  "calculator_sha256": "31488d18ed412a054281dc8aff429e260ae4aa859035e14d9580d144f7bedd3d",
+  "python_version": "3.14.4",
+  "source_commit": "b9f8c3e50d73342753f428cf918144e2b4b7fc48",
+  "artifacts": {}
+}

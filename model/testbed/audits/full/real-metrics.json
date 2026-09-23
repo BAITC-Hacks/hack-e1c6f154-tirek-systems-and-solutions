@@ -1,0 +1,2403 @@
+{
+  "kind": "independent_real_observed_sales_recalculation",
+  "refitted": false,
+  "evaluation_status": "Previously inspected July/August windows, not an independent holdout",
+  "target": "Unaltered positive observed invoice shipments; returns excluded, not cleaned regular demand or net sales",
+  "target_tolerance_absolute_units": "0.000001",
+  "monthly_added_to_target": false,
+  "missing_stockout_or_clients_invented": false,
+  "selection_sha256": "66fa1ad2a803cc23af65a4d017608eba42f50de3b550bbe9248c384f1cd78a9a",
+  "sources": {
+    "SE": {
+      "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+      "counts": {
+        "input_rows": 77313,
+        "negative_rows": 302,
+        "excluded_valid_rows": 302,
+        "used_positive_invoice_rows": 76997,
+        "invalid_date_or_quantity_rows": 14
+      }
+    },
+    "IEK": {
+      "sha256": "7b0100a662eba816fd2e6a477ba56ca2a7846d3489ce1083821c94333ac30e4c",
+      "counts": {
+        "input_rows": 171604,
+        "negative_rows": 115,
+        "excluded_valid_rows": 115,
+        "used_positive_invoice_rows": 171470,
+        "invalid_date_or_quantity_rows": 19
+      }
+    }
+  },
+  "splits": {
+    "validation": {
+      "panels": {
+        "SE__pieces": {
+          "selected_method": "mix|cb_scaled_poisson|mean364|0.25",
+          "unit": "шт",
+          "prediction_sha256": "22835ce1f2335283096f08bb8e3fc0d4e35268e271a8270817b1e9fd9421ea82",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 1691,
+              "actual_quantity": 979932.0,
+              "predicted_quantity": 932179.5462860388,
+              "absolute_error": 254613.92630256506,
+              "mae": 150.57003329542582,
+              "wape": 0.2598281577727486,
+              "bias": -0.04873037487699265,
+              "bias_units": -47752.453713961164,
+              "zero_actual_rows": 709,
+              "absolute_error_on_zero_actual": 6385.057343114991
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 187,
+                "actual_quantity": 679370.0,
+                "predicted_quantity": 666144.8739564193,
+                "absolute_error": 156913.11181179664,
+                "mae": 839.107549795704,
+                "wape": 0.23096856177310837,
+                "bias": -0.019466750141426147,
+                "bias_units": -13225.126043580682,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "inactive": {
+                "sku_windows": 439,
+                "actual_quantity": 566.0,
+                "predicted_quantity": 1260.3054636790932,
+                "absolute_error": 1477.5996217678035,
+                "mae": 3.365830573502969,
+                "wape": 2.6106000384590167,
+                "bias": 1.2266880983729564,
+                "bias_units": 694.3054636790934,
+                "zero_actual_rows": 386,
+                "absolute_error_on_zero_actual": 863.8019475527899
+              },
+              "intermittent": {
+                "sku_windows": 950,
+                "actual_quantity": 102146.0,
+                "predicted_quantity": 78142.76268724263,
+                "absolute_error": 58587.403220043,
+                "mae": 61.670950757940005,
+                "wape": 0.5735653204241282,
+                "bias": -0.23498949848997877,
+                "bias_units": -24003.237312757374,
+                "zero_actual_rows": 304,
+                "absolute_error_on_zero_actual": 5460.758491031004
+              },
+              "new": {
+                "sku_windows": 25,
+                "actual_quantity": 14956.0,
+                "predicted_quantity": 11738.26768580275,
+                "absolute_error": 8175.609553119434,
+                "mae": 327.0243821247774,
+                "wape": 0.5466441263118103,
+                "bias": -0.21514658426031355,
+                "bias_units": -3217.7323141972497,
+                "zero_actual_rows": 19,
+                "absolute_error_on_zero_actual": 60.49690453119739
+              },
+              "regular": {
+                "sku_windows": 86,
+                "actual_quantity": 182850.0,
+                "predicted_quantity": 174893.33649289506,
+                "absolute_error": 29416.202095838173,
+                "mae": 342.04886157951364,
+                "wape": 0.16087613943581172,
+                "bias": -0.043514703347579724,
+                "bias_units": -7956.663507104952,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 4,
+                "actual_quantity": 44.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 44.0,
+                "mae": 11.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -44.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-05-04": {
+                "sku_windows": 563,
+                "actual_quantity": 265460.0,
+                "predicted_quantity": 310192.4651230101,
+                "absolute_error": 104616.01802879311,
+                "mae": 185.8188597314265,
+                "wape": 0.3940933399713445,
+                "bias": 0.1685092485610265,
+                "bias_units": 44732.46512301009,
+                "zero_actual_rows": 231,
+                "absolute_error_on_zero_actual": 1031.089090092117
+              },
+              "2026-06-01": {
+                "sku_windows": 563,
+                "actual_quantity": 332349.0,
+                "predicted_quantity": 303452.92290911946,
+                "absolute_error": 66044.2186866276,
+                "mae": 117.30767084658544,
+                "wape": 0.19871947466857912,
+                "bias": -0.08694497979798502,
+                "bias_units": -28896.07709088052,
+                "zero_actual_rows": 229,
+                "absolute_error_on_zero_actual": 966.83369601592
+              },
+              "2026-06-29": {
+                "sku_windows": 565,
+                "actual_quantity": 382123.0,
+                "predicted_quantity": 318534.15825390926,
+                "absolute_error": 83953.68958714434,
+                "mae": 148.59060103919353,
+                "wape": 0.21970331434418852,
+                "bias": -0.16640935443846808,
+                "bias_units": -63588.84174609074,
+                "zero_actual_rows": 249,
+                "absolute_error_on_zero_actual": 4387.134557006954
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 24,
+                "actual_quantity": 766795.0,
+                "predicted_quantity": 747424.3223424728,
+                "absolute_error": 152475.1850591959,
+                "mae": 6353.13271079983,
+                "wape": 0.1988473908400497,
+                "bias": -0.025261872674609505,
+                "bias_units": -19370.677657527194,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "B": {
+                "sku_windows": 114,
+                "actual_quantity": 169151.0,
+                "predicted_quantity": 142250.10251035288,
+                "absolute_error": 71371.14491398181,
+                "mae": 626.062674684051,
+                "wape": 0.42193746956259087,
+                "bias": -0.15903481202976694,
+                "bias_units": -26900.897489647108,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 3049.105519226749
+              },
+              "C": {
+                "sku_windows": 1549,
+                "actual_quantity": 43942.0,
+                "predicted_quantity": 42505.12143321314,
+                "absolute_error": 30723.596329387325,
+                "mae": 19.834471484433394,
+                "wape": 0.699185206166932,
+                "bias": -0.032699434863840075,
+                "bias_units": -1436.8785667868608,
+                "zero_actual_rows": 708,
+                "absolute_error_on_zero_actual": 3335.9518238882424
+              },
+              "unseen": {
+                "sku_windows": 4,
+                "actual_quantity": 44.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 44.0,
+                "mae": 11.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -44.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        },
+        "IEK__metres": {
+          "selected_method": "mix|cb_mae_d4|cb_scaled_mae_d6|0.25",
+          "unit": "м",
+          "prediction_sha256": "978bd9230003d5d6b36d8b5eca48a1e60f4a1ad1386c06d6ca2e51b2f894ceae",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 331,
+              "actual_quantity": 118237.0,
+              "predicted_quantity": 91730.04593128625,
+              "absolute_error": 50585.2135177729,
+              "mae": 152.8254184826976,
+              "wape": 0.4278289665483131,
+              "bias": -0.22418493423136374,
+              "bias_units": -26506.954068713752,
+              "zero_actual_rows": 132,
+              "absolute_error_on_zero_actual": 1810.2283465014395
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 60,
+                "actual_quantity": 94311.0,
+                "predicted_quantity": 71111.16129068843,
+                "absolute_error": 34798.9274780405,
+                "mae": 579.9821246340084,
+                "wape": 0.3689805799751938,
+                "bias": -0.2459929245720178,
+                "bias_units": -23199.83870931157,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 208.4950195989921
+              },
+              "inactive": {
+                "sku_windows": 66,
+                "actual_quantity": 407.0,
+                "predicted_quantity": 31.03480120722386,
+                "absolute_error": 421.28990234593357,
+                "mae": 6.383180338574751,
+                "wape": 1.035110325174284,
+                "bias": -0.9237474171812682,
+                "bias_units": -375.96519879277616,
+                "zero_actual_rows": 53,
+                "absolute_error_on_zero_actual": 22.662351776578713
+              },
+              "intermittent": {
+                "sku_windows": 195,
+                "actual_quantity": 21434.0,
+                "predicted_quantity": 17661.21776918393,
+                "absolute_error": 14515.3640671798,
+                "mae": 74.4377644470759,
+                "wape": 0.6772120960707194,
+                "bias": -0.17601857939796908,
+                "bias_units": -3772.7822308160694,
+                "zero_actual_rows": 73,
+                "absolute_error_on_zero_actual": 1575.3916138999577
+              },
+              "new": {
+                "sku_windows": 5,
+                "actual_quantity": 0.0,
+                "predicted_quantity": 3.6793612259108635,
+                "absolute_error": 3.6793612259108635,
+                "mae": 0.7358722451821726,
+                "wape": null,
+                "bias": null,
+                "bias_units": 3.6793612259108635,
+                "zero_actual_rows": 5,
+                "absolute_error_on_zero_actual": 3.6793612259108635
+              },
+              "regular": {
+                "sku_windows": 3,
+                "actual_quantity": 2081.0,
+                "predicted_quantity": 2922.95270898075,
+                "absolute_error": 841.9527089807499,
+                "mae": 280.6509029935833,
+                "wape": 0.40459044160535795,
+                "bias": 0.40459044160535795,
+                "bias_units": 841.9527089807499,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 2,
+                "actual_quantity": 4.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 4.0,
+                "mae": 2.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -4.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-05-04": {
+                "sku_windows": 109,
+                "actual_quantity": 30817.0,
+                "predicted_quantity": 25058.741126045377,
+                "absolute_error": 12000.571734594569,
+                "mae": 110.09698839077586,
+                "wape": 0.38941401611430604,
+                "bias": -0.18685332361860738,
+                "bias_units": -5758.258873954624,
+                "zero_actual_rows": 42,
+                "absolute_error_on_zero_actual": 216.23314405772166
+              },
+              "2026-06-01": {
+                "sku_windows": 111,
+                "actual_quantity": 44182.0,
+                "predicted_quantity": 27042.756916218088,
+                "absolute_error": 24097.341321059528,
+                "mae": 217.09316505459034,
+                "wape": 0.5454108306789989,
+                "bias": -0.3879236585890614,
+                "bias_units": -17139.243083781912,
+                "zero_actual_rows": 44,
+                "absolute_error_on_zero_actual": 940.8873840316534
+              },
+              "2026-06-29": {
+                "sku_windows": 111,
+                "actual_quantity": 43238.0,
+                "predicted_quantity": 39628.54788902278,
+                "absolute_error": 14487.300462118801,
+                "mae": 130.51622037944867,
+                "wape": 0.3350594491447061,
+                "bias": -0.08347870185894855,
+                "bias_units": -3609.452110977217,
+                "zero_actual_rows": 46,
+                "absolute_error_on_zero_actual": 653.1078184120645
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 37,
+                "actual_quantity": 100627.0,
+                "predicted_quantity": 77586.5213477931,
+                "absolute_error": 39370.31276831021,
+                "mae": 1064.0625072516273,
+                "wape": 0.3912499902442705,
+                "bias": -0.22896914995187082,
+                "bias_units": -23040.478652206904,
+                "zero_actual_rows": 2,
+                "absolute_error_on_zero_actual": 848.6289686881186
+              },
+              "B": {
+                "sku_windows": 61,
+                "actual_quantity": 13294.0,
+                "predicted_quantity": 11552.84396346177,
+                "absolute_error": 7846.6904273286045,
+                "mae": 128.63426930046893,
+                "wape": 0.5902429988963898,
+                "bias": -0.13097307330662172,
+                "bias_units": -1741.1560365382293,
+                "zero_actual_rows": 3,
+                "absolute_error_on_zero_actual": 507.96465489110125
+              },
+              "C": {
+                "sku_windows": 231,
+                "actual_quantity": 4312.0,
+                "predicted_quantity": 2590.6806200313804,
+                "absolute_error": 3364.210322134088,
+                "mae": 14.563681048199514,
+                "wape": 0.7801971990106883,
+                "bias": -0.39919280611517155,
+                "bias_units": -1721.3193799686196,
+                "zero_actual_rows": 127,
+                "absolute_error_on_zero_actual": 453.6347229222197
+              },
+              "unseen": {
+                "sku_windows": 2,
+                "actual_quantity": 4.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 4.0,
+                "mae": 2.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -4.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        },
+        "IEK__packs": {
+          "selected_method": "blend:cb_scaled_poisson:0.75",
+          "unit": "упак",
+          "prediction_sha256": "789853e137dd214760ec5f2461e1404d2045b689a59acbbd498b8d15cda03b9e",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 214,
+              "actual_quantity": 8652.0,
+              "predicted_quantity": 6985.778901671327,
+              "absolute_error": 3384.131875524367,
+              "mae": 15.813700352917602,
+              "wape": 0.391138681868281,
+              "bias": -0.1925821888960556,
+              "bias_units": -1666.221098328673,
+              "zero_actual_rows": 94,
+              "absolute_error_on_zero_actual": 127.8507377604624
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 17,
+                "actual_quantity": 1526.0,
+                "predicted_quantity": 1630.7244947010563,
+                "absolute_error": 847.1352689570423,
+                "mae": 49.83148640923778,
+                "wape": 0.5551345143886254,
+                "bias": 0.06862679862454539,
+                "bias_units": 104.72449470105627,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "inactive": {
+                "sku_windows": 51,
+                "actual_quantity": 124.0,
+                "predicted_quantity": 17.2297138304683,
+                "absolute_error": 134.28057360128605,
+                "mae": 2.632952423554628,
+                "wape": 1.0829078516232746,
+                "bias": -0.8610506949155782,
+                "bias_units": -106.7702861695317,
+                "zero_actual_rows": 42,
+                "absolute_error_on_zero_actual": 13.755143715877171
+              },
+              "intermittent": {
+                "sku_windows": 128,
+                "actual_quantity": 904.0,
+                "predicted_quantity": 744.0633724347961,
+                "absolute_error": 716.8738965875166,
+                "mae": 5.600577317089973,
+                "wape": 0.7930020979950404,
+                "bias": -0.1769210481915973,
+                "bias_units": -159.93662756520396,
+                "zero_actual_rows": 47,
+                "absolute_error_on_zero_actual": 111.5075459857197
+              },
+              "new": {
+                "sku_windows": 5,
+                "actual_quantity": 0.0,
+                "predicted_quantity": 2.588048058865519,
+                "absolute_error": 2.588048058865519,
+                "mae": 0.5176096117731037,
+                "wape": null,
+                "bias": null,
+                "bias_units": 2.588048058865519,
+                "zero_actual_rows": 5,
+                "absolute_error_on_zero_actual": 2.588048058865519
+              },
+              "regular": {
+                "sku_windows": 12,
+                "actual_quantity": 6097.0,
+                "predicted_quantity": 4591.1732726461405,
+                "absolute_error": 1682.2540883196566,
+                "mae": 140.1878406933047,
+                "wape": 0.27591505466945326,
+                "bias": -0.2469783052901196,
+                "bias_units": -1505.8267273538593,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 1,
+                "actual_quantity": 1.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 1.0,
+                "mae": 1.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -1.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-05-04": {
+                "sku_windows": 71,
+                "actual_quantity": 1935.0,
+                "predicted_quantity": 1900.4963051596096,
+                "absolute_error": 629.0957695494491,
+                "mae": 8.860503796471113,
+                "wape": 0.3251140927904129,
+                "bias": -0.017831366842578987,
+                "bias_units": -34.50369484039034,
+                "zero_actual_rows": 34,
+                "absolute_error_on_zero_actual": 59.15415342444877
+              },
+              "2026-06-01": {
+                "sku_windows": 71,
+                "actual_quantity": 3424.0,
+                "predicted_quantity": 2199.0931084296685,
+                "absolute_error": 1600.134523253455,
+                "mae": 22.537105961316264,
+                "wape": 0.4673290079595371,
+                "bias": -0.3577414987062884,
+                "bias_units": -1224.9068915703315,
+                "zero_actual_rows": 27,
+                "absolute_error_on_zero_actual": 23.757741706116562
+              },
+              "2026-06-29": {
+                "sku_windows": 72,
+                "actual_quantity": 3293.0,
+                "predicted_quantity": 2886.1894880820487,
+                "absolute_error": 1154.901582721463,
+                "mae": 16.040299760020318,
+                "wape": 0.35071411561538507,
+                "bias": -0.12353796292679964,
+                "bias_units": -406.8105119179512,
+                "zero_actual_rows": 33,
+                "absolute_error_on_zero_actual": 44.93884262989706
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 23,
+                "actual_quantity": 6948.0,
+                "predicted_quantity": 5787.109337969777,
+                "absolute_error": 2215.3675073068193,
+                "mae": 96.32032640464432,
+                "wape": 0.3188496700211312,
+                "bias": -0.1670827089853516,
+                "bias_units": -1160.8906620302228,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "B": {
+                "sku_windows": 24,
+                "actual_quantity": 1224.0,
+                "predicted_quantity": 858.7063822119527,
+                "absolute_error": 760.3940148721468,
+                "mae": 31.68308395300612,
+                "wape": 0.621236940255022,
+                "bias": -0.2984424981928491,
+                "bias_units": -365.29361778804736,
+                "zero_actual_rows": 2,
+                "absolute_error_on_zero_actual": 32.00712639802564
+              },
+              "C": {
+                "sku_windows": 166,
+                "actual_quantity": 479.0,
+                "predicted_quantity": 339.96318148959716,
+                "absolute_error": 407.3703533454008,
+                "mae": 2.454038273165065,
+                "wape": 0.850460027860962,
+                "bias": -0.29026475680668656,
+                "bias_units": -139.03681851040287,
+                "zero_actual_rows": 92,
+                "absolute_error_on_zero_actual": 95.84361136243676
+              },
+              "unseen": {
+                "sku_windows": 1,
+                "actual_quantity": 1.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 1.0,
+                "mae": 1.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -1.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        },
+        "IEK__pieces": {
+          "selected_method": "mix|cb_scaled_mae_d4|cb_scaled_poisson|0.75",
+          "unit": "шт",
+          "prediction_sha256": "282e301b39e19625d7201635af3a83814eaf246876ad245aa68fbf0972e94cf4",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 5734,
+              "actual_quantity": 358589.0,
+              "predicted_quantity": 320704.4786521399,
+              "absolute_error": 114464.54000505852,
+              "mae": 19.962424137610483,
+              "wape": 0.31920817427488996,
+              "bias": -0.10564886638424513,
+              "bias_units": -37884.52134786008,
+              "zero_actual_rows": 2882,
+              "absolute_error_on_zero_actual": 3806.6229373506294
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 390,
+                "actual_quantity": 95432.0,
+                "predicted_quantity": 76717.46250065586,
+                "absolute_error": 43758.13898767502,
+                "mae": 112.2003563786539,
+                "wape": 0.4585268986050278,
+                "bias": -0.19610337726699784,
+                "bias_units": -18714.537499344136,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 93.76591352159681
+              },
+              "inactive": {
+                "sku_windows": 1860,
+                "actual_quantity": 2151.0,
+                "predicted_quantity": 606.612802331174,
+                "absolute_error": 2400.7527047773283,
+                "mae": 1.290727260632972,
+                "wape": 1.1161100440619842,
+                "bias": -0.7179856799948052,
+                "bias_units": -1544.387197668826,
+                "zero_actual_rows": 1600,
+                "absolute_error_on_zero_actual": 422.8041120099637
+              },
+              "intermittent": {
+                "sku_windows": 3097,
+                "actual_quantity": 43422.0,
+                "predicted_quantity": 30189.871877527705,
+                "absolute_error": 33043.49622166919,
+                "mae": 10.669517669250627,
+                "wape": 0.7609851278538343,
+                "bias": -0.30473327167040426,
+                "bias_units": -13232.128122472293,
+                "zero_actual_rows": 1173,
+                "absolute_error_on_zero_actual": 3235.526491389053
+              },
+              "new": {
+                "sku_windows": 154,
+                "actual_quantity": 456.0,
+                "predicted_quantity": 106.42571527685604,
+                "absolute_error": 465.9670861272935,
+                "mae": 3.02576029952788,
+                "wape": 1.0218576450159944,
+                "bias": -0.7666102735156666,
+                "bias_units": -349.574284723144,
+                "zero_actual_rows": 108,
+                "absolute_error_on_zero_actual": 54.526420430016316
+              },
+              "regular": {
+                "sku_windows": 162,
+                "actual_quantity": 216482.0,
+                "predicted_quantity": 213084.10575634832,
+                "absolute_error": 34150.18500480968,
+                "mae": 210.8036111408005,
+                "wape": 0.15775069061081146,
+                "bias": -0.015695966609933748,
+                "bias_units": -3397.8942436516777,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 71,
+                "actual_quantity": 646.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 646.0,
+                "mae": 9.098591549295774,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -646.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-05-04": {
+                "sku_windows": 1884,
+                "actual_quantity": 107708.0,
+                "predicted_quantity": 96241.40807734473,
+                "absolute_error": 35836.96474214023,
+                "mae": 19.021743493705007,
+                "wape": 0.33272333291993383,
+                "bias": -0.1064599836841764,
+                "bias_units": -11466.591922655272,
+                "zero_actual_rows": 997,
+                "absolute_error_on_zero_actual": 1529.4060328291632
+              },
+              "2026-06-01": {
+                "sku_windows": 1913,
+                "actual_quantity": 121307.0,
+                "predicted_quantity": 105463.48022841297,
+                "absolute_error": 37399.881658741055,
+                "mae": 19.550382466670705,
+                "wape": 0.30830769583569834,
+                "bias": -0.13060680563847954,
+                "bias_units": -15843.519771587036,
+                "zero_actual_rows": 938,
+                "absolute_error_on_zero_actual": 1133.929159777893
+              },
+              "2026-06-29": {
+                "sku_windows": 1937,
+                "actual_quantity": 129574.0,
+                "predicted_quantity": 118999.59034638223,
+                "absolute_error": 41227.69360417723,
+                "mae": 21.28430232533672,
+                "wape": 0.3181787519423436,
+                "bias": -0.08160903926418703,
+                "bias_units": -10574.40965361777,
+                "zero_actual_rows": 947,
+                "absolute_error_on_zero_actual": 1143.2877447435733
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 211,
+                "actual_quantity": 283881.0,
+                "predicted_quantity": 266350.36871190794,
+                "absolute_error": 62179.99518779274,
+                "mae": 294.6919203212926,
+                "wape": 0.21903542395508238,
+                "bias": -0.06175345052360695,
+                "bias_units": -17530.631288092063,
+                "zero_actual_rows": 2,
+                "absolute_error_on_zero_actual": 1.0491827032838696
+              },
+              "B": {
+                "sku_windows": 736,
+                "actual_quantity": 55643.0,
+                "predicted_quantity": 42945.57350696217,
+                "absolute_error": 35375.59084553899,
+                "mae": 48.0646614749171,
+                "wape": 0.6357599490598815,
+                "bias": -0.22819449873367412,
+                "bias_units": -12697.426493037829,
+                "zero_actual_rows": 56,
+                "absolute_error_on_zero_actual": 1115.1905339454795
+              },
+              "C": {
+                "sku_windows": 4716,
+                "actual_quantity": 18419.0,
+                "predicted_quantity": 11408.536433269815,
+                "absolute_error": 16262.953971726787,
+                "mae": 3.4484635224187423,
+                "wape": 0.8829444579904874,
+                "bias": -0.3806104330707522,
+                "bias_units": -7010.4635667301845,
+                "zero_actual_rows": 2824,
+                "absolute_error_on_zero_actual": 2690.383220701866
+              },
+              "unseen": {
+                "sku_windows": 71,
+                "actual_quantity": 646.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 646.0,
+                "mae": 9.098591549295774,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -646.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        }
+      },
+      "by_unit": {
+        "шт": {
+          "overall": {
+            "sku_windows": 7425,
+            "actual_quantity": 1338521.0,
+            "predicted_quantity": 1252884.0249381787,
+            "absolute_error": 369078.4663076236,
+            "mae": 49.70753754984829,
+            "wape": 0.27573602977287887,
+            "bias": -0.06397880575786352,
+            "bias_units": -85636.97506182124,
+            "zero_actual_rows": 3591,
+            "absolute_error_on_zero_actual": 10191.680280465622
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 577,
+              "actual_quantity": 774802.0,
+              "predicted_quantity": 742862.3364570752,
+              "absolute_error": 200671.25079947166,
+              "mae": 347.7837968795003,
+              "wape": 0.2589968157019105,
+              "bias": -0.04122300089948763,
+              "bias_units": -31939.66354292482,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 93.76591352159681
+            },
+            "inactive": {
+              "sku_windows": 2299,
+              "actual_quantity": 2717.0,
+              "predicted_quantity": 1866.9182660102674,
+              "absolute_error": 3878.3523265451313,
+              "mae": 1.6869736087625626,
+              "wape": 1.4274392074144762,
+              "bias": -0.31287513212724793,
+              "bias_units": -850.0817339897327,
+              "zero_actual_rows": 1986,
+              "absolute_error_on_zero_actual": 1286.6060595627537
+            },
+            "intermittent": {
+              "sku_windows": 4047,
+              "actual_quantity": 145568.0,
+              "predicted_quantity": 108332.63456477033,
+              "absolute_error": 91630.8994417122,
+              "mae": 22.64168506096175,
+              "wape": 0.6294714459339429,
+              "bias": -0.25579361834489495,
+              "bias_units": -37235.365435229665,
+              "zero_actual_rows": 1477,
+              "absolute_error_on_zero_actual": 8696.284982420057
+            },
+            "new": {
+              "sku_windows": 179,
+              "actual_quantity": 15412.0,
+              "predicted_quantity": 11844.693401079607,
+              "absolute_error": 8641.576639246729,
+              "mae": 48.27696446506552,
+              "wape": 0.5607044276697851,
+              "bias": -0.23146292492346182,
+              "bias_units": -3567.3065989203938,
+              "zero_actual_rows": 127,
+              "absolute_error_on_zero_actual": 115.0233249612137
+            },
+            "regular": {
+              "sku_windows": 248,
+              "actual_quantity": 399332.0,
+              "predicted_quantity": 387977.4422492434,
+              "absolute_error": 63566.38710064786,
+              "mae": 256.31607701874134,
+              "wape": 0.15918180135989066,
+              "bias": -0.028433878954746,
+              "bias_units": -11354.55775075663,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "unseen": {
+              "sku_windows": 75,
+              "actual_quantity": 690.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 690.0,
+              "mae": 9.2,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -690.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-05-04": {
+              "sku_windows": 2447,
+              "actual_quantity": 373168.0,
+              "predicted_quantity": 406433.8732003548,
+              "absolute_error": 140452.98277093333,
+              "mae": 57.39803137349136,
+              "wape": 0.376380029292258,
+              "bias": 0.08914449577765195,
+              "bias_units": 33265.87320035482,
+              "zero_actual_rows": 1228,
+              "absolute_error_on_zero_actual": 2560.49512292128
+            },
+            "2026-06-01": {
+              "sku_windows": 2476,
+              "actual_quantity": 453656.0,
+              "predicted_quantity": 408916.40313753247,
+              "absolute_error": 103444.10034536866,
+              "mae": 41.77871580992272,
+              "wape": 0.2280232165900344,
+              "bias": -0.09862009289520597,
+              "bias_units": -44739.59686246756,
+              "zero_actual_rows": 1167,
+              "absolute_error_on_zero_actual": 2100.762855793813
+            },
+            "2026-06-29": {
+              "sku_windows": 2502,
+              "actual_quantity": 511697.0,
+              "predicted_quantity": 437533.7486002915,
+              "absolute_error": 125181.38319132157,
+              "mae": 50.03252725472485,
+              "wape": 0.24463966603541076,
+              "bias": -0.14493587298676464,
+              "bias_units": -74163.2513997085,
+              "zero_actual_rows": 1196,
+              "absolute_error_on_zero_actual": 5530.422301750527
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 235,
+              "actual_quantity": 1050676.0,
+              "predicted_quantity": 1013774.6910543807,
+              "absolute_error": 214655.18024698866,
+              "mae": 913.4262989233561,
+              "wape": 0.20430197344089773,
+              "bias": -0.03512149220655964,
+              "bias_units": -36901.30894561926,
+              "zero_actual_rows": 2,
+              "absolute_error_on_zero_actual": 1.0491827032838696
+            },
+            "B": {
+              "sku_windows": 850,
+              "actual_quantity": 224794.0,
+              "predicted_quantity": 185195.67601731507,
+              "absolute_error": 106746.7357595208,
+              "mae": 125.58439501120094,
+              "wape": 0.4748647017247827,
+              "bias": -0.17615382965152512,
+              "bias_units": -39598.32398268494,
+              "zero_actual_rows": 57,
+              "absolute_error_on_zero_actual": 4164.296053172228
+            },
+            "C": {
+              "sku_windows": 6265,
+              "actual_quantity": 62361.0,
+              "predicted_quantity": 53913.65786648296,
+              "absolute_error": 46986.55030111411,
+              "mae": 7.4998484119894835,
+              "wape": 0.7534605009719875,
+              "bias": -0.1354587343614927,
+              "bias_units": -8447.342133517046,
+              "zero_actual_rows": 3532,
+              "absolute_error_on_zero_actual": 6026.335044590109
+            },
+            "unseen": {
+              "sku_windows": 75,
+              "actual_quantity": 690.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 690.0,
+              "mae": 9.2,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -690.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          }
+        },
+        "м": {
+          "overall": {
+            "sku_windows": 331,
+            "actual_quantity": 118237.0,
+            "predicted_quantity": 91730.04593128625,
+            "absolute_error": 50585.2135177729,
+            "mae": 152.8254184826976,
+            "wape": 0.4278289665483131,
+            "bias": -0.22418493423136374,
+            "bias_units": -26506.954068713752,
+            "zero_actual_rows": 132,
+            "absolute_error_on_zero_actual": 1810.2283465014395
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 60,
+              "actual_quantity": 94311.0,
+              "predicted_quantity": 71111.16129068843,
+              "absolute_error": 34798.9274780405,
+              "mae": 579.9821246340084,
+              "wape": 0.3689805799751938,
+              "bias": -0.2459929245720178,
+              "bias_units": -23199.83870931157,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 208.4950195989921
+            },
+            "inactive": {
+              "sku_windows": 66,
+              "actual_quantity": 407.0,
+              "predicted_quantity": 31.03480120722386,
+              "absolute_error": 421.28990234593357,
+              "mae": 6.383180338574751,
+              "wape": 1.035110325174284,
+              "bias": -0.9237474171812682,
+              "bias_units": -375.96519879277616,
+              "zero_actual_rows": 53,
+              "absolute_error_on_zero_actual": 22.662351776578713
+            },
+            "intermittent": {
+              "sku_windows": 195,
+              "actual_quantity": 21434.0,
+              "predicted_quantity": 17661.21776918393,
+              "absolute_error": 14515.3640671798,
+              "mae": 74.4377644470759,
+              "wape": 0.6772120960707194,
+              "bias": -0.17601857939796908,
+              "bias_units": -3772.7822308160694,
+              "zero_actual_rows": 73,
+              "absolute_error_on_zero_actual": 1575.3916138999577
+            },
+            "new": {
+              "sku_windows": 5,
+              "actual_quantity": 0.0,
+              "predicted_quantity": 3.6793612259108635,
+              "absolute_error": 3.6793612259108635,
+              "mae": 0.7358722451821726,
+              "wape": null,
+              "bias": null,
+              "bias_units": 3.6793612259108635,
+              "zero_actual_rows": 5,
+              "absolute_error_on_zero_actual": 3.6793612259108635
+            },
+            "regular": {
+              "sku_windows": 3,
+              "actual_quantity": 2081.0,
+              "predicted_quantity": 2922.95270898075,
+              "absolute_error": 841.9527089807499,
+              "mae": 280.6509029935833,
+              "wape": 0.40459044160535795,
+              "bias": 0.40459044160535795,
+              "bias_units": 841.9527089807499,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "unseen": {
+              "sku_windows": 2,
+              "actual_quantity": 4.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 4.0,
+              "mae": 2.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -4.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-05-04": {
+              "sku_windows": 109,
+              "actual_quantity": 30817.0,
+              "predicted_quantity": 25058.741126045377,
+              "absolute_error": 12000.571734594569,
+              "mae": 110.09698839077586,
+              "wape": 0.38941401611430604,
+              "bias": -0.18685332361860738,
+              "bias_units": -5758.258873954624,
+              "zero_actual_rows": 42,
+              "absolute_error_on_zero_actual": 216.23314405772166
+            },
+            "2026-06-01": {
+              "sku_windows": 111,
+              "actual_quantity": 44182.0,
+              "predicted_quantity": 27042.756916218088,
+              "absolute_error": 24097.341321059528,
+              "mae": 217.09316505459034,
+              "wape": 0.5454108306789989,
+              "bias": -0.3879236585890614,
+              "bias_units": -17139.243083781912,
+              "zero_actual_rows": 44,
+              "absolute_error_on_zero_actual": 940.8873840316534
+            },
+            "2026-06-29": {
+              "sku_windows": 111,
+              "actual_quantity": 43238.0,
+              "predicted_quantity": 39628.54788902278,
+              "absolute_error": 14487.300462118801,
+              "mae": 130.51622037944867,
+              "wape": 0.3350594491447061,
+              "bias": -0.08347870185894855,
+              "bias_units": -3609.452110977217,
+              "zero_actual_rows": 46,
+              "absolute_error_on_zero_actual": 653.1078184120645
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 37,
+              "actual_quantity": 100627.0,
+              "predicted_quantity": 77586.5213477931,
+              "absolute_error": 39370.31276831021,
+              "mae": 1064.0625072516273,
+              "wape": 0.3912499902442705,
+              "bias": -0.22896914995187082,
+              "bias_units": -23040.478652206904,
+              "zero_actual_rows": 2,
+              "absolute_error_on_zero_actual": 848.6289686881186
+            },
+            "B": {
+              "sku_windows": 61,
+              "actual_quantity": 13294.0,
+              "predicted_quantity": 11552.84396346177,
+              "absolute_error": 7846.6904273286045,
+              "mae": 128.63426930046893,
+              "wape": 0.5902429988963898,
+              "bias": -0.13097307330662172,
+              "bias_units": -1741.1560365382293,
+              "zero_actual_rows": 3,
+              "absolute_error_on_zero_actual": 507.96465489110125
+            },
+            "C": {
+              "sku_windows": 231,
+              "actual_quantity": 4312.0,
+              "predicted_quantity": 2590.6806200313804,
+              "absolute_error": 3364.210322134088,
+              "mae": 14.563681048199514,
+              "wape": 0.7801971990106883,
+              "bias": -0.39919280611517155,
+              "bias_units": -1721.3193799686196,
+              "zero_actual_rows": 127,
+              "absolute_error_on_zero_actual": 453.6347229222197
+            },
+            "unseen": {
+              "sku_windows": 2,
+              "actual_quantity": 4.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 4.0,
+              "mae": 2.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -4.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          }
+        },
+        "упак": {
+          "overall": {
+            "sku_windows": 214,
+            "actual_quantity": 8652.0,
+            "predicted_quantity": 6985.778901671327,
+            "absolute_error": 3384.131875524367,
+            "mae": 15.813700352917602,
+            "wape": 0.391138681868281,
+            "bias": -0.1925821888960556,
+            "bias_units": -1666.221098328673,
+            "zero_actual_rows": 94,
+            "absolute_error_on_zero_actual": 127.8507377604624
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 17,
+              "actual_quantity": 1526.0,
+              "predicted_quantity": 1630.7244947010563,
+              "absolute_error": 847.1352689570423,
+              "mae": 49.83148640923778,
+              "wape": 0.5551345143886254,
+              "bias": 0.06862679862454539,
+              "bias_units": 104.72449470105627,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "inactive": {
+              "sku_windows": 51,
+              "actual_quantity": 124.0,
+              "predicted_quantity": 17.2297138304683,
+              "absolute_error": 134.28057360128605,
+              "mae": 2.632952423554628,
+              "wape": 1.0829078516232746,
+              "bias": -0.8610506949155782,
+              "bias_units": -106.7702861695317,
+              "zero_actual_rows": 42,
+              "absolute_error_on_zero_actual": 13.755143715877171
+            },
+            "intermittent": {
+              "sku_windows": 128,
+              "actual_quantity": 904.0,
+              "predicted_quantity": 744.0633724347961,
+              "absolute_error": 716.8738965875166,
+              "mae": 5.600577317089973,
+              "wape": 0.7930020979950404,
+              "bias": -0.1769210481915973,
+              "bias_units": -159.93662756520396,
+              "zero_actual_rows": 47,
+              "absolute_error_on_zero_actual": 111.5075459857197
+            },
+            "new": {
+              "sku_windows": 5,
+              "actual_quantity": 0.0,
+              "predicted_quantity": 2.588048058865519,
+              "absolute_error": 2.588048058865519,
+              "mae": 0.5176096117731037,
+              "wape": null,
+              "bias": null,
+              "bias_units": 2.588048058865519,
+              "zero_actual_rows": 5,
+              "absolute_error_on_zero_actual": 2.588048058865519
+            },
+            "regular": {
+              "sku_windows": 12,
+              "actual_quantity": 6097.0,
+              "predicted_quantity": 4591.1732726461405,
+              "absolute_error": 1682.2540883196566,
+              "mae": 140.1878406933047,
+              "wape": 0.27591505466945326,
+              "bias": -0.2469783052901196,
+              "bias_units": -1505.8267273538593,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "unseen": {
+              "sku_windows": 1,
+              "actual_quantity": 1.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 1.0,
+              "mae": 1.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -1.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-05-04": {
+              "sku_windows": 71,
+              "actual_quantity": 1935.0,
+              "predicted_quantity": 1900.4963051596096,
+              "absolute_error": 629.0957695494491,
+              "mae": 8.860503796471113,
+              "wape": 0.3251140927904129,
+              "bias": -0.017831366842578987,
+              "bias_units": -34.50369484039034,
+              "zero_actual_rows": 34,
+              "absolute_error_on_zero_actual": 59.15415342444877
+            },
+            "2026-06-01": {
+              "sku_windows": 71,
+              "actual_quantity": 3424.0,
+              "predicted_quantity": 2199.0931084296685,
+              "absolute_error": 1600.134523253455,
+              "mae": 22.537105961316264,
+              "wape": 0.4673290079595371,
+              "bias": -0.3577414987062884,
+              "bias_units": -1224.9068915703315,
+              "zero_actual_rows": 27,
+              "absolute_error_on_zero_actual": 23.757741706116562
+            },
+            "2026-06-29": {
+              "sku_windows": 72,
+              "actual_quantity": 3293.0,
+              "predicted_quantity": 2886.1894880820487,
+              "absolute_error": 1154.901582721463,
+              "mae": 16.040299760020318,
+              "wape": 0.35071411561538507,
+              "bias": -0.12353796292679964,
+              "bias_units": -406.8105119179512,
+              "zero_actual_rows": 33,
+              "absolute_error_on_zero_actual": 44.93884262989706
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 23,
+              "actual_quantity": 6948.0,
+              "predicted_quantity": 5787.109337969777,
+              "absolute_error": 2215.3675073068193,
+              "mae": 96.32032640464432,
+              "wape": 0.3188496700211312,
+              "bias": -0.1670827089853516,
+              "bias_units": -1160.8906620302228,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "B": {
+              "sku_windows": 24,
+              "actual_quantity": 1224.0,
+              "predicted_quantity": 858.7063822119527,
+              "absolute_error": 760.3940148721468,
+              "mae": 31.68308395300612,
+              "wape": 0.621236940255022,
+              "bias": -0.2984424981928491,
+              "bias_units": -365.29361778804736,
+              "zero_actual_rows": 2,
+              "absolute_error_on_zero_actual": 32.00712639802564
+            },
+            "C": {
+              "sku_windows": 166,
+              "actual_quantity": 479.0,
+              "predicted_quantity": 339.96318148959716,
+              "absolute_error": 407.3703533454008,
+              "mae": 2.454038273165065,
+              "wape": 0.850460027860962,
+              "bias": -0.29026475680668656,
+              "bias_units": -139.03681851040287,
+              "zero_actual_rows": 92,
+              "absolute_error_on_zero_actual": 95.84361136243676
+            },
+            "unseen": {
+              "sku_windows": 1,
+              "actual_quantity": 1.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 1.0,
+              "mae": 1.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -1.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          }
+        }
+      }
+    },
+    "evaluation": {
+      "panels": {
+        "SE__pieces": {
+          "selected_method": "mix|cb_scaled_poisson|mean364|0.25",
+          "unit": "шт",
+          "prediction_sha256": "f9b789b389c8d11cd60f9994f05c46e98c2c3f58b0e4c160b88fe6396ec2566d",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 1130,
+              "actual_quantity": 706307.0,
+              "predicted_quantity": 633610.6558978059,
+              "absolute_error": 239558.10006170458,
+              "mae": 211.9983186386766,
+              "wape": 0.33916993610668533,
+              "bias": -0.10292456977234267,
+              "bias_units": -72696.34410219402,
+              "zero_actual_rows": 442,
+              "absolute_error_on_zero_actual": 5690.81407330816
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 139,
+                "actual_quantity": 479280.0,
+                "predicted_quantity": 440250.3868737751,
+                "absolute_error": 154523.57652061197,
+                "mae": 1111.6804066231077,
+                "wape": 0.3224077293452929,
+                "bias": -0.08143384478013876,
+                "bias_units": -39029.61312622491,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "inactive": {
+                "sku_windows": 296,
+                "actual_quantity": 173.0,
+                "predicted_quantity": 646.4686800618691,
+                "absolute_error": 746.0862748396256,
+                "mae": 2.5205617393230595,
+                "wape": 4.312637426818645,
+                "bias": 2.7368131795483768,
+                "bias_units": 473.4686800618692,
+                "zero_actual_rows": 259,
+                "absolute_error_on_zero_actual": 604.0434102036118
+              },
+              "intermittent": {
+                "sku_windows": 619,
+                "actual_quantity": 61893.0,
+                "predicted_quantity": 61954.26635021282,
+                "absolute_error": 37480.18028120369,
+                "mae": 60.549564266888034,
+                "wape": 0.6055641232644029,
+                "bias": 0.0009898752720472255,
+                "bias_units": 61.266350212818935,
+                "zero_actual_rows": 177,
+                "absolute_error_on_zero_actual": 5077.394294137612
+              },
+              "new": {
+                "sku_windows": 6,
+                "actual_quantity": 0.0,
+                "predicted_quantity": 9.37636896693708,
+                "absolute_error": 9.37636896693708,
+                "mae": 1.5627281611561803,
+                "wape": null,
+                "bias": null,
+                "bias_units": 9.37636896693708,
+                "zero_actual_rows": 6,
+                "absolute_error_on_zero_actual": 9.37636896693708
+              },
+              "regular": {
+                "sku_windows": 70,
+                "actual_quantity": 164961.0,
+                "predicted_quantity": 130750.15762478925,
+                "absolute_error": 46798.88061608235,
+                "mae": 668.5554373726051,
+                "wape": 0.28369663505969506,
+                "bias": -0.20738745749122972,
+                "bias_units": -34210.84237521075,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-07-27": {
+                "sku_windows": 565,
+                "actual_quantity": 287581.0,
+                "predicted_quantity": 338856.66445535375,
+                "absolute_error": 87883.09482886868,
+                "mae": 155.54530058206845,
+                "wape": 0.3055942319863575,
+                "bias": 0.17829990317633546,
+                "bias_units": 51275.664455353726,
+                "zero_actual_rows": 208,
+                "absolute_error_on_zero_actual": 2057.2770635168763
+              },
+              "2026-08-24": {
+                "sku_windows": 565,
+                "actual_quantity": 418726.0,
+                "predicted_quantity": 294753.99144245224,
+                "absolute_error": 151675.00523283592,
+                "mae": 268.4513366952848,
+                "wape": 0.36222972834941203,
+                "bias": -0.29606952651029017,
+                "bias_units": -123972.00855754776,
+                "zero_actual_rows": 234,
+                "absolute_error_on_zero_actual": 3633.5370097912837
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 17,
+                "actual_quantity": 578768.0,
+                "predicted_quantity": 507849.8282006344,
+                "absolute_error": 185526.58178691802,
+                "mae": 10913.328340406943,
+                "wape": 0.3205543184607961,
+                "bias": -0.12253298696432008,
+                "bias_units": -70918.1717993656,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "B": {
+                "sku_windows": 71,
+                "actual_quantity": 89845.0,
+                "predicted_quantity": 96099.76694865603,
+                "absolute_error": 32659.85898126659,
+                "mae": 459.9980138206562,
+                "wape": 0.36351337282282364,
+                "bias": 0.06961730701381309,
+                "bias_units": 6254.766948656038,
+                "zero_actual_rows": 3,
+                "absolute_error_on_zero_actual": 4101.716803870826
+              },
+              "C": {
+                "sku_windows": 1042,
+                "actual_quantity": 37694.0,
+                "predicted_quantity": 29661.060748515538,
+                "absolute_error": 21371.65929351998,
+                "mae": 20.51022964829173,
+                "wape": 0.5669777496025887,
+                "bias": -0.2131092282985213,
+                "bias_units": -8032.939251484462,
+                "zero_actual_rows": 439,
+                "absolute_error_on_zero_actual": 1589.0972694373345
+              }
+            }
+          }
+        },
+        "IEK__metres": {
+          "selected_method": "mix|cb_mae_d4|cb_scaled_mae_d6|0.25",
+          "unit": "м",
+          "prediction_sha256": "3148e42956904a221aeaa21fe33cc3325d2936c7c687911fbdca80306fee245c",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 223,
+              "actual_quantity": 101295.0,
+              "predicted_quantity": 91699.32410830744,
+              "absolute_error": 57369.09554922071,
+              "mae": 257.2605181579404,
+              "wape": 0.5663566370425066,
+              "bias": -0.09473000534767331,
+              "bias_units": -9595.675891692568,
+              "zero_actual_rows": 93,
+              "absolute_error_on_zero_actual": 1488.6685730935365
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 44,
+                "actual_quantity": 84171.0,
+                "predicted_quantity": 79197.92388084046,
+                "absolute_error": 46554.13907755938,
+                "mae": 1058.0486153990769,
+                "wape": 0.5530900081686018,
+                "bias": -0.059083011003309135,
+                "bias_units": -4973.076119159533,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "inactive": {
+                "sku_windows": 50,
+                "actual_quantity": 518.0,
+                "predicted_quantity": 47.97972270489246,
+                "absolute_error": 552.3844171719397,
+                "mae": 11.047688343438795,
+                "wape": 1.0663791837296133,
+                "bias": -0.9073750526932578,
+                "bias_units": -470.0202772951075,
+                "zero_actual_rows": 45,
+                "absolute_error_on_zero_actual": 41.182069938416085
+              },
+              "intermittent": {
+                "sku_windows": 123,
+                "actual_quantity": 16580.0,
+                "predicted_quantity": 12449.246049053794,
+                "absolute_error": 10240.70534265864,
+                "mae": 83.25776701348488,
+                "wape": 0.6176541219938867,
+                "bias": -0.2491407690558628,
+                "bias_units": -4130.753950946206,
+                "zero_actual_rows": 44,
+                "absolute_error_on_zero_actual": 1447.4659193856098
+              },
+              "new": {
+                "sku_windows": 4,
+                "actual_quantity": 0.0,
+                "predicted_quantity": 0.020583769510407635,
+                "absolute_error": 0.020583769510407635,
+                "mae": 0.005145942377601909,
+                "wape": null,
+                "bias": null,
+                "bias_units": 0.020583769510407635,
+                "zero_actual_rows": 4,
+                "absolute_error_on_zero_actual": 0.020583769510407635
+              },
+              "regular": {
+                "sku_windows": 1,
+                "actual_quantity": 25.0,
+                "predicted_quantity": 4.15387193876788,
+                "absolute_error": 20.84612806123212,
+                "mae": 20.84612806123212,
+                "wape": 0.8338451224492848,
+                "bias": -0.8338451224492848,
+                "bias_units": -20.84612806123212,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 1,
+                "actual_quantity": 1.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 1.0,
+                "mae": 1.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -1.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-07-27": {
+                "sku_windows": 111,
+                "actual_quantity": 61815.0,
+                "predicted_quantity": 41304.11442848498,
+                "absolute_error": 30184.496487130153,
+                "mae": 271.9324007849563,
+                "wape": 0.4883037529261531,
+                "bias": -0.3318108156841385,
+                "bias_units": -20510.885571515024,
+                "zero_actual_rows": 49,
+                "absolute_error_on_zero_actual": 529.4870379137624
+              },
+              "2026-08-24": {
+                "sku_windows": 112,
+                "actual_quantity": 39480.0,
+                "predicted_quantity": 50395.20967982245,
+                "absolute_error": 27184.59906209055,
+                "mae": 242.71963448295136,
+                "wape": 0.6885663389587272,
+                "bias": 0.27647440931667816,
+                "bias_units": 10915.209679822454,
+                "zero_actual_rows": 44,
+                "absolute_error_on_zero_actual": 959.181535179774
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 23,
+                "actual_quantity": 87828.0,
+                "predicted_quantity": 81391.79687040574,
+                "absolute_error": 48807.45875258901,
+                "mae": 2122.063424025609,
+                "wape": 0.5557163860339414,
+                "bias": -0.07328190474101952,
+                "bias_units": -6436.2031295942625,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 884.5614673956302
+              },
+              "B": {
+                "sku_windows": 42,
+                "actual_quantity": 9635.0,
+                "predicted_quantity": 8118.856111385564,
+                "absolute_error": 5720.5336471755345,
+                "mae": 136.20318207560797,
+                "wape": 0.5937243017307249,
+                "bias": -0.15735795418935505,
+                "bias_units": -1516.143888614436,
+                "zero_actual_rows": 3,
+                "absolute_error_on_zero_actual": 333.02733420180533
+              },
+              "C": {
+                "sku_windows": 157,
+                "actual_quantity": 3831.0,
+                "predicted_quantity": 2188.6711265161302,
+                "absolute_error": 2840.103149456163,
+                "mae": 18.08982897742779,
+                "wape": 0.7413477289105098,
+                "bias": -0.4286945636867318,
+                "bias_units": -1642.3288734838698,
+                "zero_actual_rows": 89,
+                "absolute_error_on_zero_actual": 271.0797714961008
+              },
+              "unseen": {
+                "sku_windows": 1,
+                "actual_quantity": 1.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 1.0,
+                "mae": 1.0,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -1.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        },
+        "IEK__packs": {
+          "selected_method": "blend:cb_scaled_poisson:0.75",
+          "unit": "упак",
+          "prediction_sha256": "a0243963332078c5a2ec242016456156b3870f69d266b5a12d5c495c1ee5e148",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 144,
+              "actual_quantity": 7374.0,
+              "predicted_quantity": 6939.675650738981,
+              "absolute_error": 1983.1354298840358,
+              "mae": 13.771773818639138,
+              "wape": 0.26893618522973095,
+              "bias": -0.05889942355045013,
+              "bias_units": -434.3243492610192,
+              "zero_actual_rows": 48,
+              "absolute_error_on_zero_actual": 195.10534405855404
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 12,
+                "actual_quantity": 1636.0,
+                "predicted_quantity": 1457.709444154928,
+                "absolute_error": 709.0439862112089,
+                "mae": 59.08699885093407,
+                "wape": 0.43340096956675356,
+                "bias": -0.10897955736251344,
+                "bias_units": -178.290555845072,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 114.39933025352036
+              },
+              "inactive": {
+                "sku_windows": 34,
+                "actual_quantity": 35.0,
+                "predicted_quantity": 14.78670648860314,
+                "absolute_error": 42.093640874902405,
+                "mae": 1.2380482610265413,
+                "wape": 1.2026754535686401,
+                "bias": -0.577522671754196,
+                "bias_units": -20.21329351139686,
+                "zero_actual_rows": 26,
+                "absolute_error_on_zero_actual": 10.940173681752771
+              },
+              "intermittent": {
+                "sku_windows": 88,
+                "actual_quantity": 608.0,
+                "predicted_quantity": 497.3924624292491,
+                "absolute_error": 536.6582699418088,
+                "mae": 6.098389431156919,
+                "wape": 0.8826616281937646,
+                "bias": -0.18192029205715607,
+                "bias_units": -110.60753757075088,
+                "zero_actual_rows": 19,
+                "absolute_error_on_zero_actual": 69.02487174412975
+              },
+              "new": {
+                "sku_windows": 2,
+                "actual_quantity": 0.0,
+                "predicted_quantity": 0.7409683791511542,
+                "absolute_error": 0.7409683791511542,
+                "mae": 0.3704841895755771,
+                "wape": null,
+                "bias": null,
+                "bias_units": 0.7409683791511542,
+                "zero_actual_rows": 2,
+                "absolute_error_on_zero_actual": 0.7409683791511542
+              },
+              "regular": {
+                "sku_windows": 8,
+                "actual_quantity": 5095.0,
+                "predicted_quantity": 4969.046069287049,
+                "absolute_error": 694.5985644769646,
+                "mae": 86.82482055962058,
+                "wape": 0.13632945328301563,
+                "bias": -0.024721085517752824,
+                "bias_units": -125.95393071295064,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-07-27": {
+                "sku_windows": 72,
+                "actual_quantity": 3874.0,
+                "predicted_quantity": 3159.728501242188,
+                "absolute_error": 1125.1667431344667,
+                "mae": 15.627315876867593,
+                "wape": 0.29044056353496817,
+                "bias": -0.1843757095399618,
+                "bias_units": -714.2714987578121,
+                "zero_actual_rows": 20,
+                "absolute_error_on_zero_actual": 27.408856945831747
+              },
+              "2026-08-24": {
+                "sku_windows": 72,
+                "actual_quantity": 3500.0,
+                "predicted_quantity": 3779.947149496793,
+                "absolute_error": 857.9686867495692,
+                "mae": 11.916231760410684,
+                "wape": 0.24513391049987693,
+                "bias": 0.07998489985622652,
+                "bias_units": 279.9471494967928,
+                "zero_actual_rows": 28,
+                "absolute_error_on_zero_actual": 167.69648711272228
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 16,
+                "actual_quantity": 6116.0,
+                "predicted_quantity": 6023.106016552872,
+                "absolute_error": 1071.4894455604674,
+                "mae": 66.96809034752921,
+                "wape": 0.1751944809614891,
+                "bias": -0.015188682708817616,
+                "bias_units": -92.89398344712853,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 114.39933025352036
+              },
+              "B": {
+                "sku_windows": 16,
+                "actual_quantity": 797.0,
+                "predicted_quantity": 633.8448350185721,
+                "absolute_error": 529.4581348493538,
+                "mae": 33.09113342808461,
+                "wape": 0.6643138454822506,
+                "bias": -0.20471162481985936,
+                "bias_units": -163.1551649814279,
+                "zero_actual_rows": 2,
+                "absolute_error_on_zero_actual": 40.97729464370026
+              },
+              "C": {
+                "sku_windows": 112,
+                "actual_quantity": 461.0,
+                "predicted_quantity": 282.72479916753724,
+                "absolute_error": 382.1878494742149,
+                "mae": 3.412391513162633,
+                "wape": 0.829040888230401,
+                "bias": -0.3867141015888564,
+                "bias_units": -178.2752008324628,
+                "zero_actual_rows": 45,
+                "absolute_error_on_zero_actual": 39.728719161333416
+              }
+            }
+          }
+        },
+        "IEK__pieces": {
+          "selected_method": "mix|cb_scaled_mae_d4|cb_scaled_poisson|0.75",
+          "unit": "шт",
+          "prediction_sha256": "c136985387b0273264be2ecdf8ccdc9bc190c3c28c4deaaf698ed7bd086918bd",
+          "raw_targets_and_row_universe_verified": true,
+          "metrics": {
+            "overall": {
+              "sku_windows": 3912,
+              "actual_quantity": 291438.0,
+              "predicted_quantity": 247827.76053834162,
+              "absolute_error": 97051.80002302091,
+              "mae": 24.808742337173033,
+              "wape": 0.3330101085754806,
+              "bias": -0.14963813731105197,
+              "bias_units": -43610.23946165836,
+              "zero_actual_rows": 1993,
+              "absolute_error_on_zero_actual": 2795.608021364352
+            },
+            "by_group": {
+              "erratic": {
+                "sku_windows": 286,
+                "actual_quantity": 73347.0,
+                "predicted_quantity": 59070.34778910778,
+                "absolute_error": 34376.30528077539,
+                "mae": 120.19687161110275,
+                "wape": 0.4686804542895468,
+                "bias": -0.19464534624309404,
+                "bias_units": -14276.65221089222,
+                "zero_actual_rows": 1,
+                "absolute_error_on_zero_actual": 8.838243251415738
+              },
+              "inactive": {
+                "sku_windows": 1216,
+                "actual_quantity": 666.0,
+                "predicted_quantity": 388.0665331777346,
+                "absolute_error": 899.2251025661917,
+                "mae": 0.7394943277682497,
+                "wape": 1.3501878416909785,
+                "bias": -0.4173175177511492,
+                "bias_units": -277.9334668222654,
+                "zero_actual_rows": 1099,
+                "absolute_error_on_zero_actual": 302.92497236284436
+              },
+              "intermittent": {
+                "sku_windows": 2146,
+                "actual_quantity": 24680.0,
+                "predicted_quantity": 20945.734707259493,
+                "absolute_error": 19666.21565030319,
+                "mae": 9.164126584484245,
+                "wape": 0.7968482840479413,
+                "bias": -0.1513073457350287,
+                "bias_units": -3734.265292740508,
+                "zero_actual_rows": 806,
+                "absolute_error_on_zero_actual": 2373.2714683713743
+              },
+              "new": {
+                "sku_windows": 130,
+                "actual_quantity": 721.0,
+                "predicted_quantity": 432.79148993094987,
+                "absolute_error": 568.5681861929962,
+                "mae": 4.373601432253817,
+                "wape": 0.7885827825145578,
+                "bias": -0.39973441063668536,
+                "bias_units": -288.20851006905013,
+                "zero_actual_rows": 87,
+                "absolute_error_on_zero_actual": 110.57333737871751
+              },
+              "regular": {
+                "sku_windows": 106,
+                "actual_quantity": 191899.0,
+                "predicted_quantity": 166990.8200188657,
+                "absolute_error": 41416.485803183146,
+                "mae": 390.7215641809731,
+                "wape": 0.21582439618332114,
+                "bias": -0.12979838342635616,
+                "bias_units": -24908.179981134323,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "unseen": {
+                "sku_windows": 28,
+                "actual_quantity": 125.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 125.0,
+                "mae": 4.464285714285714,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -125.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            },
+            "by_origin": {
+              "2026-07-27": {
+                "sku_windows": 1947,
+                "actual_quantity": 141673.0,
+                "predicted_quantity": 122097.57215034637,
+                "absolute_error": 43166.80148751011,
+                "mae": 22.170930399337497,
+                "wape": 0.3046932124505735,
+                "bias": -0.13817331354353776,
+                "bias_units": -19575.427849653628,
+                "zero_actual_rows": 993,
+                "absolute_error_on_zero_actual": 1572.9311543686458
+              },
+              "2026-08-24": {
+                "sku_windows": 1965,
+                "actual_quantity": 149765.0,
+                "predicted_quantity": 125730.18838799527,
+                "absolute_error": 53884.99853551081,
+                "mae": 27.42239111221924,
+                "wape": 0.35979700554542654,
+                "bias": -0.16048350156581803,
+                "bias_units": -24034.811612004738,
+                "zero_actual_rows": 1000,
+                "absolute_error_on_zero_actual": 1222.6768669957064
+              }
+            },
+            "by_abc": {
+              "A": {
+                "sku_windows": 153,
+                "actual_quantity": 242975.0,
+                "predicted_quantity": 208821.2354935359,
+                "absolute_error": 64871.66234297659,
+                "mae": 423.9977930913503,
+                "wape": 0.2669890414362654,
+                "bias": -0.14056493263283917,
+                "bias_units": -34153.7645064641,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              },
+              "B": {
+                "sku_windows": 506,
+                "actual_quantity": 36161.0,
+                "predicted_quantity": 30695.955379434978,
+                "absolute_error": 21630.096941918076,
+                "mae": 42.74722715794086,
+                "wape": 0.5981609176161632,
+                "bias": -0.15113090402823542,
+                "bias_units": -5465.044620565021,
+                "zero_actual_rows": 43,
+                "absolute_error_on_zero_actual": 881.7151888026618
+              },
+              "C": {
+                "sku_windows": 3225,
+                "actual_quantity": 12177.0,
+                "predicted_quantity": 8310.569665370756,
+                "absolute_error": 10425.040738126245,
+                "mae": 3.2325707715120138,
+                "wape": 0.856125543083374,
+                "bias": -0.3175191208531858,
+                "bias_units": -3866.4303346292436,
+                "zero_actual_rows": 1950,
+                "absolute_error_on_zero_actual": 1913.8928325616903
+              },
+              "unseen": {
+                "sku_windows": 28,
+                "actual_quantity": 125.0,
+                "predicted_quantity": 0.0,
+                "absolute_error": 125.0,
+                "mae": 4.464285714285714,
+                "wape": 1.0,
+                "bias": -1.0,
+                "bias_units": -125.0,
+                "zero_actual_rows": 0,
+                "absolute_error_on_zero_actual": 0.0
+              }
+            }
+          }
+        }
+      },
+      "by_unit": {
+        "шт": {
+          "overall": {
+            "sku_windows": 5042,
+            "actual_quantity": 997745.0,
+            "predicted_quantity": 881438.4164361476,
+            "absolute_error": 336609.90008472546,
+            "mae": 66.76118605409073,
+            "wape": 0.33737067094771256,
+            "bias": -0.11656944766834451,
+            "bias_units": -116306.5835638524,
+            "zero_actual_rows": 2435,
+            "absolute_error_on_zero_actual": 8486.422094672513
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 425,
+              "actual_quantity": 552627.0,
+              "predicted_quantity": 499320.73466288287,
+              "absolute_error": 188899.88180138735,
+              "mae": 444.47031012091145,
+              "wape": 0.3418216659725047,
+              "bias": -0.09645975556228184,
+              "bias_units": -53306.265337117125,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 8.838243251415738
+            },
+            "inactive": {
+              "sku_windows": 1512,
+              "actual_quantity": 839.0,
+              "predicted_quantity": 1034.5352132396038,
+              "absolute_error": 1645.3113774058172,
+              "mae": 1.0881689004006727,
+              "wape": 1.9610385904717726,
+              "bias": 0.23305746512467673,
+              "bias_units": 195.5352132396038,
+              "zero_actual_rows": 1358,
+              "absolute_error_on_zero_actual": 906.9683825664561
+            },
+            "intermittent": {
+              "sku_windows": 2765,
+              "actual_quantity": 86573.0,
+              "predicted_quantity": 82900.00105747231,
+              "absolute_error": 57146.39593150688,
+              "mae": 20.66777429710918,
+              "wape": 0.6600949017766149,
+              "bias": -0.042426610404256396,
+              "bias_units": -3672.998942527689,
+              "zero_actual_rows": 983,
+              "absolute_error_on_zero_actual": 7450.665762508986
+            },
+            "new": {
+              "sku_windows": 136,
+              "actual_quantity": 721.0,
+              "predicted_quantity": 442.16785889788696,
+              "absolute_error": 577.9445551599333,
+              "mae": 4.249592317352451,
+              "wape": 0.8015874551455385,
+              "bias": -0.38672973800570465,
+              "bias_units": -278.83214110211304,
+              "zero_actual_rows": 93,
+              "absolute_error_on_zero_actual": 119.94970634565459
+            },
+            "regular": {
+              "sku_windows": 176,
+              "actual_quantity": 356860.0,
+              "predicted_quantity": 297740.9776436549,
+              "absolute_error": 88215.3664192655,
+              "mae": 501.2236728367358,
+              "wape": 0.2471988074294275,
+              "bias": -0.165664468857101,
+              "bias_units": -59119.02235634507,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "unseen": {
+              "sku_windows": 28,
+              "actual_quantity": 125.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 125.0,
+              "mae": 4.464285714285714,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -125.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-07-27": {
+              "sku_windows": 2512,
+              "actual_quantity": 429254.0,
+              "predicted_quantity": 460954.2366057001,
+              "absolute_error": 131049.89631637878,
+              "mae": 52.16954471193423,
+              "wape": 0.30529685528004114,
+              "bias": 0.07384960094885569,
+              "bias_units": 31700.236605700098,
+              "zero_actual_rows": 1201,
+              "absolute_error_on_zero_actual": 3630.208217885522
+            },
+            "2026-08-24": {
+              "sku_windows": 2530,
+              "actual_quantity": 568491.0,
+              "predicted_quantity": 420484.1798304475,
+              "absolute_error": 205560.0037683467,
+              "mae": 81.2490133471726,
+              "wape": 0.3615888444466961,
+              "bias": -0.2603503312621528,
+              "bias_units": -148006.8201695525,
+              "zero_actual_rows": 1234,
+              "absolute_error_on_zero_actual": 4856.21387678699
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 170,
+              "actual_quantity": 821743.0,
+              "predicted_quantity": 716671.0636941703,
+              "absolute_error": 250398.2441298946,
+              "mae": 1472.9308478229093,
+              "wape": 0.3047160050403771,
+              "bias": -0.1278647171996959,
+              "bias_units": -105071.9363058297,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "B": {
+              "sku_windows": 577,
+              "actual_quantity": 126006.0,
+              "predicted_quantity": 126795.72232809101,
+              "absolute_error": 54289.955923184665,
+              "mae": 94.09004492752975,
+              "wape": 0.43085214928800747,
+              "bias": 0.00626733907981379,
+              "bias_units": 789.7223280910165,
+              "zero_actual_rows": 46,
+              "absolute_error_on_zero_actual": 4983.431992673488
+            },
+            "C": {
+              "sku_windows": 4267,
+              "actual_quantity": 49871.0,
+              "predicted_quantity": 37971.6304138863,
+              "absolute_error": 31796.700031646225,
+              "mae": 7.451769400432675,
+              "wape": 0.6375789543351091,
+              "bias": -0.2386029874298431,
+              "bias_units": -11899.369586113706,
+              "zero_actual_rows": 2389,
+              "absolute_error_on_zero_actual": 3502.990101999025
+            },
+            "unseen": {
+              "sku_windows": 28,
+              "actual_quantity": 125.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 125.0,
+              "mae": 4.464285714285714,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -125.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          }
+        },
+        "м": {
+          "overall": {
+            "sku_windows": 223,
+            "actual_quantity": 101295.0,
+            "predicted_quantity": 91699.32410830744,
+            "absolute_error": 57369.09554922071,
+            "mae": 257.2605181579404,
+            "wape": 0.5663566370425066,
+            "bias": -0.09473000534767331,
+            "bias_units": -9595.675891692568,
+            "zero_actual_rows": 93,
+            "absolute_error_on_zero_actual": 1488.6685730935365
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 44,
+              "actual_quantity": 84171.0,
+              "predicted_quantity": 79197.92388084046,
+              "absolute_error": 46554.13907755938,
+              "mae": 1058.0486153990769,
+              "wape": 0.5530900081686018,
+              "bias": -0.059083011003309135,
+              "bias_units": -4973.076119159533,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "inactive": {
+              "sku_windows": 50,
+              "actual_quantity": 518.0,
+              "predicted_quantity": 47.97972270489246,
+              "absolute_error": 552.3844171719397,
+              "mae": 11.047688343438795,
+              "wape": 1.0663791837296133,
+              "bias": -0.9073750526932578,
+              "bias_units": -470.0202772951075,
+              "zero_actual_rows": 45,
+              "absolute_error_on_zero_actual": 41.182069938416085
+            },
+            "intermittent": {
+              "sku_windows": 123,
+              "actual_quantity": 16580.0,
+              "predicted_quantity": 12449.246049053794,
+              "absolute_error": 10240.70534265864,
+              "mae": 83.25776701348488,
+              "wape": 0.6176541219938867,
+              "bias": -0.2491407690558628,
+              "bias_units": -4130.753950946206,
+              "zero_actual_rows": 44,
+              "absolute_error_on_zero_actual": 1447.4659193856098
+            },
+            "new": {
+              "sku_windows": 4,
+              "actual_quantity": 0.0,
+              "predicted_quantity": 0.020583769510407635,
+              "absolute_error": 0.020583769510407635,
+              "mae": 0.005145942377601909,
+              "wape": null,
+              "bias": null,
+              "bias_units": 0.020583769510407635,
+              "zero_actual_rows": 4,
+              "absolute_error_on_zero_actual": 0.020583769510407635
+            },
+            "regular": {
+              "sku_windows": 1,
+              "actual_quantity": 25.0,
+              "predicted_quantity": 4.15387193876788,
+              "absolute_error": 20.84612806123212,
+              "mae": 20.84612806123212,
+              "wape": 0.8338451224492848,
+              "bias": -0.8338451224492848,
+              "bias_units": -20.84612806123212,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            },
+            "unseen": {
+              "sku_windows": 1,
+              "actual_quantity": 1.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 1.0,
+              "mae": 1.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -1.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-07-27": {
+              "sku_windows": 111,
+              "actual_quantity": 61815.0,
+              "predicted_quantity": 41304.11442848498,
+              "absolute_error": 30184.496487130153,
+              "mae": 271.9324007849563,
+              "wape": 0.4883037529261531,
+              "bias": -0.3318108156841385,
+              "bias_units": -20510.885571515024,
+              "zero_actual_rows": 49,
+              "absolute_error_on_zero_actual": 529.4870379137624
+            },
+            "2026-08-24": {
+              "sku_windows": 112,
+              "actual_quantity": 39480.0,
+              "predicted_quantity": 50395.20967982245,
+              "absolute_error": 27184.59906209055,
+              "mae": 242.71963448295136,
+              "wape": 0.6885663389587272,
+              "bias": 0.27647440931667816,
+              "bias_units": 10915.209679822454,
+              "zero_actual_rows": 44,
+              "absolute_error_on_zero_actual": 959.181535179774
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 23,
+              "actual_quantity": 87828.0,
+              "predicted_quantity": 81391.79687040574,
+              "absolute_error": 48807.45875258901,
+              "mae": 2122.063424025609,
+              "wape": 0.5557163860339414,
+              "bias": -0.07328190474101952,
+              "bias_units": -6436.2031295942625,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 884.5614673956302
+            },
+            "B": {
+              "sku_windows": 42,
+              "actual_quantity": 9635.0,
+              "predicted_quantity": 8118.856111385564,
+              "absolute_error": 5720.5336471755345,
+              "mae": 136.20318207560797,
+              "wape": 0.5937243017307249,
+              "bias": -0.15735795418935505,
+              "bias_units": -1516.143888614436,
+              "zero_actual_rows": 3,
+              "absolute_error_on_zero_actual": 333.02733420180533
+            },
+            "C": {
+              "sku_windows": 157,
+              "actual_quantity": 3831.0,
+              "predicted_quantity": 2188.6711265161302,
+              "absolute_error": 2840.103149456163,
+              "mae": 18.08982897742779,
+              "wape": 0.7413477289105098,
+              "bias": -0.4286945636867318,
+              "bias_units": -1642.3288734838698,
+              "zero_actual_rows": 89,
+              "absolute_error_on_zero_actual": 271.0797714961008
+            },
+            "unseen": {
+              "sku_windows": 1,
+              "actual_quantity": 1.0,
+              "predicted_quantity": 0.0,
+              "absolute_error": 1.0,
+              "mae": 1.0,
+              "wape": 1.0,
+              "bias": -1.0,
+              "bias_units": -1.0,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          }
+        },
+        "упак": {
+          "overall": {
+            "sku_windows": 144,
+            "actual_quantity": 7374.0,
+            "predicted_quantity": 6939.675650738981,
+            "absolute_error": 1983.1354298840358,
+            "mae": 13.771773818639138,
+            "wape": 0.26893618522973095,
+            "bias": -0.05889942355045013,
+            "bias_units": -434.3243492610192,
+            "zero_actual_rows": 48,
+            "absolute_error_on_zero_actual": 195.10534405855404
+          },
+          "by_group": {
+            "erratic": {
+              "sku_windows": 12,
+              "actual_quantity": 1636.0,
+              "predicted_quantity": 1457.709444154928,
+              "absolute_error": 709.0439862112089,
+              "mae": 59.08699885093407,
+              "wape": 0.43340096956675356,
+              "bias": -0.10897955736251344,
+              "bias_units": -178.290555845072,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 114.39933025352036
+            },
+            "inactive": {
+              "sku_windows": 34,
+              "actual_quantity": 35.0,
+              "predicted_quantity": 14.78670648860314,
+              "absolute_error": 42.093640874902405,
+              "mae": 1.2380482610265413,
+              "wape": 1.2026754535686401,
+              "bias": -0.577522671754196,
+              "bias_units": -20.21329351139686,
+              "zero_actual_rows": 26,
+              "absolute_error_on_zero_actual": 10.940173681752771
+            },
+            "intermittent": {
+              "sku_windows": 88,
+              "actual_quantity": 608.0,
+              "predicted_quantity": 497.3924624292491,
+              "absolute_error": 536.6582699418088,
+              "mae": 6.098389431156919,
+              "wape": 0.8826616281937646,
+              "bias": -0.18192029205715607,
+              "bias_units": -110.60753757075088,
+              "zero_actual_rows": 19,
+              "absolute_error_on_zero_actual": 69.02487174412975
+            },
+            "new": {
+              "sku_windows": 2,
+              "actual_quantity": 0.0,
+              "predicted_quantity": 0.7409683791511542,
+              "absolute_error": 0.7409683791511542,
+              "mae": 0.3704841895755771,
+              "wape": null,
+              "bias": null,
+              "bias_units": 0.7409683791511542,
+              "zero_actual_rows": 2,
+              "absolute_error_on_zero_actual": 0.7409683791511542
+            },
+            "regular": {
+              "sku_windows": 8,
+              "actual_quantity": 5095.0,
+              "predicted_quantity": 4969.046069287049,
+              "absolute_error": 694.5985644769646,
+              "mae": 86.82482055962058,
+              "wape": 0.13632945328301563,
+              "bias": -0.024721085517752824,
+              "bias_units": -125.95393071295064,
+              "zero_actual_rows": 0,
+              "absolute_error_on_zero_actual": 0.0
+            }
+          },
+          "by_origin": {
+            "2026-07-27": {
+              "sku_windows": 72,
+              "actual_quantity": 3874.0,
+              "predicted_quantity": 3159.728501242188,
+              "absolute_error": 1125.1667431344667,
+              "mae": 15.627315876867593,
+              "wape": 0.29044056353496817,
+              "bias": -0.1843757095399618,
+              "bias_units": -714.2714987578121,
+              "zero_actual_rows": 20,
+              "absolute_error_on_zero_actual": 27.408856945831747
+            },
+            "2026-08-24": {
+              "sku_windows": 72,
+              "actual_quantity": 3500.0,
+              "predicted_quantity": 3779.947149496793,
+              "absolute_error": 857.9686867495692,
+              "mae": 11.916231760410684,
+              "wape": 0.24513391049987693,
+              "bias": 0.07998489985622652,
+              "bias_units": 279.9471494967928,
+              "zero_actual_rows": 28,
+              "absolute_error_on_zero_actual": 167.69648711272228
+            }
+          },
+          "by_abc": {
+            "A": {
+              "sku_windows": 16,
+              "actual_quantity": 6116.0,
+              "predicted_quantity": 6023.106016552872,
+              "absolute_error": 1071.4894455604674,
+              "mae": 66.96809034752921,
+              "wape": 0.1751944809614891,
+              "bias": -0.015188682708817616,
+              "bias_units": -92.89398344712853,
+              "zero_actual_rows": 1,
+              "absolute_error_on_zero_actual": 114.39933025352036
+            },
+            "B": {
+              "sku_windows": 16,
+              "actual_quantity": 797.0,
+              "predicted_quantity": 633.8448350185721,
+              "absolute_error": 529.4581348493538,
+              "mae": 33.09113342808461,
+              "wape": 0.6643138454822506,
+              "bias": -0.20471162481985936,
+              "bias_units": -163.1551649814279,
+              "zero_actual_rows": 2,
+              "absolute_error_on_zero_actual": 40.97729464370026
+            },
+            "C": {
+              "sku_windows": 112,
+              "actual_quantity": 461.0,
+              "predicted_quantity": 282.72479916753724,
+              "absolute_error": 382.1878494742149,
+              "mae": 3.412391513162633,
+              "wape": 0.829040888230401,
+              "bias": -0.3867141015888564,
+              "bias_units": -178.2752008324628,
+              "zero_actual_rows": 45,
+              "absolute_error_on_zero_actual": 39.728719161333416
+            }
+          }
+        }
+      }
+    }
+  },
+  "real_target_10_percent_achieved_all_panels": false
+}

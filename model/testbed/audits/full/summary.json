@@ -1,0 +1,627 @@
+{
+  "kind": "full_fix_verification_forecast_accuracy_separate_from_test_passes",
+  "source_commit": "b9f8c3e50d73342753f428cf918144e2b4b7fc48",
+  "freeze_sha256": "1fc7819e9f3c795972deff9e6f666b18094edf7f508b7541106e43c4ee92f295",
+  "unit_tests": {
+    "passed": 100,
+    "total": 100
+  },
+  "must_have_controls": {
+    "passed": 11,
+    "total": 11
+  },
+  "prior_regressions": {
+    "GEN-01": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "event_count": 2300,
+        "identifier_format": "opaque 128-bit, independent RNG, no class suffix",
+        "limit": "Not an OS sandbox or protection from a malicious adapter knowing the generator seeds."
+      }
+    },
+    "GEN-02": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "invalid_requests_rejected": [
+          "horizon_negative",
+          "horizon_bool",
+          "horizon_fraction",
+          "complete_string",
+          "promo_zero",
+          "promo_invalid_date"
+        ]
+      }
+    },
+    "GEN-03": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "boundary_rejects_unsorted": true,
+        "direct_baseline_sorts_by_date": true
+      }
+    },
+    "MET-001": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "horizon_overflow_rejected": true,
+        "aggregate_overflow": {
+          "rows": 12,
+          "failed_rows": 12,
+          "units": [
+            "шт"
+          ],
+          "aggregation_error": "Numeric aggregation failure: Numeric total is not finite",
+          "zero_realized_rows": 0,
+          "realized_regular_quantity": 12.0,
+          "expected_regular_quantity": 12.0,
+          "project_quantity": 0.0,
+          "absolute_error_realized": null,
+          "wape_realized": null,
+          "bias_realized": null,
+          "mae_realized": null,
+          "mean_signed_error_realized": null,
+          "daily_wape_realized": null,
+          "daily_mae_realized": null,
+          "absolute_error_expectation": null,
+          "wape_expectation": null,
+          "bias_expectation": null,
+          "mae_expectation": null,
+          "mean_signed_error_expectation": null,
+          "daily_wape_expectation": null,
+          "daily_mae_expectation": null
+        },
+        "full_evaluate_proofs": "tests/test_boundary_corrections.py::test_full_evaluate_retains_both_overflow_paths"
+      }
+    },
+    "BIZ-01": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "campaigns": [
+          {
+            "mutation": "status",
+            "changed_unique_inputs": 38,
+            "false_pass_ids": []
+          },
+          {
+            "mutation": "rules",
+            "changed_unique_inputs": 54,
+            "false_pass_ids": []
+          },
+          {
+            "mutation": "supplier",
+            "changed_unique_inputs": 54,
+            "false_pass_ids": []
+          },
+          {
+            "mutation": "reason",
+            "changed_unique_inputs": 54,
+            "false_pass_ids": []
+          },
+          {
+            "mutation": "negative_quantity",
+            "changed_unique_inputs": 40,
+            "false_pass_ids": []
+          },
+          {
+            "mutation": "unit",
+            "changed_unique_inputs": 40,
+            "false_pass_ids": []
+          }
+        ]
+      }
+    },
+    "BIZ-02": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "decimal_boundaries": [
+          {
+            "need": 0.1,
+            "actual": 0.1,
+            "match": true
+          },
+          {
+            "need": 0.2,
+            "actual": 0.2,
+            "match": true
+          },
+          {
+            "need": 0.3,
+            "actual": 0.3,
+            "match": true
+          },
+          {
+            "need": 0.4,
+            "actual": 0.4,
+            "match": true
+          },
+          {
+            "need": 0.5,
+            "actual": 0.5,
+            "match": true
+          },
+          {
+            "need": 0.6,
+            "actual": 0.6,
+            "match": true
+          },
+          {
+            "need": 0.7,
+            "actual": 0.7,
+            "match": true
+          },
+          {
+            "need": 0.8,
+            "actual": 0.8,
+            "match": true
+          },
+          {
+            "need": 0.9,
+            "actual": 0.9,
+            "match": true
+          },
+          {
+            "need": 1.0,
+            "actual": 1,
+            "match": true
+          },
+          {
+            "need": 1.1,
+            "actual": 1.1,
+            "match": true
+          },
+          {
+            "need": 1.2,
+            "actual": 1.2,
+            "match": true
+          },
+          {
+            "need": 1.3,
+            "actual": 1.3,
+            "match": true
+          },
+          {
+            "need": 1.4,
+            "actual": 1.4,
+            "match": true
+          },
+          {
+            "need": 1.5,
+            "actual": 1.5,
+            "match": true
+          },
+          {
+            "need": 1.6,
+            "actual": 1.6,
+            "match": true
+          },
+          {
+            "need": 1.7,
+            "actual": 1.7,
+            "match": true
+          },
+          {
+            "need": 1.8,
+            "actual": 1.8,
+            "match": true
+          },
+          {
+            "need": 1.9,
+            "actual": 1.9,
+            "match": true
+          },
+          {
+            "need": 2.0,
+            "actual": 2,
+            "match": true
+          }
+        ]
+      }
+    },
+    "BIZ-03": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "equal_budget_boundaries": [
+          {
+            "quantity": 1,
+            "price": 0.01,
+            "budget": 0.01,
+            "match": true
+          },
+          {
+            "quantity": 1,
+            "price": 0.03,
+            "budget": 0.03,
+            "match": true
+          },
+          {
+            "quantity": 1,
+            "price": 0.07,
+            "budget": 0.07,
+            "match": true
+          },
+          {
+            "quantity": 1,
+            "price": 0.1,
+            "budget": 0.1,
+            "match": true
+          },
+          {
+            "quantity": 2,
+            "price": 0.01,
+            "budget": 0.02,
+            "match": true
+          },
+          {
+            "quantity": 2,
+            "price": 0.03,
+            "budget": 0.06,
+            "match": true
+          },
+          {
+            "quantity": 2,
+            "price": 0.07,
+            "budget": 0.14,
+            "match": true
+          },
+          {
+            "quantity": 2,
+            "price": 0.1,
+            "budget": 0.2,
+            "match": true
+          },
+          {
+            "quantity": 3,
+            "price": 0.01,
+            "budget": 0.03,
+            "match": true
+          },
+          {
+            "quantity": 3,
+            "price": 0.03,
+            "budget": 0.09,
+            "match": true
+          },
+          {
+            "quantity": 3,
+            "price": 0.07,
+            "budget": 0.21,
+            "match": true
+          },
+          {
+            "quantity": 3,
+            "price": 0.1,
+            "budget": 0.3,
+            "match": true
+          },
+          {
+            "quantity": 4,
+            "price": 0.01,
+            "budget": 0.04,
+            "match": true
+          },
+          {
+            "quantity": 4,
+            "price": 0.03,
+            "budget": 0.12,
+            "match": true
+          },
+          {
+            "quantity": 4,
+            "price": 0.07,
+            "budget": 0.28,
+            "match": true
+          },
+          {
+            "quantity": 4,
+            "price": 0.1,
+            "budget": 0.4,
+            "match": true
+          },
+          {
+            "quantity": 5,
+            "price": 0.01,
+            "budget": 0.05,
+            "match": true
+          },
+          {
+            "quantity": 5,
+            "price": 0.03,
+            "budget": 0.15,
+            "match": true
+          },
+          {
+            "quantity": 5,
+            "price": 0.07,
+            "budget": 0.35,
+            "match": true
+          },
+          {
+            "quantity": 5,
+            "price": 0.1,
+            "budget": 0.5,
+            "match": true
+          },
+          {
+            "quantity": 6,
+            "price": 0.01,
+            "budget": 0.06,
+            "match": true
+          },
+          {
+            "quantity": 6,
+            "price": 0.03,
+            "budget": 0.18,
+            "match": true
+          },
+          {
+            "quantity": 6,
+            "price": 0.07,
+            "budget": 0.42,
+            "match": true
+          },
+          {
+            "quantity": 6,
+            "price": 0.1,
+            "budget": 0.6,
+            "match": true
+          },
+          {
+            "quantity": 7,
+            "price": 0.01,
+            "budget": 0.07,
+            "match": true
+          },
+          {
+            "quantity": 7,
+            "price": 0.03,
+            "budget": 0.21,
+            "match": true
+          },
+          {
+            "quantity": 7,
+            "price": 0.07,
+            "budget": 0.49,
+            "match": true
+          },
+          {
+            "quantity": 7,
+            "price": 0.1,
+            "budget": 0.7,
+            "match": true
+          },
+          {
+            "quantity": 8,
+            "price": 0.01,
+            "budget": 0.08,
+            "match": true
+          },
+          {
+            "quantity": 8,
+            "price": 0.03,
+            "budget": 0.24,
+            "match": true
+          },
+          {
+            "quantity": 8,
+            "price": 0.07,
+            "budget": 0.56,
+            "match": true
+          },
+          {
+            "quantity": 8,
+            "price": 0.1,
+            "budget": 0.8,
+            "match": true
+          },
+          {
+            "quantity": 9,
+            "price": 0.01,
+            "budget": 0.09,
+            "match": true
+          },
+          {
+            "quantity": 9,
+            "price": 0.03,
+            "budget": 0.27,
+            "match": true
+          },
+          {
+            "quantity": 9,
+            "price": 0.07,
+            "budget": 0.63,
+            "match": true
+          },
+          {
+            "quantity": 9,
+            "price": 0.1,
+            "budget": 0.9,
+            "match": true
+          },
+          {
+            "quantity": 10,
+            "price": 0.01,
+            "budget": 0.1,
+            "match": true
+          },
+          {
+            "quantity": 10,
+            "price": 0.03,
+            "budget": 0.3,
+            "match": true
+          },
+          {
+            "quantity": 10,
+            "price": 0.07,
+            "budget": 0.7,
+            "match": true
+          },
+          {
+            "quantity": 10,
+            "price": 0.1,
+            "budget": 1.0,
+            "match": true
+          },
+          {
+            "quantity": 11,
+            "price": 0.01,
+            "budget": 0.11,
+            "match": true
+          },
+          {
+            "quantity": 11,
+            "price": 0.03,
+            "budget": 0.33,
+            "match": true
+          },
+          {
+            "quantity": 11,
+            "price": 0.07,
+            "budget": 0.77,
+            "match": true
+          },
+          {
+            "quantity": 11,
+            "price": 0.1,
+            "budget": 1.1,
+            "match": true
+          },
+          {
+            "quantity": 12,
+            "price": 0.01,
+            "budget": 0.12,
+            "match": true
+          },
+          {
+            "quantity": 12,
+            "price": 0.03,
+            "budget": 0.36,
+            "match": true
+          },
+          {
+            "quantity": 12,
+            "price": 0.07,
+            "budget": 0.84,
+            "match": true
+          },
+          {
+            "quantity": 12,
+            "price": 0.1,
+            "budget": 1.2,
+            "match": true
+          }
+        ]
+      }
+    },
+    "BIZ-04": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "quantity": 110,
+        "residual_deficit_day": 19,
+        "residual_unmet_quantity": 90,
+        "requires_expedite": true,
+        "reason": "Forecast 280 шт over 28 days; quantile 0.8 gives target 280. Uncovered commitments 0, free stock 70, confirmed inbound 100: base need max(0, 280+0-70-100)=110; MOQ=1, multiple=1; quantity 110. Before normal ETA day 7: shortfall 0. With proposed order: residual shortage 90, first residual day 19, post-ETA unmet demand 90. Manual approval is required. Displayed numbers use up to six significant digits."
+      }
+    },
+    "BIZ-05": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "invalid_domain_cases_blocked": 4
+      }
+    },
+    "BIZ-06": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "preserved_economics_source": "audit-owner-approved-v3"
+      }
+    },
+    "BIZ-07": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "resolution": "Explicit provisional base need, not a feasible supplier lot; approval blocked.",
+        "quantity": 211,
+        "quantity_kind": "provisional_base_need",
+        "constraints": {
+          "min_order_qty": null,
+          "order_multiple": 5,
+          "unit_quantum": 1
+        }
+      }
+    },
+    "BIZ-08": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "invalid_dates": [
+          {
+            "field": "inbound",
+            "status": "needs_data",
+            "quantity": null,
+            "blocked": true
+          },
+          {
+            "field": "material_requirements",
+            "status": "needs_data",
+            "quantity": null,
+            "blocked": true
+          }
+        ]
+      }
+    },
+    "BIZ-09": {
+      "status": "regression_confirmed",
+      "evidence": {
+        "target_stock": 280,
+        "quantity": 210,
+        "target_quantile": 1
+      }
+    }
+  },
+  "synthetic_comparison": {
+    "development": {
+      "independent_decimal_metrics": {
+        "wape": 0.2378650139062195,
+        "mae": 398.0472786875661,
+        "bias": -0.21089421198211783
+      },
+      "groups_reconciled": 23,
+      "unchanged_targets": true,
+      "csv_verified": true,
+      "rows": 288,
+      "previous_wape": 0.23786501390621947,
+      "new_wape": 0.23786501390621947,
+      "business_checks": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      },
+      "paired_checks": {
+        "passed": 48,
+        "total": 48
+      }
+    },
+    "final": {
+      "independent_decimal_metrics": {
+        "wape": 0.24299854390773018,
+        "mae": 415.10795790875295,
+        "bias": -0.20598152209468665
+      },
+      "groups_reconciled": 24,
+      "unchanged_targets": true,
+      "csv_verified": true,
+      "rows": 384,
+      "previous_wape": 0.2429985439077302,
+      "new_wape": 0.2429985439077302,
+      "business_checks": {
+        "passed": 54,
+        "total": 54,
+        "integration_status": "reference_only"
+      },
+      "paired_checks": {
+        "passed": 64,
+        "total": 64
+      }
+    }
+  },
+  "final_status": "Previously inspected final seeds; retrospective comparison, not new holdout",
+  "real_metrics": "real-metrics.json independently checks saved CSVs against XLSX; it does not retrain",
+  "real_replay": "real-replay.json records fresh inference from saved weights, not accuracy scoring",
+  "unresolved_data_requirements": "real-review.json; blocked real orders are not successful procurement decisions"
+}

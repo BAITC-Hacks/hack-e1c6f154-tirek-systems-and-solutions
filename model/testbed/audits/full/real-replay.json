@@ -1,0 +1,56 @@
+{
+  "kind": "fresh_inference_from_saved_real_weights_not_retraining_or_backtest",
+  "external_model_commit": "bc89cab52d4f706918463d084ad9ea36177198d1",
+  "published_compatible_base_commit": "2282c2042dfb38a8aca17fb97219a55de28165ee",
+  "implementation_sha256": {
+    "data.py": "1e07debe30fb9a3f4709900a5a4b2f27a5ab651c884aa66e9215d4f5209a4db3",
+    "features.py": "fd93c8a64236903529d71544c95353c5bd9bda9cb172b343a6c8656ed0ecfbfe",
+    "methods.py": "52ff03f81b024e848d2099e6762532e6f86264c462228aff0ae475b9ab8b89e3"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "packages": {
+      "catboost": "1.2.8",
+      "numpy": "2.3.5",
+      "pandas": "2.2.3",
+      "scipy": "1.18.1",
+      "openpyxl": "3.1.5"
+    }
+  },
+  "actual_inference_driver_sha256": "4608da5da41afd1a360f021f65b730724cd8fc15451803fad5b3f353137f281a",
+  "selection_sha256": "66fa1ad2a803cc23af65a4d017608eba42f50de3b550bbe9248c384f1cd78a9a",
+  "weights_manifest_sha256": "08750e23512eb1c1f37e68b1c685100c68449b925a49b50d6d4d27b7812e2541",
+  "forecast_sha256": "3db6b3cf5a1b53fbe7f7cfdea3ee050e5c57a679e762cfaaabee6d234fc34d65",
+  "private_log_sha256": "4e49d36671bafbc8d5f06d8a728e10ca312b37a57b664b953f12bc3686559378",
+  "rows": 2714,
+  "exit_code": 0,
+  "command": [
+    "/tmp/testbed-full-venv/bin/python",
+    "-m",
+    "model.forecast_v2.run",
+    "infer",
+    "--inputs",
+    "/home/perricheno/Documents/Codex/2026-09-23/fdf/work/inputs",
+    "--output",
+    "/home/perricheno/Documents/Codex/2026-09-23/fdf/work/forecast-v2/model/forecast_v2/artifacts",
+    "--private",
+    "/tmp/testbed-full-private",
+    "--cache",
+    "/tmp/testbed-full-private/cache.pkl",
+    "--predictions",
+    "/tmp/testbed-full-private/forecast.csv"
+  ],
+  "working_directory": "/home/perricheno/Documents/Codex/2026-09-23/fdf/work/forecast-v2",
+  "private_export_json_sha256": "fd4fd8ed18a0264f6d5dcf88e81d9af09659d4c3d36340820b74a204fb107780",
+  "private_export_csv_sha256": "8fbe436800a74d9478081fc5f8d10393aaaac83d3d4fab25c189d9894adc8bc5",
+  "raw_partner_rows_in_this_report": false,
+  "retrained": false,
+  "independent_forecast_accuracy_evaluation": false,
+  "previous_forecast_comparison": {
+    "rows": 2714,
+    "previous_sha256": "3db6b3cf5a1b53fbe7f7cfdea3ee050e5c57a679e762cfaaabee6d234fc34d65",
+    "maximum_absolute_difference": "0E-15",
+    "absolute_tolerance": "0.000001",
+    "model_or_selection_refitted": false
+  }
+}

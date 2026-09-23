@@ -1,0 +1,25 @@
+{
+  "kind": "published_dependency_compatibility",
+  "published_commit": "2282c2042dfb38a8aca17fb97219a55de28165ee",
+  "current_checkout": "bc89cab52d4f706918463d084ad9ea36177198d1",
+  "all_frozen_algorithms_and_weights_byte_identical": true,
+  "files": {
+    "artifacts/IEK__metres-cb_mae_d4.cbm": "0a5ea1ea67aaaeca0debe17952497777b66825ced0375c40b87810fa075ff41d",
+    "artifacts/IEK__metres-cb_scaled_mae_d6.cbm": "e270eb140d34b7c131ee8edcc30e673d3ca6682934dc47076d2b16bef3312688",
+    "artifacts/IEK__packs-cb_scaled_poisson.cbm": "869c10658d70b50cf45996466144751fe4b0a6e6116f27102b7231d1754a62f1",
+    "artifacts/IEK__pieces-cb_scaled_mae_d4.cbm": "2722ce08791ad6cea87bc92d715582e94869af9d53ec8fd58e8e0dfb3b4dd607",
+    "artifacts/IEK__pieces-cb_scaled_poisson.cbm": "9fc4b82a4c4ebb033dffbbc9c2531bb9fb015b25725d6a5af6515a4ed17c2edd",
+    "artifacts/SE__pieces-cb_scaled_poisson.cbm": "5d69faa2278498c51f8198331dc17493274f0b11cbe65e0457e1cf7eb069cf87",
+    "artifacts/SE__pieces-ridge_100.json": "f434db05d984009efb6bd6fb1bb7ef7e248a0bbf86fd4c4413287045a3a55aca",
+    "artifacts/manifest.json": "08750e23512eb1c1f37e68b1c685100c68449b925a49b50d6d4d27b7812e2541",
+    "artifacts/selection.json": "66fa1ad2a803cc23af65a4d017608eba42f50de3b550bbe9248c384f1cd78a9a",
+    "artifacts/selection.lock.json": "aed624e90c2565d7df722dde5aa70914238e82e2c687f51ced2e97157172ea49",
+    "data.py": "1e07debe30fb9a3f4709900a5a4b2f27a5ab651c884aa66e9215d4f5209a4db3",
+    "features.py": "fd93c8a64236903529d71544c95353c5bd9bda9cb172b343a6c8656ed0ecfbfe",
+    "methods.py": "52ff03f81b024e848d2099e6762532e6f86264c462228aff0ae475b9ab8b89e3"
+  },
+  "excluded_from_equivalence": [
+    "run.py CLI validation driver; its actual SHA is recorded in real-replay.json"
+  ],
+  "not_an_additional_forecast_or_accuracy_run": true
+}

@@ -1,0 +1,323 @@
+{
+  "mode": "synthetic_requirement_controls",
+  "forecast_accuracy": null,
+  "passed": 11,
+  "total": 11,
+  "cases": [
+    {
+      "requirement": "MH2",
+      "case": "seasonal",
+      "passed": true,
+      "evidence": {
+        "deterministic_control_horizon_error": 0.006517163479723701,
+        "forecast": 1971.331480178326,
+        "truth": 1958.567177695265,
+        "mean56": 1412.7781263457816,
+        "daily_min": 65.21214137793581,
+        "daily_max": 74.7778621344339
+      }
+    },
+    {
+      "requirement": "MH2",
+      "case": "growth",
+      "passed": true,
+      "evidence": {
+        "deterministic_control_horizon_error": 0.001325669251476902,
+        "forecast": 1439.4717190089616,
+        "truth": 1441.3825154893623,
+        "mean56": 1325.7716695090107,
+        "daily_min": 50.04043344324939,
+        "daily_max": 52.80179388180534
+      }
+    },
+    {
+      "requirement": "MH3",
+      "case": "known_stockout",
+      "passed": true,
+      "evidence": {
+        "compensated": 560.0,
+        "raw_sales_forecast": 108.38932092533803
+      }
+    },
+    {
+      "requirement": "MH4",
+      "case": "single_project",
+      "passed": true,
+      "evidence": {
+        "base": {
+          "forecast": {
+            "SKU-001": 218.85560653719043,
+            "SKU-002": 492.00000000000006,
+            "SKU-003": 1136.5,
+            "SKU-004": 2503.1666666666665
+          },
+          "quantity": {
+            "SKU-001": 219,
+            "SKU-002": 493,
+            "SKU-003": 1137,
+            "SKU-004": 2504
+          }
+        },
+        "perturbed": {
+          "forecast": {
+            "SKU-001": 224.33333333333337,
+            "SKU-002": 510.13804935270633,
+            "SKU-003": 1136.5,
+            "SKU-004": 2490.143222283297
+          },
+          "quantity": {
+            "SKU-001": 225,
+            "SKU-002": 511,
+            "SKU-003": 1137,
+            "SKU-004": 2491
+          }
+        }
+      }
+    },
+    {
+      "requirement": "MH4",
+      "case": "split_project",
+      "passed": true,
+      "evidence": {
+        "base": {
+          "forecast": {
+            "SKU-001": 218.85560653719043,
+            "SKU-002": 492.00000000000006,
+            "SKU-003": 1136.5,
+            "SKU-004": 2503.1666666666665
+          },
+          "quantity": {
+            "SKU-001": 219,
+            "SKU-002": 493,
+            "SKU-003": 1137,
+            "SKU-004": 2504
+          }
+        },
+        "perturbed": {
+          "forecast": {
+            "SKU-001": 224.33333333333337,
+            "SKU-002": 510.13804935270633,
+            "SKU-003": 1136.5,
+            "SKU-004": 2490.143222283297
+          },
+          "quantity": {
+            "SKU-001": 225,
+            "SKU-002": 511,
+            "SKU-003": 1137,
+            "SKU-004": 2491
+          }
+        }
+      }
+    },
+    {
+      "requirement": "MH1",
+      "case": "stock",
+      "passed": true,
+      "evidence": {
+        "base_quantity": 210,
+        "changed_quantity": 180
+      }
+    },
+    {
+      "requirement": "MH1",
+      "case": "inbound",
+      "passed": true,
+      "evidence": {
+        "base_quantity": 210,
+        "changed_quantity": 110
+      }
+    },
+    {
+      "requirement": "MH1",
+      "case": "growth",
+      "passed": true,
+      "evidence": {
+        "base_quantity": 210,
+        "changed_quantity": 266
+      }
+    },
+    {
+      "requirement": "MH1",
+      "case": "forecast",
+      "passed": true,
+      "evidence": {
+        "base_quantity": 210,
+        "changed_quantity": 490
+      }
+    },
+    {
+      "requirement": "MH1",
+      "case": "category_policy",
+      "passed": true,
+      "evidence": {
+        "q50_quantity": 30,
+        "q90_quantity": 330
+      }
+    },
+    {
+      "requirement": "MH5",
+      "case": "forecast_to_two_supplier_orders",
+      "passed": true,
+      "evidence": {
+        "supplier_groups": {
+          "synthetic-supplier-1": [
+            "SKU-001",
+            "SKU-003"
+          ],
+          "synthetic-supplier-2": [
+            "SKU-002",
+            "SKU-004"
+          ]
+        },
+        "items": [
+          {
+            "sku": "SKU-001",
+            "supplier_id": "synthetic-supplier-1",
+            "quantity": 219,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Forecast 218.856 шт over 28 days; quantile 0.8 gives target 218.856. Uncovered commitments 0, free stock 0, confirmed inbound 0: base need max(0, 218.856+0-0-0)=218.856; MOQ=1, multiple=1; quantity 219. Before normal ETA day 7: shortfall 46.7304. With proposed order: residual shortage 0, first residual day None, post-ETA unmet demand 0. Manual approval is required. Displayed numbers use up to six significant digits.",
+            "unit": "шт",
+            "quantity_kind": "constrained_recommendation",
+            "forecast_mean": 218.85560653719043,
+            "target_stock": 218.85560653719043,
+            "urgency": "expedite",
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "first_deficit_day_basis": "without_proposed_order",
+            "early_shortfall": 46.73041761994851,
+            "residual_deficit_day": null,
+            "residual_shortfall": 0,
+            "residual_unmet_quantity": 0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit_cost": null,
+            "order_constraints_base": {
+              "min_order_qty": 1,
+              "order_multiple": 1,
+              "unit_quantum": 1
+            }
+          },
+          {
+            "sku": "SKU-002",
+            "supplier_id": "synthetic-supplier-2",
+            "quantity": 493,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Forecast 492 шт over 28 days; quantile 0.8 gives target 492. Uncovered commitments 0, free stock 0, confirmed inbound 0: base need max(0, 492+0-0-0)=492; MOQ=1, multiple=1; quantity 493. Before normal ETA day 7: shortfall 105.429. With proposed order: residual shortage 0, first residual day None, post-ETA unmet demand 0. Manual approval is required. Displayed numbers use up to six significant digits.",
+            "unit": "шт",
+            "quantity_kind": "constrained_recommendation",
+            "forecast_mean": 492.00000000000006,
+            "target_stock": 492.00000000000006,
+            "urgency": "expedite",
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "first_deficit_day_basis": "without_proposed_order",
+            "early_shortfall": 105.42857142857144,
+            "residual_deficit_day": null,
+            "residual_shortfall": 0,
+            "residual_unmet_quantity": 0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit_cost": null,
+            "order_constraints_base": {
+              "min_order_qty": 1,
+              "order_multiple": 1,
+              "unit_quantum": 1
+            }
+          },
+          {
+            "sku": "SKU-003",
+            "supplier_id": "synthetic-supplier-1",
+            "quantity": 1137,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Forecast 1136.5 шт over 28 days; quantile 0.8 gives target 1136.5. Uncovered commitments 0, free stock 0, confirmed inbound 0: base need max(0, 1136.5+0-0-0)=1136.5; MOQ=1, multiple=1; quantity 1137. Before normal ETA day 7: shortfall 243.536. With proposed order: residual shortage 0, first residual day None, post-ETA unmet demand 0. Manual approval is required. Displayed numbers use up to six significant digits.",
+            "unit": "шт",
+            "quantity_kind": "constrained_recommendation",
+            "forecast_mean": 1136.5,
+            "target_stock": 1136.5,
+            "urgency": "expedite",
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "first_deficit_day_basis": "without_proposed_order",
+            "early_shortfall": 243.53571428571428,
+            "residual_deficit_day": null,
+            "residual_shortfall": 0,
+            "residual_unmet_quantity": 0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit_cost": null,
+            "order_constraints_base": {
+              "min_order_qty": 1,
+              "order_multiple": 1,
+              "unit_quantum": 1
+            }
+          },
+          {
+            "sku": "SKU-004",
+            "supplier_id": "synthetic-supplier-2",
+            "quantity": 2504,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Forecast 2503.17 шт over 28 days; quantile 0.8 gives target 2503.17. Uncovered commitments 0, free stock 0, confirmed inbound 0: base need max(0, 2503.17+0-0-0)=2503.17; MOQ=1, multiple=1; quantity 2504. Before normal ETA day 7: shortfall 536.393. With proposed order: residual shortage 0, first residual day None, post-ETA unmet demand 0. Manual approval is required. Displayed numbers use up to six significant digits.",
+            "unit": "шт",
+            "quantity_kind": "constrained_recommendation",
+            "forecast_mean": 2503.1666666666665,
+            "target_stock": 2503.1666666666665,
+            "urgency": "expedite",
+            "target_quantile": 0.8,
+            "free_stock": 0,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "first_deficit_day_basis": "without_proposed_order",
+            "early_shortfall": 536.3928571428571,
+            "residual_deficit_day": null,
+            "residual_shortfall": 0,
+            "residual_unmet_quantity": 0,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit_cost": null,
+            "order_constraints_base": {
+              "min_order_qty": 1,
+              "order_multiple": 1,
+              "unit_quantum": 1
+            }
+          }
+        ],
+        "scope": "Deterministic point-distribution integration probe; no calibrated uncertainty or automatic order dispatch."
+      }
+    }
+  ],
+  "meaning": "Selected MH1–MH5 functional controls; pass count is not forecast accuracy or full product acceptance."
+}

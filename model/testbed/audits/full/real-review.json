@@ -1,0 +1,55 @@
+{
+  "kind": "forecast_and_source_review_not_an_order",
+  "forecast_sha256": "3db6b3cf5a1b53fbe7f7cfdea3ee050e5c57a679e762cfaaabee6d234fc34d65",
+  "source_hashes": {
+    "SE_constraints": {
+      "sha256": "4fc809ecf9c0a73d97f13f7a16e7dbb20425ab97a6b2d9a0f6be0bbe1a326a7b"
+    },
+    "IEK_constraints": {
+      "sha256": "4705b5bbbaa7c55541a151f146270bcbdc72a4ce28686fdb3378575733c4a446"
+    },
+    "SE_snapshot": {
+      "sha256": "17aa50b7697aba5598997b1b4bba9de3950169bc81e97fd10c4d8b0348bd9a3d"
+    }
+  },
+  "rows": 2714,
+  "supplier_groups": 2,
+  "by_supplier_unit": {
+    "IEK/м": 112,
+    "IEK/упак": 72,
+    "IEK/шт": 1965,
+    "SE/шт": 565
+  },
+  "needs_data": 2714,
+  "approved_orders": 0,
+  "automatic_dispatches": 0,
+  "constraint_matches": 2282,
+  "current_snapshot_matches": 470,
+  "missing_counts": {
+    "supplier_lead_time_unknown": 2714,
+    "review_period_unknown": 2714,
+    "inventory_scope_and_freshness_unconfirmed": 2714,
+    "demand_uncertainty_not_calibrated": 2714,
+    "daily_demand_profile_not_supplied": 2714,
+    "category_service_or_cost_policy_unknown": 2714,
+    "purchase_unit_cost_unknown": 2714,
+    "material_requirements_completeness_unknown": 2714,
+    "inbound_completeness_and_status_unconfirmed": 2714,
+    "order_constraint_units_unconfirmed": 2714,
+    "order_multiple_unknown": 2149,
+    "current_stock_snapshot_not_matched": 2244,
+    "supplier_constraint_not_matched": 432,
+    "invalid_supplier_constraint": 8,
+    "duplicate_supplier_constraint_requires_review": 1,
+    "minimum_order_quantity_unknown": 565,
+    "snapshot_after_forecast_origin": 470
+  },
+  "raw_partner_rows_in_this_report": false,
+  "limitations": [
+    "CSV forecast provenance relies on the separate replay command; schema/hash checks alone do not prove execution.",
+    "IEK inbound is not applied: stock, shipment status and unit conversion are unconfirmed.",
+    "SE cost/growth/seasonality fields and both current supplier categories are not past forecast features.",
+    "No calibrated demand distribution or inferred daily availability; monthly stock is not stockout history.",
+    "No claimed 1C import compatibility or release-ready real order."
+  ]
+}
