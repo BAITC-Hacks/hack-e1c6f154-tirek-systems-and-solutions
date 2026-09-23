@@ -96,6 +96,7 @@ export default function ItemDrawer({
       return
     }
     if (confirmConstraints && (
+      unitQuantum.trim() === '' || minimum.trim() === '' || multiple.trim() === '' ||
       !Number.isFinite(Number(unitQuantum)) || Number(unitQuantum) <= 0 ||
       !Number.isFinite(Number(minimum)) || Number(minimum) < 0 ||
       !Number.isFinite(Number(multiple)) || Number(multiple) <= 0 ||

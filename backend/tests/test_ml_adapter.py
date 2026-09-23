@@ -152,6 +152,15 @@ class AdapterIntegrationTests(unittest.TestCase):
         self.assertIsNone(item["ai"]["verdict"])
         self.assertIsNone(item["ai"]["provider_model"])
 
+    def test_requested_batch_review_reaches_provider_boundary(self):
+        unavailable = {"status": "unavailable", "verdict": None,
+                       "reasons": ["Test provider boundary"], "evidence_ids": [],
+                       "rule_ids": [], "suggested_action": None, "provider_model": None}
+        with patch("backend.app.ai_review.review", return_value=unavailable) as reviewer:
+            item = self.item(self.run_adapter(request_ai_review=True))
+        reviewer.assert_called_once()
+        self.assertEqual(item["ai"]["status"], "unavailable")
+
     def test_foreign_warehouse_material_is_not_added_to_almaty(self):
         baseline = self.item(self.run_adapter())["recommended_quantity"]
         self.context = {"material_requirements": [{

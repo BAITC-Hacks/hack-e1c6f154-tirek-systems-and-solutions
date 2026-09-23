@@ -608,9 +608,10 @@ class TirekCalculationPipeline:
                 forecast["method"] = ("baseline" if context_audit else
                                       "ml" if (selected_method in MODEL_SPECS or selected_method.startswith(("mix|", "blend:"))) else "baseline")
             order_cost = None if shown_quantity is None or unit_cost is None else float(Decimal(str(shown_quantity)) * Decimal(str(unit_cost)))
-            ai = {"status": "unavailable" if request["request_ai_review"] else "not_requested", "verdict": None,
-                  "reasons": ["LLM-провайдер не настроен; детерминированный расчёт сохранён."] if request["request_ai_review"] else [],
-                  "evidence_ids": [], "rule_ids": ["AI-01"] if request["request_ai_review"] else [],
+            # The adapter has not called a provider. The pipeline owns the
+            # optional batch review and decides whether configuration is available.
+            ai = {"status": "not_requested", "verdict": None, "reasons": [],
+                  "evidence_ids": [], "rule_ids": [],
                   "suggested_action": None, "provider_model": None}
             evidence = ([
                 {"id": f"{item_id}-forecast", "source_kind": "observed", "reference": model_id,
