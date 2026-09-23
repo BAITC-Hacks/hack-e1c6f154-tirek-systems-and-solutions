@@ -1,12 +1,9 @@
 """Integration point owned by the ML developer. Never silently fall back to demo."""
-import importlib
 import os
 from typing import Protocol
 from .contracts import DomainError, validate
 from .demo import make_demo, summary
-
-
-DEFAULT_PIPELINE = 'backend.app.ml_adapter:TirekCalculationPipeline'
+from .runtime import DEFAULT_PIPELINE, load_adapter
 
 
 class CalculationPipeline(Protocol):
@@ -30,8 +27,7 @@ def calculate(dataset, request, calculation_id):
         result = make_demo(calculation_id, request)
     else:
         target = os.getenv('TIREK_PIPELINE', DEFAULT_PIPELINE)
-        module, name = target.split(':', 1)
-        result = getattr(importlib.import_module(module), name)().calculate(dataset, request, calculation_id)
+        result = load_adapter(target)().calculate(dataset, request, calculation_id)
     if not isinstance(result, dict) or not isinstance(result.get('response'), dict) or not isinstance(result.get('details'), dict):
         raise DomainError('INVALID_PIPELINE_RESULT', 'Расчётный модуль вернул неполный результат.', 500)
     validate('RecommendationsResponse', result['response'])

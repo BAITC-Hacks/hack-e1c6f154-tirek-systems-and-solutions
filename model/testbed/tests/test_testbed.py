@@ -251,7 +251,7 @@ class MetricAndFreezeTests(unittest.TestCase):
             args = Namespace(split="development",adapter="model.testbed.tests.adapter_examples:missing_sku",calculator=DEFAULT_CALCULATOR,
                              timeout=2,output=folder,require_target=False)
             self.assertEqual(evaluate(args), 2)
-            report = json.loads((Path(folder)/"report.json").read_text())
+            report = json.loads((Path(folder)/"report.json").read_text(encoding="utf-8"))
             self.assertEqual(report["overall"]["rows"],12)
             self.assertEqual(report["overall"]["failed_rows"],12)
             self.assertIsNone(report["overall"]["wape_realized"])

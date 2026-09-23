@@ -5,7 +5,6 @@ from hashlib import sha256
 from io import StringIO
 from pathlib import Path
 import csv
-import importlib
 import json
 import logging
 import os
@@ -21,9 +20,7 @@ from .demo import demo_dataset, make_demo, now, summary
 from .ingestion import MAX_BYTES, inspect_upload
 from .pipeline import calculate
 from .storage import Store
-
-
-DEFAULT_INGESTOR = 'backend.app.ml_adapter:normalize_dataset'
+from .runtime import DEFAULT_INGESTOR, capabilities, load_adapter
 
 
 def error_body(error):
@@ -154,12 +151,13 @@ def create_app(db_path=None):
 
     @app.get(prefix + '/workspace')
     def workspace():
+        available = capabilities()
         with store.transaction() as db:
             calculations = store.all(db, 'calculation')
             return {'latest_calculation_id': calculations[0]['response']['meta']['calculation_id'] if calculations else None,
                     'datasets': store.all(db, 'dataset'), 'approvals': [a['public'] for a in store.all(db, 'approval')],
                     'calculations': [c['response']['meta'] for c in calculations],
-                    'capabilities': {'demo': True, 'ml_connected': True, 'real_import': 'normalized'}}
+                    'capabilities': available}
 
     @app.get(prefix + '/datasets/{dataset_id}')
     def dataset(dataset_id: str):
@@ -234,8 +232,7 @@ def create_app(db_path=None):
                 (target / (source['role'] + '.xlsx')).write_bytes(content)
             (target / 'manifest.json').write_text(json.dumps({'report': report, 'context': extra}, ensure_ascii=False, indent=2), encoding='utf-8')
             normalizer = os.getenv('TIREK_INGESTOR', DEFAULT_INGESTOR)
-            module, name = normalizer.split(':', 1)
-            normalized = getattr(importlib.import_module(module), name)(target, deepcopy(report), extra)
+            normalized = load_adapter(normalizer)(target, deepcopy(report), extra)
             validate('DatasetReport', normalized)
             if normalized['dataset_id'] != report['dataset_id']:
                 raise DomainError('INVALID_PARAMETERS', 'Нормализатор изменил ID исходного набора.')

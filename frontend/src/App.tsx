@@ -32,6 +32,7 @@ import {
   api,
   ApiError,
   type Approval,
+  type CalculationRequest,
   type Health,
   type ItemDetail,
   type Job,
@@ -63,6 +64,7 @@ export default function App() {
   const [itemId, setItemId] = useState<string | null>(null)
   const [selected, setSelected] = useState<string[]>([])
   const [calculationOpen, setCalculationOpen] = useState(false)
+  const [calculationDataset, setCalculationDataset] = useState<string | null>(null)
   const [approvalOpen, setApprovalOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [search, setSearch] = useState('')
@@ -114,6 +116,9 @@ export default function App() {
 
   const title = navigation.find((nav) => nav.to === location.pathname)?.label || 'Настройки'
   const reviews = data ? data.summary.needs_data_count + data.summary.needs_review_count : 0
+  const activeDataset = workspace?.datasets.find(
+    (dataset) => dataset.dataset_id === data?.meta.dataset_id,
+  )
   const download = async (id: string) => {
     try {
       await api.download(id)
@@ -268,9 +273,15 @@ export default function App() {
                 <div className="scenario-bar">
                   <span>
                     <span className="scenario-indicator" />
-                    <strong>Демонстрационное пространство</strong>
+                    <strong>
+                      {data.meta.mode === 'scenario' ? 'Сценарный расчёт' : 'Операционный расчёт'}
+                    </strong>
                     <span className="scenario-detail">
-                      Синтетические данные · ML-модель пока не подключена
+                      {activeDataset?.source_kind === 'synthetic'
+                        ? 'Синтетические данные · демонстрация платформы'
+                        : activeDataset?.source_kind === 'observed'
+                          ? 'Данные загруженных источников'
+                          : 'Смешанные источники'}
                     </span>
                   </span>
                   <Link to="/settings">
@@ -325,7 +336,27 @@ export default function App() {
                           </span>
                           <span>Горизонт {data.meta.horizon_days} дней</span>
                           <span>Версия {data.meta.dataset_version}</span>
-                          <span>Сценарий · ревизия {data.meta.revision}</span>
+                          <span>
+                            {data.meta.mode === 'scenario' ? 'Сценарий' : 'Операционный'} · ревизия{' '}
+                            {data.meta.revision}
+                          </span>
+                          <span>Правила {data.meta.policy_version}</span>
+                          <span>
+                            Метод:{' '}
+                            {[
+                              ...new Set(
+                                data.items.map((item) => item.forecast?.method).filter(Boolean),
+                              ),
+                            ].join(', ') || 'Нет позиций'}
+                          </span>
+                          <span>
+                            Модель:{' '}
+                            {[
+                              ...new Set(
+                                data.items.map((item) => item.forecast?.model_id).filter(Boolean),
+                              ),
+                            ].join(', ') || '—'}
+                          </span>
                         </div>
                         <RecommendationTable
                           data={data}
@@ -358,7 +389,10 @@ export default function App() {
                       <DataPage
                         workspace={workspace}
                         refresh={refresh}
-                        onCalculate={() => setCalculationOpen(true)}
+                        onCalculate={(id) => {
+                          setCalculationDataset(id)
+                          setCalculationOpen(true)
+                        }}
                       />
                     }
                   />
@@ -419,13 +453,14 @@ export default function App() {
           open={calculationOpen}
           close={() => setCalculationOpen(false)}
           workspace={workspace}
+          initialDataset={calculationDataset}
           onComplete={async (id) => {
             currentId.current = id
             setSelected([])
             await refresh()
             setCalculationOpen(false)
             navigate('/recommendations')
-            setToast('Сценарий подготовлен. Рекомендации готовы к проверке.')
+            setToast('Расчёт подготовлен. Рекомендации готовы к проверке.')
           }}
         />
       )}
@@ -441,7 +476,7 @@ export default function App() {
             setApprovalOpen(false)
             setSelected([])
             navigate('/approvals')
-            setToast('Сценарий утверждён. Неизменяемый снимок сохранён.')
+            setToast('Решение утверждено. Неизменяемый снимок сохранён.')
             await download(approval.approval_id)
           }}
         />
@@ -691,47 +726,87 @@ function CalculationModal({
   open,
   close,
   workspace,
+  initialDataset,
   onComplete,
 }: {
   open: boolean
   close: () => void
   workspace: Workspace
+  initialDataset: string | null
   onComplete: (id: string) => Promise<void>
 }) {
   const [dataset, setDataset] = useState('demo-systeme-v1')
   const [category, setCategory] = useState('')
   const [budget, setBudget] = useState('')
   const [asOf, setAsOf] = useState('2026-09-22')
+  const [mode, setMode] = useState<CalculationRequest['mode']>('scenario')
+  const [leadTime, setLeadTime] = useState(7)
+  const [policies, setPolicies] = useState('[]')
+  const [economics, setEconomics] = useState('[]')
+  const [growth, setGrowth] = useState('[]')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [job, setJob] = useState<Job | null>(null)
   const controller = useRef<AbortController | null>(null)
   const operation = useRef<{ body: string; key: string } | null>(null)
+  const source = workspace.datasets.find((value) => value.dataset_id === dataset)
+  const isDemo = source?.source_kind === 'synthetic'
+  const available = !!source?.calculation_allowed && (isDemo || workspace.capabilities.ml_connected)
+  function selectDataset(id: string) {
+    const next = workspace.datasets.find((value) => value.dataset_id === id)
+    setDataset(id)
+    setAsOf(next?.data_as_of || '')
+    setCategory('')
+    setMode('scenario')
+    setLeadTime(7)
+    setPolicies('[]')
+    setEconomics('[]')
+    setGrowth('[]')
+    setError('')
+  }
   useEffect(() => () => controller.current?.abort(), [])
   useEffect(() => {
     if (open) {
       setError('')
       setJob(null)
+      if (initialDataset) selectDataset(initialDataset)
     }
-  }, [open])
+  }, [open, initialDataset])
   async function run() {
-    if (busy) return
+    if (busy || !available) return
     if (!asOf || (budget !== '' && (!Number.isFinite(Number(budget)) || Number(budget) <= 0))) {
       setError('Укажите дату и положительный бюджет либо оставьте бюджет пустым.')
       return
     }
-    const payload = {
+    let parsedPolicies: CalculationRequest['category_policies'] = []
+    let parsedEconomics: CalculationRequest['economic_profiles'] = []
+    let parsedGrowth: CalculationRequest['growth_adjustments'] = []
+    if (!isDemo) {
+      try {
+        parsedPolicies = JSON.parse(policies)
+        parsedEconomics = JSON.parse(economics)
+        parsedGrowth = JSON.parse(growth)
+        if (![parsedPolicies, parsedEconomics, parsedGrowth].every(Array.isArray)) throw new Error()
+      } catch {
+        setError('Политики, экономика и прирост должны быть JSON-массивами. Пустое значение: [].')
+        return
+      }
+    }
+    const payload: CalculationRequest = {
       dataset_id: dataset,
       as_of_date: asOf,
       warehouse_ids: ['almaty'],
-      category_codes: category ? [category] : [],
+      category_codes: category
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean),
       horizon_days: 28,
-      lead_time_days: 7,
-      review_period_days: 21,
-      mode: 'scenario' as const,
-      category_policies: [],
-      economic_profiles: [],
-      growth_adjustments: [],
+      lead_time_days: isDemo ? 7 : leadTime,
+      review_period_days: isDemo ? 21 : 28 - leadTime,
+      mode: isDemo ? 'scenario' : mode,
+      category_policies: parsedPolicies,
+      economic_profiles: parsedEconomics,
+      growth_adjustments: parsedGrowth,
       budget_kzt: budget ? Number(budget) : null,
       request_ai_review: false,
     }
@@ -771,12 +846,12 @@ function CalculationModal({
       >
         <label className="field">
           Набор данных
-          <select value={dataset} onChange={(e) => setDataset(e.target.value)} disabled={busy}>
+          <select value={dataset} onChange={(e) => selectDataset(e.target.value)} disabled={busy}>
             {workspace.datasets.map((d) => (
               <option key={d.dataset_id} value={d.dataset_id} disabled={!d.calculation_allowed}>
                 {d.source_kind === 'synthetic'
-                  ? 'Systeme Electric · демо, 12 позиций'
-                  : `Загрузка ${d.dataset_version} · требуется нормализация`}
+                  ? `Systeme Electric · демо, ${d.sku_count} позиций`
+                  : `Загрузка ${d.dataset_version} · ${d.calculation_allowed ? `${d.sku_count} позиций` : 'требуется нормализация'}`}
               </option>
             ))}
           </select>
@@ -790,25 +865,38 @@ function CalculationModal({
           </label>
           <label className="field">
             Категория
-            <select value={category} onChange={(e) => setCategory(e.target.value)} disabled={busy}>
-              <option value="">Все категории</option>
-              {[
-                'Автоматы',
-                'Электроустановка',
-                'Дифференциальная защита',
-                'Управление',
-                'Корпуса',
-              ].map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
+            {isDemo ? (
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                disabled={busy}
+              >
+                <option value="">Все категории</option>
+                {[
+                  'Автоматы',
+                  'Электроустановка',
+                  'Дифференциальная защита',
+                  'Управление',
+                  'Корпуса',
+                ].map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                disabled={busy}
+                placeholder="Коды через запятую; пусто — все"
+              />
+            )}
           </label>
           <label className="field">
             Дата расчёта
             <input
               type="date"
               value={asOf}
-              min="2026-09-22"
+              min={source?.data_as_of}
               onChange={(e) => setAsOf(e.target.value)}
               disabled={busy}
               required
@@ -823,15 +911,110 @@ function CalculationModal({
         </div>
         <div className="horizon-breakdown">
           <span>
-            Поставка <strong>7 дней</strong>
+            Поставка <strong>{isDemo ? 7 : leadTime} дней</strong>
           </span>
           <Plus size={14} />
           <span>
-            Пересмотр <strong>21 день</strong>
+            Пересмотр <strong>{isDemo ? 21 : 28 - leadTime} дней</strong>
           </span>
           <ArrowRight size={15} />
           <strong>28 дней</strong>
         </div>
+        {!isDemo && (
+          <>
+            <div className="form-grid">
+              <label className="field">
+                Режим расчёта
+                <select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as CalculationRequest['mode'])}
+                  disabled={busy}
+                >
+                  <option value="scenario">Сценарный</option>
+                  <option value="operational" disabled={source?.source_kind !== 'observed'}>
+                    Операционный
+                  </option>
+                </select>
+              </label>
+              <label className="field">
+                Срок поставки, дней
+                <input
+                  type="number"
+                  min="0"
+                  max="27"
+                  step="1"
+                  required
+                  value={leadTime}
+                  onChange={(e) => setLeadTime(Number(e.target.value))}
+                  disabled={busy}
+                />
+              </label>
+            </div>
+            <label className="field">
+              Политики категорий · JSON
+              <textarea
+                rows={4}
+                value={policies}
+                onChange={(e) => setPolicies(e.target.value)}
+                disabled={busy}
+                spellCheck={false}
+              />
+              <span className="field-hint">
+                Укажите исходный код категории, квантиль и основание. Без политики или экономики
+                количество останется неизвестным.
+              </span>
+            </label>
+            <details className="context-details">
+              <summary>Формат политики и дополнительные параметры</summary>
+              <p className="field-hint">
+                Пример формата; замените код, значения и основание своими:
+              </p>
+              <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+                {JSON.stringify(
+                  [
+                    {
+                      category_raw: 'КОД',
+                      target_quantile: 0.9,
+                      minimum_target_quantile: null,
+                      source_kind: 'manual',
+                      rationale: 'Основание выбранной политики',
+                    },
+                  ],
+                  null,
+                  2,
+                )}
+              </pre>
+              <label className="field">
+                Экономические профили · JSON
+                <textarea
+                  rows={4}
+                  value={economics}
+                  onChange={(e) => setEconomics(e.target.value)}
+                  disabled={busy}
+                  spellCheck={false}
+                />
+                <span className="field-hint">
+                  Для каждого SKU: underage_cost, overage_cost, unit_cost, currency (KZT),
+                  horizon_days (28), source_kind и rationale.
+                </span>
+              </label>
+              <label className="field">
+                Прогноз прироста · JSON
+                <textarea
+                  rows={4}
+                  value={growth}
+                  onChange={(e) => setGrowth(e.target.value)}
+                  disabled={busy}
+                  spellCheck={false}
+                />
+                <span className="field-hint">
+                  Для каждого SKU: rate, valid_from, valid_to, source_kind и rationale.
+                  Необязательно; без прироста оставьте [].
+                </span>
+              </label>
+            </details>
+          </>
+        )}
         <label className="field">
           Бюджет закупки, ₸ <span className="field-optional">необязательно</span>
           <input
@@ -848,10 +1031,17 @@ function CalculationModal({
         <div className="notice">
           <Info size={19} />
           <span>
-            Сценарный режим: используются готовые синтетические профили. Это демонстрация платформы,
-            не результат ML-прогноза.
+            {isDemo
+              ? 'Сценарный режим: используются готовые синтетические профили. Это демонстрация платформы, не результат ML-прогноза.'
+              : 'Расчёт использует загруженные источники и выбранный прогнозный метод. Недостаточные данные и неизвестные условия поставки будут отмечены в рекомендациях.'}
           </span>
         </div>
+        {!available && (
+          <p className="inline-error" role="alert">
+            {workspace.capabilities.ml_error ||
+              'Набор ещё не готов к расчёту. Проверьте отчёт импорта.'}
+          </p>
+        )}
         {error && (
           <p className="inline-error" role="alert">
             {error}
@@ -870,7 +1060,7 @@ function CalculationModal({
           <button type="button" className="button" onClick={close} disabled={busy}>
             Отмена
           </button>
-          <button className="button button-primary" disabled={busy}>
+          <button className="button button-primary" disabled={busy || !available}>
             {busy ? <CircleNotch size={18} className="spin" /> : <ChartLineUp size={18} />}
             Подготовить рекомендации
           </button>
@@ -940,7 +1130,7 @@ function ApprovalModal({
         if (!busy) close()
       }}
       title="Зафиксировать решение"
-      description={`Сценарный снимок · ревизия ${data.meta.revision}`}
+      description={`${data.meta.mode === 'scenario' ? 'Сценарный' : 'Операционный'} снимок · ревизия ${data.meta.revision}`}
     >
       <div className="approval-intro">
         <span className="approval-icon">
@@ -983,7 +1173,7 @@ function ApprovalModal({
       )}
       <div className="notice warning">
         <Info size={18} />
-        <span>Будет утверждён синтетический сценарий. Заказ поставщику не отправляется.</span>
+        <span>Будет сохранён утверждённый снимок выбранных позиций.</span>
       </div>
       {error && (
         <p className="inline-error" role="alert">
@@ -1067,7 +1257,9 @@ function ApprovalHistory({
                     </td>
                     <td>{approval.selected_item_ids.length}</td>
                     <td>
-                      <Badge tone="scenario">Сценарий</Badge>
+                      <Badge tone={approval.mode === 'scenario' ? 'scenario' : 'normal'}>
+                        {approval.mode === 'scenario' ? 'Сценарий' : 'Операционный'}
+                      </Badge>
                     </td>
                     <td>
                       <div className="history-actions">
@@ -1182,9 +1374,10 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
             рекомендацию, изменить количество, утвердить решение и выгрузить заказ.
           </p>
           <p>
-            Реальные файлы проходят проверку и сохраняются. Нормализация данных, обучение, прогноз и
-            ИИ-проверка будут подключены отдельно. Синтетические значения не используются как
-            фактические.
+            {workspace.capabilities.ml_connected
+              ? 'Адаптер нормализации и прогноза доступен. Загрузите шесть исходных файлов SE и задайте политики категорий или экономические профили. ИИ-проверка пока не подключена.'
+              : workspace.capabilities.ml_error ||
+                'Для расчёта по загруженным файлам требуется настроить адаптер модели.'}
           </p>
           <Link className="text-button" to="/data">
             Посмотреть источники <ArrowRight size={17} />

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import {
   ArrowDown,
   ArrowUpRight,
-  CaretDown,
   MagnifyingGlass,
   SlidersHorizontal,
   CheckCircle,
@@ -28,6 +27,7 @@ export default function RecommendationTable({
 }) {
   const [params, setParams] = useSearchParams()
   const [category, setCategory] = useState('all')
+  const [supplier, setSupplier] = useState('all')
   const [sortDescending, setSortDescending] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const query = params.get('q') || ''
@@ -39,6 +39,7 @@ export default function RecommendationTable({
       (item) =>
         (!query || `${item.sku} ${item.name}`.toLowerCase().includes(query.toLowerCase())) &&
         (category === 'all' || item.category_raw === category) &&
+        (supplier === 'all' || item.supplier_id === supplier) &&
         (status === 'all' ||
           (status === 'buy' && (item.final_quantity ?? 0) > 0) ||
           (status === 'review' && ['needs_data', 'needs_review'].includes(item.decision_status)) ||
@@ -47,7 +48,7 @@ export default function RecommendationTable({
     )
     if (sortDescending) items.sort((a, b) => (b.final_quantity ?? -1) - (a.final_quantity ?? -1))
     return compact ? items.slice(0, 5) : items
-  }, [data, query, category, status, sortDescending, compact])
+  }, [data, query, category, supplier, status, sortDescending, compact])
   const selectable = filtered.filter(canSelect)
   const allChecked =
     selectable.length > 0 && selectable.every((item) => selected.includes(item.item_id))
@@ -121,10 +122,22 @@ export default function RecommendationTable({
               <SlidersHorizontal size={17} />
               Фильтры{category !== 'all' && <span className="filter-dot" />}
             </button>
-            <div className="supplier-chip">
-              <span className="supplier-monogram">S</span>Systeme Electric
-              <CaretDown size={13} />
-            </div>
+            <select
+              aria-label="Поставщик"
+              value={supplier}
+              onChange={(e) => setSupplier(e.target.value)}
+            >
+              <option value="all">Все поставщики</option>
+              {[
+                ...new Map(
+                  data.items.map((item) => [item.supplier_id, item.supplier_name]),
+                ).entries(),
+              ].map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
           {filtersOpen && (
             <div className="filter-row">
@@ -132,7 +145,13 @@ export default function RecommendationTable({
                 Категория
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="all">Все категории</option>
-                  {[...new Set(data.items.map((i) => i.category_raw))].map((cat) => (
+                  {[
+                    ...new Set(
+                      data.items
+                        .map((i) => i.category_raw)
+                        .filter((cat): cat is string => cat !== null),
+                    ),
+                  ].map((cat) => (
                     <option key={cat}>{cat}</option>
                   ))}
                 </select>
@@ -151,6 +170,7 @@ export default function RecommendationTable({
                 className="text-button"
                 onClick={() => {
                   setCategory('all')
+                  setSupplier('all')
                   setParams({})
                 }}
               >
@@ -167,6 +187,7 @@ export default function RecommendationTable({
             className="button"
             onClick={() => {
               setCategory('all')
+              setSupplier('all')
               setParams({})
             }}
           >
@@ -253,7 +274,7 @@ function TableGroup({
     <>
       <tr className="supplier-row">
         <td colSpan={9}>
-          <span className="supplier-monogram">S</span>
+          <span className="supplier-monogram">{items[0].supplier_name.slice(0, 1)}</span>
           {items[0].supplier_name}
           <span>{items.length} позиций</span>
         </td>

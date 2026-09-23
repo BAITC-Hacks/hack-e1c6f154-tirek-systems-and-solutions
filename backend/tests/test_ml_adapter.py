@@ -10,6 +10,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from fastapi.testclient import TestClient
 
 import numpy as np
 import pandas as pd
@@ -17,6 +18,7 @@ import pandas as pd
 from backend.app import ml_adapter
 from backend.app.contracts import validate
 from backend.app.pipeline import calculate
+from backend.app.main import create_app
 from model.forecast_v2.data import Panel
 
 
@@ -57,11 +59,11 @@ class AdapterIntegrationTests(unittest.TestCase):
     def tearDown(self):
         self.directory.cleanup()
 
-    def run_adapter(self, **updates):
+    def run_adapter(self, via_http=False, **updates):
         req = deepcopy(self.request)
         req.update(updates)
-        (self.normalized / "current.json").write_text(json.dumps(self.profiles))
-        (self.normalized / "context.json").write_text(json.dumps(self.context))
+        (self.normalized / "current.json").write_text(json.dumps(self.profiles, ensure_ascii=False), encoding="utf-8")
+        (self.normalized / "context.json").write_text(json.dumps(self.context, ensure_ascii=False), encoding="utf-8")
         env = {"DATA_DIR": str(self.root), "TIREK_PIPELINE": "backend.app.ml_adapter:TirekCalculationPipeline"}
         forecast = (self.frame, np.asarray([280.0]),
                     {"selected": "mean364", "best_ml": "ridge_100", "trained_as_of": "2026-09-21"}, "a" * 64)
@@ -70,11 +72,40 @@ class AdapterIntegrationTests(unittest.TestCase):
         with patch.dict("os.environ", env), patch.object(ml_adapter, "load_panels", return_value=([self.panel], {})), \
                 patch.object(ml_adapter, "_load_forecast", return_value=forecast), \
                 patch.object(ml_adapter, "_daily_path", return_value=[10.0] * 28):
-            result = calculate(deepcopy(self.dataset), req, "calc-integration")
+            if via_http:
+                app = create_app(self.root / 'http.sqlite3')
+                with TestClient(app) as client:
+                    with app.state.store.transaction() as db:
+                        app.state.store.put(db, 'dataset', self.dataset['dataset_id'],
+                                            {**self.dataset, 'calculation_allowed': True})
+                    created = client.post('/api/v1/calculations', json=req,
+                                          headers={'Idempotency-Key': 'http-integration'})
+                    self.assertEqual(created.status_code, 202, created.text)
+                    job = client.get('/api/v1/jobs/' + created.json()['job_id']).json()
+                    self.assertEqual(job['status'], 'succeeded', job)
+                    prefix = '/api/v1/calculations/' + job['resource_id']
+                    response = client.get(prefix + '/recommendations').json()
+                    item = response['items'][0]
+                    detail = client.get(prefix + '/items/' + item['item_id']).json()
+                    rejected = client.post(prefix + '/approve', json={
+                        'expected_revision': 1, 'selected_item_ids': [item['item_id']],
+                        'acknowledged_issue_codes': [issue['code'] for issue in item['issues']],
+                    }, headers={'Idempotency-Key': 'approve-incomplete'})
+                    self.assertEqual(rejected.status_code, 422, rejected.text)
+                    result = {'response': response, 'details': {item['item_id']: detail}}
+            else:
+                result = calculate(deepcopy(self.dataset), req, "calc-integration")
         validate("RecommendationsResponse", result["response"])
         for detail in result["details"].values():
             validate("ItemDetail", detail)
         return result
+
+    def test_http_job_list_detail_and_utf8_sources(self):
+        self.profiles['001']['name'] = 'Выключатель ИК — проверка кириллицы'
+        result = self.run_adapter(via_http=True)
+        self.assertEqual(self.item(result)['name'], self.profiles['001']['name'])
+        self.assertEqual(self.item(result)['recommended_quantity'], 180)
+        self.assertEqual(self.item(result)['forecast']['method'], 'baseline')
 
     def item(self, result):
         return result["response"]["items"][0]
@@ -150,3 +181,17 @@ class AdapterIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_frozen_weights_load_and_predict_on_synthetic_history():
+    """Exercise real hashes/features/weights; this is not an accuracy measurement."""
+    daily = pd.DataFrame(10.0, index=['SMOKE-ONLY'],
+                         columns=pd.date_range('2025-01-01', '2026-09-22'))
+    monthly = pd.DataFrame(300.0, index=['SMOKE-ONLY'],
+                           columns=pd.date_range('2024-01-01', periods=12, freq='MS'))
+    panel = Panel('SE__pieces', 'SE', 'шт', 'Алматы', daily, monthly, {})
+    frame, values, entry, selection_hash = ml_adapter._load_forecast(panel, pd.Timestamp('2026-09-22'))
+    assert len(frame) == len(values) == 1
+    assert np.isfinite(values).all() and (values >= 0).all()
+    assert len(selection_hash) == 64
+    assert entry['trained_as_of'] <= '2026-09-22'

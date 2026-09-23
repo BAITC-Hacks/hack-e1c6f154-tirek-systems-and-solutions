@@ -1,16 +1,29 @@
 # Tirek backend
 
-FastAPI + SQLite. Это работающий backend платформы с явным синтетическим провайдером, а не обученная ML-система.
+FastAPI + SQLite. Демо-провайдер и встроенный адаптер нормализации SE, прогноза v2 и расчёта закупки. Они используют общий HTTP-контракт.
 
 ## Запуск из корня репозитория
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r backend/requirements.lock.txt
-.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+py -3.12 -m venv .venv-ml
+.\.venv-ml\Scripts\python.exe -m pip install -r backend/requirements-ml.txt
+.\.venv-ml\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Python 3.11+; проверено на Python 3.14 / Windows. API: http://127.0.0.1:8000/docs. База по умолчанию `data/tirek.sqlite3`. Для другого диска перед запуском задайте `$env:DATA_DIR = 'D:\tirek-data'`. Переменные из `.env.example` — образец; задайте их в окружении либо передайте uvicorn `--env-file backend/.env`.
+Полный стек проверен на Python 3.12 / Windows. Python 3.14 со старыми зависимостями платформы не является окружением модели. API: http://127.0.0.1:8000/docs. База по умолчанию `data/tirek.sqlite3`. Для другого диска перед запуском задайте `$env:DATA_DIR = 'D:\tirek-data'`. Переменные из `.env.example` — образец; задайте их в окружении либо передайте uvicorn `--env-file backend/.env`.
+
+Если Python 3.12 ещё не установлен, можно установить отдельное окружение через uv:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install uv
+.\.venv\Scripts\uv.exe venv --python 3.12 .venv-ml
+.\.venv\Scripts\uv.exe pip install --python .venv-ml\Scripts\python.exe -r backend/requirements-ml.txt
+.\scripts\dev.ps1
+```
+
+`dev.ps1` предпочитает `.venv-ml`, иначе использует `.venv`; другой интерпретатор
+задаётся через `-PythonPath`. До сообщения о готовности проверяется JSON API через Vite.
 
 Сервер слушает localhost. Аутентификация и многопользовательская изоляция пока не реализованы.
 
@@ -27,7 +40,9 @@ Python 3.11+; проверено на Python 3.14 / Windows. API: http://127.0.0
 
 ## Что ещё не реализовано
 
-Отдельный модуль [model/](../model/README.md) уже содержит CatBoost, baseline и оценку качества. Их интеграция в API, партнёрская нормализация, расчёт пополнения на реальных данных, stockout-коррекция, клиентские выбросы и LLM — следующие этапы. Импорт без нормализатора возвращает `calculation_allowed=false`, `rows_used=0`; дата набора явно означает дату загрузки, даты файлов неизвестны. Отчёт не выдаёт чтение XLSX за готовность прогноза.
+Нормализатор и прогноз v2 подключены по умолчанию через `backend.app.ml_adapter`. Неполный набор сохраняется с `calculation_allowed=false`; для полного набора проверяются исходные форматы, а даты и использованные строки берутся из аудита. `/workspace.capabilities` проверяет доступность адаптера и файлов весов, а не возвращает постоянное `true`. Совместимость и хеши весов дополнительно проверяются при прогнозе.
+
+Встроенный прогноз пока не использует stockout-интервалы и клиентские метки из дополнительного контекста: это явно отмечается в отчёте. LLM, HTTP-мониторинг остатков и подтверждённый импорт CSV в 1С не реализованы. Полный запуск по партнёрским XLSX в текущем окружении не проверен, поскольку файлы отсутствуют. Условия MOQ и область складского снимка должны быть подтверждены до утверждения реальных позиций. [Результаты аудита](../docs/integration-audit.md).
 
 Синтетический провайдер поддерживает горизонт 28 = 7 + 21 дней. Он не принимает пользовательские экономические/категориальные политики и прирост: изменение этих параметров требует настоящего расчётного модуля. Бюджет применяется к утверждению, а не объявляется оптимизатором.
 
@@ -40,8 +55,8 @@ Python 3.11+; проверено на Python 3.14 / Windows. API: http://127.0.0
 Из корня:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest backend/tests -q
-.\.venv\Scripts\python.exe scripts/validate_contract.py
+.\.venv-ml\Scripts\python.exe -m pytest backend/tests model -q
+.\.venv-ml\Scripts\python.exe scripts/validate_contract.py
 ```
 
 Тесты используют отдельную временную SQLite-базу: форматы ответов, null/0, MOQ, причины, конфликт ревизии, бюджет и неизвестные цены, предупреждения, повторные запросы, файлы, восстановление после перезапуска и неизменность CSV. Исходный валидатор контракта проверяет спецификацию/примеры отдельно от приложения.

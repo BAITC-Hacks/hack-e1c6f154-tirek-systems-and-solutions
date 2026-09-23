@@ -1,0 +1,3 @@
+# Python 3.12: platform + the existing frozen forecast runtime.
+-r requirements.lock.txt
+-r ../model/forecast_v2/requirements.txt

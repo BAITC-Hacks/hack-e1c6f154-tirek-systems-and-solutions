@@ -1,0 +1,6 @@
+# Frozen model files are verified byte-for-byte against hashes from Linux.
+# Preserve their original LF bytes on Windows; never regenerate locks to hide drift.
+model/forecast_v2/*.py text eol=lf
+model/forecast_v2/*.json text eol=lf
+model/forecast_v2/artifacts/*.json text eol=lf
+*.cbm binary

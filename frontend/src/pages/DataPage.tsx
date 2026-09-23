@@ -8,7 +8,7 @@ import {
   Info,
   X,
 } from '@phosphor-icons/react'
-import { api, type Dataset, type Job, type Workspace } from '../api/client'
+import { api, ApiError, type Dataset, type Job, type Workspace } from '../api/client'
 import { Badge, date, Loading, number } from '../components/ui'
 
 const roleLabels: Record<string, string> = {
@@ -20,6 +20,14 @@ const roleLabels: Record<string, string> = {
   current_stock_inbound: 'Остаток и товар в пути',
   additional_context: 'Дополнительный контекст',
 }
+const sourceNames: Record<string, string> = {
+  sales_transactions: 'Динамика…xlsx',
+  sales_monthly: 'Ежемесячные продажи…xlsx',
+  stock_monthly: 'Ежемесячные остатки…xlsx',
+  seasonality: 'Сезонность…xlsx',
+  moq: 'MOQ…xlsx',
+  current_stock_inbound: 'Товар в пути на ДД.ММ.ГГГГ.xlsx',
+}
 
 export default function DataPage({
   workspace,
@@ -28,7 +36,7 @@ export default function DataPage({
 }: {
   workspace: Workspace
   refresh: () => Promise<void>
-  onCalculate: () => void
+  onCalculate: (datasetId: string) => void
 }) {
   const [files, setFiles] = useState<File[]>([])
   const [context, setContext] = useState('')
@@ -77,6 +85,7 @@ export default function DataPage({
       key.current = crypto.randomUUID()
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setError((e as Error).message)
+      if (e instanceof ApiError && e.status > 0) key.current = crypto.randomUUID()
     } finally {
       setBusy(false)
     }
@@ -204,15 +213,16 @@ export default function DataPage({
                 <span>{index + 1}</span>
                 <div>
                   <strong>{label}</strong>
-                  <small>{role}.xlsx</small>
+                  <small>{sourceNames[role]}</small>
                 </div>
               </div>
             ))}
           <div className="notice">
             <Info size={20} />
             <p>
-              Сейчас работает проверка файлов и хранение версий. Нормализация партнёрских данных и
-              ML подключаются на следующем этапе.
+              Сохраните оригинальные имена и структуру выгрузок SE: они используются при
+              нормализации. Для расчёта нужны все шесть ролей. Дату складского снимка берём из имени
+              файла.
             </p>
           </div>
         </aside>
@@ -243,8 +253,15 @@ export default function DataPage({
         {report && <DatasetReport report={report} />}
         {report?.calculation_allowed && (
           <div className="panel-bottom">
-            <span className="muted">Доступен сценарий на синтетических данных</span>
-            <button className="button button-primary" onClick={onCalculate}>
+            <span className="muted">
+              {report.source_kind === 'synthetic'
+                ? 'Доступен сценарий на синтетических данных'
+                : 'Набор нормализован и доступен для расчёта'}
+            </span>
+            <button
+              className="button button-primary"
+              onClick={() => onCalculate(report.dataset_id)}
+            >
               Перейти к расчёту <ArrowRight size={17} />
             </button>
           </div>
@@ -259,7 +276,12 @@ function DatasetReport({ report }: { report: Dataset }) {
     <>
       <div className="dataset-summary">
         <div>
-          <span>Дата {report.source_kind === 'observed' ? 'загрузки' : 'данных'}</span>
+          <span>
+            Дата{' '}
+            {report.issues.some((issue) => issue.code === 'SOURCE_DATE_UNKNOWN')
+              ? 'загрузки'
+              : 'данных'}
+          </span>
           <strong>{date(report.data_as_of)}</strong>
         </div>
         <div>

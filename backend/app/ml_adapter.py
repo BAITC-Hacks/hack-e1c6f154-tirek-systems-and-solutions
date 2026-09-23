@@ -214,9 +214,9 @@ def normalize_dataset(directory: Path, report: dict, context: dict | None) -> di
 
 
 def _load_forecast(panel, origin):
-    selection = json.loads((MODEL_DIR / "selection.json").read_text())
-    lock = json.loads((MODEL_DIR / "selection.lock.json").read_text())
-    manifest = json.loads((MODEL_DIR / "manifest.json").read_text())
+    selection = json.loads((MODEL_DIR / "selection.json").read_text(encoding="utf-8"))
+    lock = json.loads((MODEL_DIR / "selection.lock.json").read_text(encoding="utf-8"))
+    manifest = json.loads((MODEL_DIR / "manifest.json").read_text(encoding="utf-8"))
     if sha256(MODEL_DIR / "selection.json") != lock["selection_sha256"]:
         raise ValueError("Forecast selection lock mismatch")
     verify_prediction_implementation(selection)
@@ -298,9 +298,9 @@ class TirekCalculationPipeline:
     def calculate(self, dataset: dict, request: dict, calculation_id: str) -> dict:
         data_dir = Path(os.getenv("DATA_DIR", str(ROOT / "data")))
         directory = data_dir / "uploads" / dataset["dataset_id"]
-        metadata = json.loads((directory / "normalized" / "metadata.json").read_text())
-        current_profiles = json.loads((directory / "normalized" / "current.json").read_text())
-        context = json.loads((directory / "normalized" / "context.json").read_text())
+        metadata = json.loads((directory / "normalized" / "metadata.json").read_text(encoding="utf-8"))
+        current_profiles = json.loads((directory / "normalized" / "current.json").read_text(encoding="utf-8"))
+        context = json.loads((directory / "normalized" / "context.json").read_text(encoding="utf-8"))
         panels, _ = load_panels(directory / metadata["model_input_root"], ("SE",))
         panel = next(value for value in panels if value.name == "SE__pieces")
         origin = pd.Timestamp(request["as_of_date"])

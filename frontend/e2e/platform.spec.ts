@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test'
 import type { APIRequestContext } from '@playwright/test'
+import { execFileSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import type { Workspace } from '../src/api/client'
 
 async function freshScenario(request: APIRequestContext) {
   const response = await request.post('http://127.0.0.1:8000/api/v1/calculations', {
@@ -69,6 +73,9 @@ test('desktop overview, search, drawer and data sources', async ({ page, request
   await page.keyboard.press('Escape')
   await page.getByRole('link', { name: 'Источники данных', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Отчёт о качестве' })).toBeVisible()
+  await page
+    .getByRole('combobox', { name: 'Версия набора', exact: true })
+    .selectOption('demo-systeme-v1')
   await expect(page.locator('.source-table tbody tr')).toHaveCount(6)
   await page.screenshot({ path: 'test-results/tirek-data.png', fullPage: true })
   expect(errors).toEqual([])
@@ -183,4 +190,110 @@ test('new calculation dialog runs a background job with the selected category', 
   await expect(page.getByRole('heading', { name: 'Подходящих позиций нет' })).toBeVisible()
   await page.getByRole('button', { name: 'Сбросить фильтры', exact: true }).click()
   await expect(page.locator('.product-cell')).toHaveCount(4)
+})
+
+test('uploaded XLSX produces a real report and does not enable an incomplete dataset', async ({
+  page,
+}) => {
+  const suffix = process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python'
+  const candidates = [resolve('..', '.venv-ml', suffix), resolve('..', '.venv', suffix)]
+  const python = process.env.TEST_PYTHON || candidates.find(existsSync) || 'python'
+  const buffer = execFileSync(python, [
+    '-c',
+    'import sys; from io import BytesIO; from openpyxl import Workbook; w=Workbook(); w.active.append(["sku", "quantity"]); w.active.append(["SYNTHETIC-TEST", 12]); b=BytesIO(); w.save(b); sys.stdout.buffer.write(b.getvalue())',
+  ])
+  await page.goto('/data')
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'MOQ-ui-test.xlsx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    buffer,
+  })
+  await page.getByRole('button', { name: 'Проверить и загрузить' }).click()
+  await expect(
+    page.getByText('Для модели нужны все шесть ролей файлов', { exact: false }),
+  ).toBeVisible({ timeout: 15000 })
+  await expect(page.getByRole('button', { name: 'Перейти к расчёту' })).not.toBeVisible()
+  await expect(page.locator('.source-table tbody tr')).toHaveCount(1)
+})
+
+test('observed dataset passes mode, categories and policies to the calculation API', async ({
+  page,
+  request,
+}) => {
+  // A UI contract fixture, not a claim of forecast accuracy on partner data.
+  const workspace: Workspace = await (await request.get('/api/v1/workspace')).json()
+  const fixture = {
+    ...workspace.datasets.find((dataset) => dataset.dataset_id === 'demo-systeme-v1')!,
+    dataset_id: 'ui-contract-observed',
+    dataset_version: 'ui-contract-v1',
+    source_kind: 'observed' as const,
+    data_as_of: '2026-09-23',
+    sku_count: 565,
+    calculation_allowed: true,
+  }
+  await page.route('**/api/v1/workspace', (route) =>
+    route.fulfill({ json: { ...workspace, datasets: [fixture, ...workspace.datasets] } }),
+  )
+  await page.route('**/api/v1/calculations', (route) =>
+    route.fulfill({
+      status: 422,
+      json: {
+        error: {
+          code: 'INVALID_PARAMETERS',
+          message: 'Проверьте заполнение полей.',
+          details: [
+            { field: 'category_policies.0.rationale', message: 'Тестовая проверка источника' },
+          ],
+        },
+      },
+    }),
+  )
+  await page.goto('/data')
+  await page.getByRole('button', { name: 'Перейти к расчёту' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('combobox', { name: 'Набор данных', exact: true })).toHaveValue(
+    fixture.dataset_id,
+  )
+  await expect(dialog.getByLabel('Дата расчёта', { exact: true })).toHaveValue('2026-09-23')
+  await dialog
+    .getByRole('combobox', { name: 'Режим расчёта', exact: true })
+    .selectOption('operational')
+  await dialog.getByRole('textbox', { name: 'Категория', exact: true }).fill('7, 8')
+  await dialog.getByLabel('Срок поставки, дней', { exact: true }).fill('10')
+  const policies = [
+    {
+      category_raw: '7',
+      target_quantile: 0.9,
+      minimum_target_quantile: null,
+      source_kind: 'manual',
+      rationale: 'Явная политика закупщика',
+    },
+  ]
+  await dialog
+    .getByRole('textbox', { name: 'Политики категорий · JSON', exact: false })
+    .fill(JSON.stringify(policies))
+  const sent = page.waitForRequest(
+    (value) => value.url().endsWith('/api/v1/calculations') && value.method() === 'POST',
+  )
+  await dialog.getByRole('button', { name: 'Подготовить рекомендации' }).click()
+  expect((await sent).postDataJSON()).toMatchObject({
+    dataset_id: fixture.dataset_id,
+    mode: 'operational',
+    category_codes: ['7', '8'],
+    category_policies: policies,
+    lead_time_days: 10,
+    review_period_days: 18,
+  })
+  await expect(dialog.getByRole('alert')).toContainText('category_policies.0.rationale')
+})
+
+test('settings reports the runtime and supplier filtering works', async ({ page, request }) => {
+  await freshScenario(request)
+  await page.goto('/settings')
+  await expect(page.getByText('Адаптер настроен', { exact: true })).toBeVisible()
+  await page.goto('/recommendations')
+  await page
+    .getByRole('combobox', { name: 'Поставщик', exact: true })
+    .selectOption('systeme-electric')
+  await expect(page.locator('.product-cell')).toHaveCount(12)
 })

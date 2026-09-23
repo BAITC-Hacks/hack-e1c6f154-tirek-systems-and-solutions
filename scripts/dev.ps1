@@ -1,7 +1,11 @@
-param([string]$DataDir = '')
+param([string]$DataDir = '', [string]$PythonPath = '')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$pythonPath = Join-Path $projectRoot '.venv\Scripts\python.exe'
+if (-not $PythonPath) {
+    $PythonPath = Join-Path $projectRoot '.venv-ml\Scripts\python.exe'
+    if (-not (Test-Path -LiteralPath $PythonPath)) { $PythonPath = Join-Path $projectRoot '.venv\Scripts\python.exe' }
+}
+$pythonPath = [System.IO.Path]::GetFullPath($PythonPath)
 $frontendPath = Join-Path $projectRoot 'frontend'
 if (-not (Test-Path -LiteralPath $pythonPath)) { throw 'Create .venv and install backend/requirements.lock.txt first. See README.md.' }
 if (-not (Test-Path -LiteralPath (Join-Path $frontendPath 'node_modules\vite\bin\vite.js'))) { throw 'Run npm ci in frontend first. See README.md.' }

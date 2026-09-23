@@ -13,7 +13,12 @@ export type Workspace = {
   datasets: Dataset[]
   approvals: Approval[]
   calculations: Recommendations['meta'][]
-  capabilities: { demo: boolean; ml_connected: boolean; real_import: string }
+  capabilities: {
+    demo: boolean
+    ml_connected: boolean
+    real_import: string
+    ml_error?: string | null
+  }
 }
 
 const base = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/$/, '')
@@ -42,7 +47,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     throw new ApiError(
-      body?.error?.message || 'Сервер не смог выполнить запрос.',
+      [
+        body?.error?.message || 'Сервер не смог выполнить запрос.',
+        ...(Array.isArray(body?.error?.details)
+          ? body.error.details.map(
+              (detail: { field?: string; message?: string }) =>
+                `${detail.field || 'Параметры'}: ${detail.message || 'некорректное значение'}`,
+            )
+          : []),
+      ].join(' '),
       body?.error?.code || 'HTTP_ERROR',
       response.status,
     )
@@ -99,6 +112,7 @@ export const api = {
     })
   },
   wait: async (initial: Job, update: (job: Job) => void, signal: AbortSignal) => {
+    signal.throwIfAborted()
     let job = initial
     const started = Date.now()
     while (job.status !== 'succeeded' && job.status !== 'failed') {
@@ -123,6 +137,7 @@ export const api = {
         )
       job = await request<Job>(`/jobs/${job.job_id}`, { signal })
     }
+    signal.throwIfAborted()
     update(job)
     if (job.status === 'failed')
       throw new ApiError(
