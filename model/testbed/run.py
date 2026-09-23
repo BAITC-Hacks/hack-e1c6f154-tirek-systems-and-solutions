@@ -235,7 +235,7 @@ def main():
     for command in (frozen, run):
         command.add_argument("--adapter", default=DEFAULT_ADAPTER)
         command.add_argument("--calculator", default=DEFAULT_CALCULATOR)
-        command.add_argument("--manifest", default=str(ROOT / "corrected-freeze.json"))
+        command.add_argument("--manifest", default=str(ROOT / "full-freeze.json"))
     export = commands.add_parser("export-development")
     export.add_argument("--scenario", choices=PROTOCOL["scenarios"], default="stable")
     export.add_argument("--seed", type=int, choices=PROTOCOL["development_seeds"], default=101)

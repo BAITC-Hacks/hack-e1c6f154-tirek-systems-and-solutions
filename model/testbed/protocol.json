@@ -1,5 +1,5 @@
 {
-  "version": "testbed-v3.0-corrections",
+  "version": "testbed-v4.0-full-fixes",
   "mode": "synthetic",
   "development_seeds": [101, 202, 303],
   "final_seeds": [909, 1337, 2027, 4099],
@@ -15,6 +15,8 @@
   "default_adapter": "model.testbed.seasonal:forecast",
   "candidate_selection": {"methods": ["mean56", "mean168", "seasonal_trend"], "inner_origin_days_before_cutoff": [84, 56, 28], "inner_horizon_days": 28, "selection_target": "observed sales on complete available historical days, exposure weighted predictions; no hidden truth", "tie_break": "method list order", "seasonal_features": "intercept, linear log trend, two annual Fourier harmonics; past weekday calibration"},
   "event_identifiers": "opaque 128-bit independent stream; no class/date/SKU suffix",
+  "history_support": "Recent complete positive exposure or explicitly supplied analogue within 168 days; otherwise explicit insufficient-data error, never invented zero demand",
+  "project_heuristic": "Promotion-normalized client episodes shorter than 7 days and above 8 typical daily units; purchases 7+ days apart are retained as recurring. Heuristic, not ground truth.",
   "scenarios": ["stable", "seasonal_growth", "intermittent", "new_product", "full_stockout", "partial_stockout", "single_project", "split_project", "recurring_client", "known_promotion", "demand_shock", "combined"],
   "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
   "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",

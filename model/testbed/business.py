@@ -6,7 +6,7 @@ All arithmetic stays Decimal until the finite JSON response is constructed.
 """
 from datetime import date, timedelta
 from copy import deepcopy
-from decimal import Decimal, ROUND_CEILING, localcontext, DecimalException
+from decimal import Decimal, ROUND_CEILING, ROUND_HALF_EVEN, Context, localcontext, DecimalException
 import json
 import math
 from pathlib import Path
@@ -15,9 +15,15 @@ from pathlib import Path
 ZERO = Decimal(0)
 ONE = Decimal(1)
 PROBABILITY_TOLERANCE = Decimal("1e-9")
+# Isolated from the caller's rounding/traps/exponent settings. JSON float inputs
+# span about632 decimal places; this also covers their products and exact lots.
+ARITHMETIC_CONTEXT = Context(prec=2048, rounding=ROUND_HALF_EVEN)
+MAX_JSON_NUMBER = Decimal("1.7976931348623157e308")
 RULE_IDS = {"DATA-01", "DATA-02", "DEMAND-01", "DEMAND-02", "DEMAND-03", "DEMAND-04",
             "SUPPLY-01", "SUPPLY-02", "SUPPLY-03", "SUPPLY-04", "POLICY-01", "POLICY-02",
             "BUDGET-01", "BUDGET-02", "APPROVAL-01", "AI-01"}
+CALCULATION_RULE_IDS = {"DATA-01", "DEMAND-04", "SUPPLY-01", "SUPPLY-02", "SUPPLY-03",
+                        "SUPPLY-04", "POLICY-01", "POLICY-02", "BUDGET-01", "BUDGET-02"}
 
 
 def decimal_number(value, *, nonnegative=True):
@@ -27,6 +33,10 @@ def decimal_number(value, *, nonnegative=True):
     number = Decimal(str(value))
     if not number.is_finite() or (nonnegative and number < 0):
         raise ValueError("expected a finite nonnegative number")
+    if number.copy_abs() > MAX_JSON_NUMBER or (number != 0 and float(number) == 0):
+        raise ValueError("number outside supported finite JSON range")
+    if len(number.as_tuple().digits) > 4096:
+        raise ValueError("number exceeds supported input precision")
     return number
 
 
@@ -67,13 +77,15 @@ def _round_decimal(value, step):
 
 
 def round_up(value, step):
-    with localcontext() as context:
-        context.prec = 80
+    with localcontext(ARITHMETIC_CONTEXT):
         return _json_numbers(_round_decimal(value, step))
 
 
 def _json_numbers(value):
     if isinstance(value, Decimal):
+        decimal_number(value, nonnegative=False)
+        if value == value.to_integral_value():
+            return int(value)
         result = float(value)
         if not math.isfinite(result):
             raise ValueError("computed value exceeds finite JSON numeric range")
@@ -109,7 +121,7 @@ def _validate_item(p, request):
     if p.get("free_stock") is None and p.get("reserved") is None:
         add("reserved")
     for key in ("on_hand", "reserved", "free_stock"):
-        if p.get(key) is not None and not _number_valid(p[key]):
+        if p.get(key) is not None and not _number_valid(p[key], nonnegative=key != "free_stock"):
             add("valid_" + key)
     if p.get("lead_time_days") is None:
         add("lead_time_days")
@@ -191,7 +203,7 @@ def _validate_item(p, request):
                     add("valid_" + field)
                 elif _number_valid(entry.get("quantity")) and decimal_number(entry["already_accounted_quantity"]) > decimal_number(entry["quantity"]):
                     add("valid_" + field)
-            elif entry.get("status") not in {"confirmed", "cancelled", "planned", "unconfirmed"}:
+            elif not isinstance(entry.get("status"), str) or entry["status"] not in {"confirmed", "cancelled", "planned", "unconfirmed"}:
                 add("valid_" + field)
 
     distribution = p.get("horizon_distribution")
@@ -204,6 +216,12 @@ def _validate_item(p, request):
         valid = mass > 0 and abs(mass - ONE) <= PROBABILITY_TOLERANCE
     if not valid:
         add("horizon_distribution")
+    elif (isinstance(daily, list) and len(daily) == horizon and all(_number_valid(v) for v in daily)
+          and sum((decimal_number(v) for v in daily), ZERO) == 0
+          and any(decimal_number(v["quantity"]) > 0 and decimal_number(v["probability"]) > 0 for v in distribution)):
+        # A nonnegative random variable with mean0 cannot have positive support.
+        # In particular there is no temporal shape with which to apply growth.
+        add("consistent_daily_distribution")
 
     growths = p.get("growth_adjustments", [])
     included = p.get("growth_already_included", [])
@@ -229,7 +247,8 @@ def _validate_item(p, request):
 
 def _calculate_item(p, request, cutoff):
     result = {"sku": p["sku"], "supplier_id": p["supplier_id"], "quantity": None,
-              "status": "ok", "rules": [], "missing": [], "reason": "", "unit": p.get("unit")}
+              "status": "ok", "rules": [], "missing": [], "reason": "",
+              "unit": p.get("unit") if isinstance(p.get("unit"), str) else None}
     missing = _validate_item(p, request)
     if missing:
         result.update(status="needs_data", missing=missing, rules=["DATA-01"],
@@ -275,7 +294,7 @@ def _calculate_item(p, request, cutoff):
     forecast_mean = sum(daily, ZERO)
     if original_mean:
         target *= forecast_mean / original_mean
-    free = decimal_number(p["free_stock"]) if p.get("free_stock") is not None else decimal_number(p["on_hand"]) - decimal_number(p["reserved"])
+    free = decimal_number(p["free_stock"], nonnegative=False) if p.get("free_stock") is not None else decimal_number(p["on_hand"]) - decimal_number(p["reserved"])
     commitments = [(strict_date(m["needed_at"]), decimal_number(m["quantity"]) - decimal_number(m["already_accounted_quantity"]))
                    for m in p.get("material_requirements", []) if strict_date(m["needed_at"]) <= end]
     inbound = [(strict_date(i["expected_at"]), decimal_number(i["quantity"]))
@@ -353,11 +372,13 @@ def _calculate_item(p, request, cutoff):
     return result
 
 
-def reference_calculate(request):
-    """Illustrative local contract, with explicit validation and manual approval."""
+def _request_cutoff(request):
+    """Validate envelope once, before per-item checks or calendar arithmetic."""
     if not isinstance(request, dict) or not _integer(request.get("horizon_days"), 1):
         raise ValueError("horizon_days must be a positive integer")
     cutoff = strict_date(request.get("as_of"))
+    if request["horizon_days"] > (date.max - cutoff).days:
+        raise ValueError("horizon_days exceeds the supported calendar")
     if not isinstance(request.get("category_policies"), dict) or not isinstance(request.get("items"), list):
         raise ValueError("category_policies must be an object and items a list")
     identities = set()
@@ -367,10 +388,50 @@ def reference_calculate(request):
         if p["sku"] in identities:
             raise ValueError("duplicate SKU")
         identities.add(p["sku"])
-    with localcontext() as context:
-        context.prec = 80
-        items = [_calculate_item(p, request, cutoff) for p in request["items"]]
+    if not request["items"] and request.get("budget_kzt") is not None and not _number_valid(request["budget_kzt"]):
+        raise ValueError("invalid budget_kzt; empty items cannot bypass request validation")
+    return cutoff
+
+
+def _numeric_data_error(p, field):
+    return {"sku": p["sku"], "supplier_id": p["supplier_id"], "quantity": None,
+            "status": "needs_data", "rules": ["DATA-01"], "missing": [field],
+            "urgency": "data_required", "unit": p.get("unit") if isinstance(p.get("unit"), str) else None,
+            "reason": "No quantity: arithmetic exceeds supported finite numeric range; check " + field}
+
+
+def _checked_item(p, request, cutoff):
+    try:
+        result = _calculate_item(p, request, cutoff)
+        rendered = _json_numbers(result)
+        if result["quantity"] is not None:
+            # Do not publish a rounded JSON quantity that violates its base unit.
+            if decimal_number(rendered["quantity"]) != result["quantity"]:
+                return _numeric_data_error(p, "quantity_representation")
+            if result.get("unit_cost") is not None:
+                if decimal_number(rendered["unit_cost"]) != result["unit_cost"]:
+                    return _numeric_data_error(p, "price_representation")
+                _json_numbers(result["quantity"] * result["unit_cost"])
+            for key, value in result["order_constraints_base"].items():
+                if value is not None and decimal_number(rendered["order_constraints_base"][key]) != value:
+                    return _numeric_data_error(p, "constraint_representation")
+        return result
+    except (ValueError, DecimalException, OverflowError):
+        return _numeric_data_error(p, "numeric_range")
+
+
+def reference_calculate(request):
+    """Illustrative local contract, with explicit validation and manual approval."""
+    with localcontext(ARITHMETIC_CONTEXT):
+        cutoff = _request_cutoff(request)
+        items = [_checked_item(p, request, cutoff) for p in request["items"]]
         known_total = sum((i["quantity"] * i["unit_cost"] for i in items if i["quantity"] is not None and i.get("unit_cost") is not None), ZERO)
+        if not _number_valid(known_total):
+            # Individual rows may fit the transport while their total does not.
+            # Reject the calculation explicitly instead of dropping a supplier
+            # or emitting an infinite/partially convenient budget total.
+            items = [_numeric_data_error(p, "aggregate_numeric_range") for p in request["items"]]
+            known_total = ZERO
         unknown_price = any(i["quantity"] is not None and i["quantity"] > 0 and i.get("unit_cost") is None for i in items)
         budget = request.get("budget_kzt")
         budget = decimal_number(budget) if budget is not None and _number_valid(budget) else None
@@ -391,10 +452,17 @@ def reference_calculate(request):
 
 
 def validate_response(request, actual):
-    with localcontext() as context:
-        context.prec = 80
+    """Schema plus deterministic contract parity; not an independent policy proof.
+
+Independent manually computed tests establish reference arithmetic. This checker
+also compares an external adapter with that explicit reference contract so a
+coherent alteration of quantity, stock and costs cannot pass schema alone.
+"""
+    with localcontext(ARITHMETIC_CONTEXT):
         try:
-            return _validate_response(request, actual)
+            _request_cutoff(request)
+            failures = _validate_response(request, actual)
+            return failures + _semantic_failures(request, actual)
         except (TypeError, ValueError, ArithmeticError, KeyError) as exc:
             return [f"response: malformed value ({type(exc).__name__}: {exc})"]
 
@@ -534,7 +602,8 @@ It checks types, identities, physical constraints, accounting and status coheren
         price = item.get("unit_cost")
         if not number(price, prefix + ".unit_cost", nullable=True):
             continue
-        if price != source.get("unit_cost"):
+        if (price is None) != (source.get("unit_cost") is None) or (price is not None and
+                (not _number_valid(source.get("unit_cost")) or decimal_number(price) != decimal_number(source["unit_cost"]))):
             fail(prefix + " price differs from source")
         if price is None:
             unknown_price |= q > 0
@@ -564,15 +633,74 @@ It checks types, identities, physical constraints, accounting and status coheren
     if valid_budget and cost > decimal_number(budget):
         budget_rules.append("BUDGET-02")
     if isinstance(actual.get("rules"), list):
-        if any(rule not in actual["rules"] for rule in budget_rules) or any(rule.startswith("BUDGET-") and rule not in budget_rules for rule in actual["rules"]):
+        if any(rule not in actual["rules"] for rule in budget_rules) or any(isinstance(rule, str) and rule.startswith("BUDGET-") and rule not in budget_rules for rule in actual["rules"]):
             fail("budget rules inconsistent with costs/prices")
     if (non_ok or budget_rules) and actual.get("approval_blocked") is not True:
         fail("invalid, provisional or over-budget order cannot be approved")
     return failures
 
 
+def _semantic_failures(request, actual):
+    """Compare stated facts and outcomes, not the wording of explanations."""
+    if not isinstance(actual, dict) or not isinstance(actual.get("items"), list):
+        return []  # The shape checker already explains this failure.
+    expected = reference_calculate(request)
+    by_sku = {row.get("sku"): row for row in actual["items"]
+              if isinstance(row, dict) and isinstance(row.get("sku"), str)}
+    failures = []
+    def match(wanted, received, path):
+        if isinstance(wanted, dict):
+            if not isinstance(received, dict):
+                failures.append(path + ": expected contract object")
+                return
+            for key, value in wanted.items():
+                if key not in received:
+                    failures.append(path + "." + key + ": missing contract field")
+                else:
+                    match(value, received[key], path + "." + key)
+        elif isinstance(wanted, (int, float)) and not isinstance(wanted, bool):
+            if not _number_valid(received, nonnegative=False):
+                failures.append(path + ": invalid contract number")
+                return
+            exact = decimal_number(wanted, nonnegative=False)
+            value = decimal_number(received, nonnegative=False)
+            # Lots, prices and money are exact decimal transport values. Only
+            # derived continuous summaries tolerate one binary-float ULP.
+            continuous = path.rsplit(".", 1)[-1] in {"target_quantile", "target_stock", "forecast_mean"}
+            tolerance = Decimal(str(math.ulp(float(wanted)))) if continuous else ZERO
+            if (exact - value).copy_abs() > tolerance:
+                failures.append(path + ": differs from the deterministic input-based contract")
+        elif type(wanted) is not type(received) or wanted != received:
+            failures.append(path + ": differs from the deterministic input-based contract")
+    for row in expected["items"]:
+        if row["sku"] not in by_sku:
+            continue
+        # Reason wording may differ, but its type and presence are mandatory.
+        # Outside warnings may be added; calculation rules must describe actual
+        # input-based actions, not claim nonexistent data or a second policy.
+        facts = {key: value for key, value in row.items() if key not in {"reason", "rules"}}
+        match(facts, by_sku[row["sku"]], "contract.items[" + row["sku"] + "]")
+        actual_rules = by_sku[row["sku"]].get("rules")
+        if isinstance(actual_rules, list):
+            calculation_rules = {rule for rule in actual_rules if isinstance(rule, str) and rule in CALCULATION_RULE_IDS}
+            if calculation_rules != set(row["rules"]):
+                failures.append("contract.items[" + row["sku"] + "]: calculation rules differ")
+    match({key: value for key, value in expected.items() if key not in {"items", "supplier_groups", "rules"}},
+          actual, "contract")
+    if isinstance(actual.get("rules"), list):
+        calculation_rules = {rule for rule in actual["rules"] if isinstance(rule, str) and rule in CALCULATION_RULE_IDS}
+        if calculation_rules != set(expected["rules"]):
+            failures.append("contract: calculation rules differ")
+    return failures
+
+
 def compare(expected, actual, path="result"):
     """Subset comparison for objects; exact lists and tolerant finite numbers."""
+    with localcontext(ARITHMETIC_CONTEXT):
+        return _compare(expected, actual, path)
+
+
+def _compare(expected, actual, path):
     failures = []
     if isinstance(expected, dict):
         if not isinstance(actual, dict):

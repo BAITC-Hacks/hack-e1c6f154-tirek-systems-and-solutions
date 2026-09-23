@@ -103,7 +103,7 @@ class ProcurementCorrectionsTests(unittest.TestCase):
         changes = [
             {"daily_mean": [-10] * 28}, {"daily_mean": [True] * 28},
             {"daily_mean": [float("nan")] * 28}, {"daily_mean": [float("inf")] * 28},
-            {"on_hand": -1}, {"reserved": -1}, {"free_stock": -1}, {"unit_cost": -100},
+            {"on_hand": -1}, {"reserved": -1}, {"unit_cost": -100},
             {"unit_cost": float("inf")}, {"on_hand": True}, {"reserved": "0"},
             {"lead_time_days": -1, "review_period_days": 29},
             {"lead_time_days": 29, "review_period_days": -1},
