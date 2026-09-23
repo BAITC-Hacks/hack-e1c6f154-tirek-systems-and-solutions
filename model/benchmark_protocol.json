@@ -1,0 +1,57 @@
+{
+  "version": "2.0",
+  "forecast_horizon_days": 28,
+  "forecast_gate": {
+    "metric": "WAPE",
+    "maximum": 0.1,
+    "zero_demand_policy": "report absolute error separately, never invent percentage accuracy"
+  },
+  "real_validation_origins": [
+    "2026-05-04",
+    "2026-06-01",
+    "2026-06-29"
+  ],
+  "real_evaluation_origins": [
+    "2026-07-27",
+    "2026-08-24"
+  ],
+  "real_evaluation_status": "retrospective; these windows have already been inspected during v1 development",
+  "real_target": "unchanged positive observed invoice sales; cleaned estimates never replace the real score target",
+  "synthetic_development_seeds": [
+    101,
+    202,
+    303
+  ],
+  "synthetic_evaluation_seeds": [
+    909,
+    1337,
+    2027,
+    4099
+  ],
+  "synthetic_scenarios": [
+    "stable",
+    "seasonal_growth",
+    "intermittent",
+    "new_product",
+    "full_stockout",
+    "partial_stockout",
+    "single_project",
+    "split_project",
+    "recurring_client",
+    "known_promotion",
+    "demand_shock",
+    "combined"
+  ],
+  "synthetic_primary_target": "realized latent REGULAR demand, excluding separately generated project orders",
+  "synthetic_secondary_target": "expected regular demand, reported separately and never substituted for realized demand",
+  "selection_rule": "candidate choices use development data only; synthetic evaluation is run after candidate freeze",
+  "coverage_rule": "report every scenario and every seed, including failures; no dropping difficult SKU",
+  "business_gate": "all hard constraints and source-sensitivity checks pass; this rate is NOT forecast accuracy",
+  "overall_goal_achieved": "real WAPE <= 0.10 AND all-scenario synthetic realized WAPE <= 0.10 AND no hard business failures",
+  "limitations": [
+    "no guarantee of 90% on unpredictable demand",
+    "new untouched real future data needed for production acceptance",
+    "no external UI or live integrations are part of this laboratory"
+  ],
+  "scenario_coverage_note": "Seasonality and sustained growth are combined in the generated scenario; direct module tests also check their formula. All cases, including shocks and intermittent demand, remain in aggregate scores."
+}

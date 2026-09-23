@@ -1,0 +1,161 @@
+{
+  "audit_version": "1.0",
+  "generated_at_utc": "2026-09-23T10:18:35.395417+00:00",
+  "command": "python -m model.decision.audit_math --output model/decision/math_audit.json",
+  "python_version": "3.12.14",
+  "decimal_precision": 28,
+  "core_path": "model/decision/core.py",
+  "core_sha256": "811a829a840b8cc3f7e5d85c5e796d6225c3b4ab33634a9407f8d205602dbcff",
+  "core_sha256_after_run": "811a829a840b8cc3f7e5d85c5e796d6225c3b4ab33634a9407f8d205602dbcff",
+  "audit_script_sha256": "5dfb024851c95919af03eb4caa257ece0c08fd7c2ba2ed68e67771a285322c0e",
+  "source_changed_during_run": false,
+  "cases": 15300,
+  "passed": 15300,
+  "failed": 0,
+  "status": "passed",
+  "runtime_seconds": 2.469247,
+  "groups": [
+    {
+      "name": "sequential_decimal_inventory_oracle",
+      "cases": 300,
+      "seed": 853071,
+      "domains": {
+        "horizon_days": 4,
+        "lead_days": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "scenario_count": [
+          1,
+          5
+        ],
+        "regular_daily_demand_integer_range": [
+          0,
+          5
+        ],
+        "material_count": [
+          0,
+          2
+        ],
+        "material_forecast_allocation_integer_range": [
+          0,
+          3
+        ],
+        "material_reserve_integer_range": [
+          0,
+          2
+        ],
+        "material_uncovered_integer_range": [
+          0,
+          3
+        ],
+        "free_stock_integer_range": [
+          0,
+          8
+        ],
+        "growth_rates": [
+          -0.2,
+          0,
+          0.2,
+          1
+        ],
+        "service_levels": [
+          0,
+          0.5,
+          1
+        ],
+        "order_multiple_integer_range": [
+          1,
+          5
+        ],
+        "minimum_order_integer_range": [
+          0,
+          6
+        ],
+        "underage_cost_integer_range": [
+          0,
+          9
+        ],
+        "overage_cost_integer_range": [
+          1,
+          9
+        ],
+        "existing_inbound": "none in these 300 cases; dated insertion of the new order is tested",
+        "exhaustive_quantity_bound": "0 plus positive lot multiples below 120; maximum total adjusted demand is 52, MOQ<=6, multiple<=5"
+      },
+      "passed": 300,
+      "failed": 0,
+      "failure_examples": [],
+      "runtime_seconds": 1.183912
+    },
+    {
+      "name": "exact_decimal_discrete_optimizer_oracle",
+      "cases": 5000,
+      "seed": 9361,
+      "domains": {
+        "scenario_count": [
+          1,
+          7
+        ],
+        "requirement_decimal_range": [
+          "0.0",
+          "2.9"
+        ],
+        "requirement_step": "0.1",
+        "underage_and_overage_cost_range": [
+          "0.1",
+          "0.9"
+        ],
+        "cost_step": "0.1",
+        "lot_multiple_range": [
+          "0.1",
+          "0.5"
+        ],
+        "lot_step": "0.1",
+        "minimum_order_range": [
+          "0.0",
+          "0.9"
+        ],
+        "floor_quantity": 0,
+        "tie_break": "smallest quantity among exactly equal Decimal losses",
+        "exhaustive_bound": "0 plus the first 49 lot multiples; even at the smallest lot, 4.9 exceeds every requirement and MOQ"
+      },
+      "passed": 5000,
+      "failed": 0,
+      "failure_examples": [],
+      "runtime_seconds": 1.254416
+    },
+    {
+      "name": "exact_percentile_rank_oracle",
+      "cases": 10000,
+      "seed": null,
+      "domains": {
+        "enumeration": "all 100 scenario counts times all 100 integer percentiles",
+        "scenario_count": [
+          1,
+          100
+        ],
+        "percentile": [
+          1,
+          100
+        ],
+        "values": "1..scenario_count",
+        "expected_rank": "Decimal ceil(percentile * scenario_count / 100)"
+      },
+      "passed": 10000,
+      "failed": 0,
+      "failure_examples": [],
+      "runtime_seconds": 0.030092
+    }
+  ],
+  "failure_reporting": "All cases run and contribute to counts; at most 20 failure examples are stored per group.",
+  "limits": [
+    "This is a synthetic arithmetic audit, not a measurement of forecast accuracy or real-world service levels.",
+    "Random seeds and bounded domains are fixed; success is not an exhaustive proof over arbitrary inputs.",
+    "The 300 inventory cases cover the new order's dated arrival; existing inbound is covered by the separate core test suite.",
+    "The optimizer and quantile groups exercise private numeric helpers, independently of input validation.",
+    "No claim about floating-point noise introduced by a forecasting model or integration adapter is made by this audit."
+  ]
+}

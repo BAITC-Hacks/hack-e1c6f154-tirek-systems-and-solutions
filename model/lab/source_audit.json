@@ -1,0 +1,202 @@
+{
+  "transactions": {
+    "filename": "Динамика продаж_Syseme Electric_2025-2026.xlsx",
+    "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+    "input_rows": 77313,
+    "used_rows": 76997,
+    "excluded_rows": 316,
+    "negative_rows": 302,
+    "undated_or_missing_sku_rows": 1,
+    "non_invoice_rows": 3,
+    "sku_count": 565,
+    "warehouse": "Алматы",
+    "unit": "шт",
+    "first_positive_sale": "2025-01-04",
+    "data_as_of": "2026-09-22",
+    "observed_positive_quantity": 6841676.0,
+    "client_id_available": false,
+    "daily_availability_available": false,
+    "last_day_completeness": "unverified; final day excluded from evaluation targets",
+    "quantity_policy": "positive invoice quantities; returns/corrections are not abs() and are not latent demand",
+    "exact_duplicate_row_excess": 0,
+    "repeated_document_sku_groups": 242,
+    "numeric_sku_rows": 0,
+    "leading_zero_sku_count": 102,
+    "duplicate_policy": "No unique line ID exists. Same document/SKU can have several real lines; these are not deduplicated.",
+    "duplicate_exact_policy": "Exact repeated transactions are flagged for review, not silently removed without a unique line ID."
+  },
+  "monthly_sales": {
+    "input_rows_after_header": 556,
+    "negative_cells_excluded": 323,
+    "blank_cells": 7105,
+    "invalid_nonblank_cells": 0,
+    "blank_policy": "zero_assumption",
+    "blank_rows_excluded": 0,
+    "header_footer_rows_excluded": 2,
+    "identical_duplicate_rows_excluded": 0,
+    "conflicting_duplicate_rows": 0,
+    "sku_count": 554,
+    "month_count": 33,
+    "first_month": "2024-01-01",
+    "last_month": "2026-09-01",
+    "unknown_cells": 323,
+    "availability_policy": "A monthly value is available only after its month ends; publication delay unknown."
+  },
+  "monthly_stock": {
+    "input_rows_after_header": 703,
+    "negative_cells_excluded": 0,
+    "blank_cells": 5133,
+    "invalid_nonblank_cells": 0,
+    "blank_policy": "unknown",
+    "blank_rows_excluded": 2,
+    "header_footer_rows_excluded": 0,
+    "identical_duplicate_rows_excluded": 0,
+    "conflicting_duplicate_rows": 0,
+    "sku_count": 701,
+    "month_count": 33,
+    "first_month": "2024-01-01",
+    "last_month": "2026-09-01",
+    "unknown_cells": 5133,
+    "availability_policy": "A monthly value is available only after its month ends; publication delay unknown."
+  },
+  "sources": [
+    {
+      "role": "sales_transactions",
+      "filename": "Динамика продаж_Syseme Electric_2025-2026.xlsx",
+      "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128"
+    },
+    {
+      "role": "sales_monthly",
+      "filename": "Ежемесячные продажи в кол-м выражении SystemElectric 2024-2026.xlsx",
+      "sha256": "f7782ab9ea5c06d68526543953c6fce7ca83a80d1c1a4e8d88fd083de415f9d0"
+    },
+    {
+      "role": "stock_monthly",
+      "filename": "Ежемесячные остатки SystemElectric 2024-2026.xlsx",
+      "sha256": "45d55eb244966ef9fdba1aa09c666e9dbc4c0b05c1088f4041edcd86b908c85e"
+    },
+    {
+      "role": "seasonality",
+      "filename": "Сезонность SystemElectric 2024-2026.xlsx",
+      "sha256": "19bdbc1c2331d3643e39294f68f11f7427f625107e8b025f6663bb559af669ab"
+    },
+    {
+      "role": "moq",
+      "filename": "MOQ SystemElectric.xlsx",
+      "sha256": "4fc809ecf9c0a73d97f13f7a16e7dbb20425ab97a6b2d9a0f6be0bbe1a326a7b"
+    },
+    {
+      "role": "current_stock_inbound",
+      "filename": "Товар в пути_SystemElectric на 22.09.2026.xlsx",
+      "sha256": "17aa50b7697aba5598997b1b4bba9de3950169bc81e97fd10c4d8b0348bd9a3d"
+    }
+  ],
+  "current_profiles": 497,
+  "moq_profiles": 554,
+  "current_snapshot": {
+    "quantity_missing_cells": 0,
+    "negative_quantity_cells": 0,
+    "free_stock_identity_checked": 497,
+    "free_stock_identity_conflicts": 0,
+    "component_sum_equals_on_hand": 4,
+    "blank_rows_excluded": 0,
+    "header_footer_rows_excluded": 0,
+    "identical_duplicate_rows_excluded": 0,
+    "conflicting_duplicate_rows": 0,
+    "sku_count": 497,
+    "as_of": "2026-09-22",
+    "inbound_eta": "2026-09-24",
+    "inbound_eta_year_policy": "Same year as dated snapshot; unverified assumption, never automatic year rollover.",
+    "category_counts": {
+      "1": 124,
+      "7": 7,
+      "2": 112,
+      "3": 243,
+      "5": 11
+    },
+    "unit_counts": {
+      "шт": 474,
+      "unknown": 23
+    },
+    "missing_multiple": 28,
+    "negative_quantities_policy": "Retained and flagged; require review before procurement.",
+    "warehouse_components_policy": "Do not sum component columns or add them to Остаток: their accounting scope is unverified."
+  },
+  "order_multiples": {
+    "nonpositive_or_missing_multiple": 0,
+    "blank_rows_excluded": 1,
+    "header_footer_rows_excluded": 1,
+    "identical_duplicate_rows_excluded": 0,
+    "conflicting_duplicate_rows": 0,
+    "sku_count": 554,
+    "interpretation": "Кратность means order multiple; minimum order quantity is not supplied.",
+    "historical_effective_dates_available": false,
+    "embedded_sales_multiple_conflicts": 26,
+    "conflict_policy": "Use the separate Кратность export; embedded sales multiples are not silently substituted. Effective date unverified."
+  },
+  "coverage": {
+    "monthly_sales": {
+      "available_skus": 554,
+      "daily_skus_matched": 545,
+      "daily_skus_missing": 20,
+      "additional_skus": 9
+    },
+    "monthly_stock": {
+      "available_skus": 701,
+      "daily_skus_matched": 565,
+      "daily_skus_missing": 0,
+      "additional_skus": 136
+    },
+    "order_multiple": {
+      "available_skus": 554,
+      "daily_skus_matched": 545,
+      "daily_skus_missing": 20,
+      "additional_skus": 9
+    },
+    "current_profile": {
+      "available_skus": 497,
+      "daily_skus_matched": 470,
+      "daily_skus_missing": 95,
+      "additional_skus": 27
+    }
+  },
+  "daily_monthly_reconciliation": {
+    "common_skus": 545,
+    "compared_complete_sku_months": 10642,
+    "matching_sku_months": 6116,
+    "differing_sku_months": 4526,
+    "sum_positive_daily_invoices": 6487558.0,
+    "sum_valid_monthly_report": 3081305.0,
+    "sum_absolute_difference": 3485287.0,
+    "semantic_equivalence_verified": false,
+    "policy": "Monthly net reports and positive invoice targets have different semantics/scope. Never sum overlapping histories or replace daily labels with monthly totals."
+  },
+  "seasonality": {
+    "raw_months": 33,
+    "unit": "not specified in the workbook; likely monetary, unverified",
+    "feature": "Dimensionless index from a complete prior year only; precomputed cross-year coefficients ignored."
+  },
+  "capabilities": {
+    "observed_positive_sales_forecast": true,
+    "monthly_2024_seasonality_feature": true,
+    "current_stock_and_dated_inbound": true,
+    "order_multiples": true,
+    "stockout_lost_demand_identifiable": false,
+    "client_level_oneoff_identifiable": false,
+    "supplier_lead_time_available": false,
+    "verified_margin_and_holding_cost_available": false,
+    "material_obligations_available": false,
+    "live_source_sync_available": false
+  },
+  "notes": [
+    "Monthly observations remain monthly; no fictional daily sales are created or added to daily transactions.",
+    "Monthly stock is a lagged proxy, not exact daily availability or proof of stockout.",
+    "Monthly publication/revision timestamps are unavailable. Point-in-time tests assume publication at month end; strict historical vintages cannot be verified.",
+    "Current category, stock, inbound, multiples and growth do not enter historical demand features.",
+    "Reported historical growth is not an independent forward growth forecast.",
+    "Category labels have no supplied meanings or service-level policy.",
+    "Current warehouse scope and the meaning/currency of СС реал require confirmation before cost optimization.",
+    "Client ID, selling price, daily stockout intervals, supplier lead times and material obligations are absent.",
+    "All six sources are read and audited; unavailable semantics are not invented to claim all requirements pass."
+  ]
+}
