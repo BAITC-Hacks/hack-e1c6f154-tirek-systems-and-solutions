@@ -12,10 +12,10 @@ Delegated by the user: React + TypeScript + Vite frontend, Python + FastAPI + SQ
 Procurement managers reviewing replenishment recommendations by product and warehouse. The workflow is documented in docs/product-spec.md and docs/platform-spec.md: import, inspect quality, calculate, investigate, override with a reason, approve an immutable snapshot, export CSV.
 
 ## Constraints and evidence
-Partner workbooks are not committed. The built-in backend/app/ml_adapter.py connects six compatible SE workbooks to forecast v2 and the procurement decision core. Its real-data scope is SE, Almaty, pieces; stockout and customer-outlier forecasting remain separate modules. Platform demo data must remain explicitly synthetic; never imply that a demo request ran the model or LLM. Preserve contracts/openapi.yaml. Currency KZT; Russian interface; null differs from zero. Local single-user workspace, not a production authenticated SaaS. See README.md and docs/submission-analysis.md for review instructions and current limitations.
+Partner workbooks are not committed. The built-in adapter connects compatible uploaded workbooks to forecast v2 and procurement decisions; explicit stockout intervals and pseudonymous client events activate the regular-demand model. Built-in demo and generated sample workbooks remain explicitly synthetic; never imply that the canned demo ran ML. Currency KZT; Russian interface; null differs from zero. The single-server MVP has registration, cookie authentication and isolated personal workspaces. See README.md and docs/mvp-verification.md for checked workflows and limits.
 
 ## Principles
 Make the reason behind a decision inspectable. Expose missing inputs. Keep data provenance visible. Preserve manual decisions and approved snapshots. Avoid adding marketing claims.
 
 ## Open decisions
-Production deployment, authentication, broader workbook support, stockout/customer integration and validation of supplier constraints belong to subsequent work.
+Shared team roles/invitations, email verification/recovery, a durable multi-worker queue, ERP integration and operational validation on complete partner data remain future work. External AI is optional, read-only, server configured, and receives calculation facts only with explicit UI consent.

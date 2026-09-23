@@ -203,7 +203,7 @@ test('uploaded XLSX produces a real report and does not enable an incomplete dat
     'import sys; from io import BytesIO; from openpyxl import Workbook; w=Workbook(); w.active.append(["sku", "quantity"]); w.active.append(["SYNTHETIC-TEST", 12]); b=BytesIO(); w.save(b); sys.stdout.buffer.write(b.getvalue())',
   ])
   await page.goto('/data')
-  await page.locator('input[type=file]').setInputFiles({
+  await page.locator('input[type=file][accept=".xlsx"]').setInputFiles({
     name: 'MOQ-ui-test.xlsx',
     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     buffer,

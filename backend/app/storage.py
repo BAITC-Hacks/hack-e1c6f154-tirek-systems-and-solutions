@@ -2,8 +2,46 @@
 import json
 import sqlite3
 from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
+import re
 from .contracts import DomainError
+
+
+_workspace = ContextVar('tirek_workspace', default=None)
+_actor = ContextVar('tirek_actor', default=None)
+
+
+def current_workspace():
+    return _workspace.get()
+
+
+def current_actor():
+    return _actor.get()
+
+
+@contextmanager
+def workspace_scope(workspace_id, actor_id=None):
+    # Identifiers come only from the authenticated server-side account record.
+    if workspace_id is not None and not re.fullmatch(r'[a-f0-9]{32}', workspace_id):
+        raise ValueError('Invalid workspace identity')
+    workspace_token = _workspace.set(workspace_id)
+    actor_token = _actor.set(actor_id)
+    try:
+        yield
+    finally:
+        _actor.reset(actor_token)
+        _workspace.reset(workspace_token)
+
+
+def scoped_data_directory(base):
+    owner = current_workspace()
+    return Path(base) / 'workspaces' / owner if owner else Path(base)
+
+
+def _namespace(value):
+    owner = current_workspace()
+    return f'{owner}:{value}' if owner else value
 
 
 class Store:
@@ -36,7 +74,7 @@ class Store:
 
     @staticmethod
     def get(db, kind, object_id):
-        row = db.execute('SELECT payload FROM objects WHERE kind=? AND id=?', (kind, object_id)).fetchone()
+        row = db.execute('SELECT payload FROM objects WHERE kind=? AND id=?', (_namespace(kind), object_id)).fetchone()
         if not row:
             raise DomainError('NOT_FOUND', 'Запись не найдена. Обновите страницу.', 404)
         return json.loads(row[0])
@@ -44,15 +82,15 @@ class Store:
     @staticmethod
     def put(db, kind, object_id, value):
         db.execute('INSERT INTO objects VALUES (?,?,?) ON CONFLICT(kind,id) DO UPDATE SET payload=excluded.payload',
-                   (kind, object_id, json.dumps(value, ensure_ascii=False, allow_nan=False)))
+                   (_namespace(kind), object_id, json.dumps(value, ensure_ascii=False, allow_nan=False)))
 
     @staticmethod
     def all(db, kind):
-        return [json.loads(row[0]) for row in db.execute('SELECT payload FROM objects WHERE kind=? ORDER BY rowid DESC', (kind,))]
+        return [json.loads(row[0]) for row in db.execute('SELECT payload FROM objects WHERE kind=? ORDER BY rowid DESC', (_namespace(kind),))]
 
     @staticmethod
     def replay(db, scope, key, digest):
-        row = db.execute('SELECT digest,payload FROM idempotency WHERE scope=? AND key=?', (scope, key)).fetchone()
+        row = db.execute('SELECT digest,payload FROM idempotency WHERE scope=? AND key=?', (_namespace(scope), key)).fetchone()
         if row:
             if row[0] != digest:
                 raise DomainError('IDEMPOTENCY_CONFLICT', 'Этот ключ уже использован для другого запроса.', 409)
@@ -60,4 +98,4 @@ class Store:
 
     @staticmethod
     def remember(db, scope, key, digest, value):
-        db.execute('INSERT INTO idempotency VALUES (?,?,?,?)', (scope, key, digest, json.dumps(value)))
+        db.execute('INSERT INTO idempotency VALUES (?,?,?,?)', (_namespace(scope), key, digest, json.dumps(value)))

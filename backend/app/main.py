@@ -11,7 +11,7 @@ import os
 from uuid import uuid4
 from dotenv import load_dotenv
 
-from fastapi import BackgroundTasks, FastAPI, File, Form, Header, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, Form, Header, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
@@ -20,7 +20,11 @@ from .contracts import DomainError, ROOT, validate
 from .demo import demo_dataset, make_demo, now, summary
 from .ingestion import MAX_BYTES, inspect_upload
 from .pipeline import calculate
-from .storage import Store
+from .storage import Store, current_actor, current_workspace, scoped_data_directory, workspace_scope
+from .auth import Authentication
+from .assistant import install_assistant
+from .samples import install_samples
+from .web import install_frontend
 from .runtime import DEFAULT_INGESTOR, capabilities, load_adapter
 from .ai_review import configuration as ai_configuration, review as review_ai
 from .stock import register_stock_routes
@@ -113,27 +117,34 @@ def order_cost(item, quantity):
 def create_app(db_path=None):
     data_dir = Path(os.getenv('DATA_DIR', str(ROOT / 'data')))
     store = Store(db_path or data_dir / 'tirek.sqlite3')
+    authentication = Authentication(store)
 
     @asynccontextmanager
     async def lifespan(app):
         with store.transaction() as db:
-            for job in store.all(db, 'job'):
+            # Recover interrupted jobs in every private workspace, including legacy data.
+            rows = db.execute("SELECT kind,id,payload FROM objects WHERE kind='job' OR kind LIKE '%:job'").fetchall()
+            for kind, job_id, payload in rows:
+                job = json.loads(payload)
                 if job['status'] in ('queued', 'running'):
                     job.update(status='failed', stage='Сервер был перезапущен', updated_at=now(),
                                error=error_body(DomainError('INTERRUPTED', 'Повторите операцию после перезапуска.')))
-                    store.put(db, 'job', job['job_id'], job)
-            if not store.all(db, 'dataset'):
+                    db.execute('UPDATE objects SET payload=? WHERE kind=? AND id=?',
+                               (json.dumps(job, ensure_ascii=False), kind, job_id))
+            if not authentication.enabled and not store.all(db, 'dataset'):
                 store.put(db, 'dataset', 'demo-systeme-v1', demo_dataset())
-            if not store.all(db, 'calculation'):
+            if not authentication.enabled and not store.all(db, 'calculation'):
                 store.put(db, 'calculation', 'demo-calc-001', make_demo())
         yield
 
     app = FastAPI(title='Tirek Platform API', version='1.0.0', lifespan=lifespan)
     app.state.store = store
     register_stock_routes(app, store)
+    authentication.install(app, error_body)
     app.add_middleware(CORSMiddleware,
-                       allow_origins=['http://127.0.0.1:5173', 'http://localhost:5173'],
-                       allow_methods=['GET', 'POST', 'PATCH', 'PUT'], allow_headers=['Content-Type', 'Idempotency-Key'])
+                       allow_origins=authentication.origins, allow_credentials=True,
+                       allow_methods=['GET', 'POST', 'PATCH', 'PUT'],
+                       allow_headers=['Content-Type', 'Idempotency-Key', 'X-CSRF-Token'])
 
     @app.exception_handler(DomainError)
     async def domain_error(request, exc):
@@ -149,6 +160,22 @@ def create_app(db_path=None):
         return JSONResponse(error_body(DomainError('INTERNAL_ERROR', 'Не удалось выполнить операцию. Повторите попытку.', 500)), status_code=500)
 
     prefix = '/api/v1'
+
+    def audit(db, action, resource_id, **details):
+        event_id = uuid4().hex
+        store.put(db, 'audit', event_id, {'event_id': event_id, 'action': action,
+                  'resource_id': resource_id, 'actor_id': current_actor(), 'created_at': now(), **details})
+
+    def reserve_ai_reviews(request, units=1, db=None):
+        if ai_configuration()['available']:
+            identity = current_actor() or ('local:' + (request.client.host if request.client else 'unknown'))
+            authentication.throttle(request, 'paid-ai-review', identity, limit=10, period=60,
+                                    units=units, per_identity=True, db=db)
+
+    @app.get(prefix + '/audit')
+    def audit_history():
+        with store.transaction() as db:
+            return {'events': store.all(db, 'audit')[:200]}
 
     @app.get(prefix + '/health')
     def health():
@@ -175,7 +202,12 @@ def create_app(db_path=None):
         with store.transaction() as db:
             return store.get(db, 'job', job_id)
 
-    def finish_job(job_id, worker, resource_type):
+    def finish_job(job_id, worker, resource_type, workspace_id, actor_id):
+        # Never rely on a request's ContextVar surviving after its response.
+        with workspace_scope(workspace_id, actor_id):
+            _finish_job(job_id, worker, resource_type)
+
+    def _finish_job(job_id, worker, resource_type):
         try:
             with store.transaction() as db:
                 value = store.get(db, 'job', job_id)
@@ -184,6 +216,7 @@ def create_app(db_path=None):
             resource_id, resource = worker()
             with store.transaction() as db:
                 store.put(db, resource_type, resource_id, resource)
+                audit(db, resource_type + '.created', resource_id)
                 value.update(status='succeeded', stage='Готово', progress_pct=100, resource_type=resource_type,
                              resource_id=resource_id, updated_at=now())
                 store.put(db, 'job', job_id, value)
@@ -196,18 +229,20 @@ def create_app(db_path=None):
                 value.update(status='failed', stage='Не удалось завершить', error=error_body(failure), updated_at=now())
                 store.put(db, 'job', job_id, value)
 
-    def queue(background, scope, key, fingerprint, kind, worker, resource_type):
+    def queue(background, scope, key, fingerprint, kind, worker, resource_type, admission=None):
         if not key.strip():
             raise DomainError('INVALID_PARAMETERS', 'Нужен Idempotency-Key.')
         with store.transaction() as db:
             prior = store.replay(db, scope, key, fingerprint)
             if prior:
                 return store.get(db, 'job', prior['job_id'])
+            if admission is not None:
+                admission(db)
             value = {'job_id': str(uuid4()), 'kind': kind, 'status': 'queued', 'stage': 'В очереди', 'progress_pct': 0,
                      'resource_type': None, 'resource_id': None, 'error': None, 'created_at': now(), 'updated_at': now()}
             store.put(db, 'job', value['job_id'], value)
             store.remember(db, scope, key, fingerprint, value)
-        background.add_task(finish_job, value['job_id'], worker, resource_type)
+        background.add_task(finish_job, value['job_id'], worker, resource_type, current_workspace(), current_actor())
         return value
 
     @app.post(prefix + '/datasets/import', status_code=202)
@@ -232,7 +267,7 @@ def create_app(db_path=None):
 
         def worker():
             report = inspect_upload(loaded, supplier_id, extra)
-            target = data_dir / 'uploads' / report['dataset_id']
+            target = scoped_data_directory(data_dir) / 'uploads' / report['dataset_id']
             target.mkdir(parents=True, exist_ok=True)
             for source, (_, content) in zip(report['sources'], loaded):
                 (target / (source['role'] + '.xlsx')).write_bytes(content)
@@ -249,7 +284,7 @@ def create_app(db_path=None):
         return queue(background, 'import', idempotency_key, fingerprint, 'import', worker, 'dataset')
 
     @app.post(prefix + '/calculations', status_code=202)
-    def start_calculation(payload: dict, background: BackgroundTasks, idempotency_key: str = Header(...)):
+    def start_calculation(payload: dict, background: BackgroundTasks, request: Request, idempotency_key: str = Header(...)):
         validate('CalculationRequest', payload)
         if payload['horizon_days'] != 28:
             raise DomainError('UNSUPPORTED_HORIZON', 'Сейчас доступен горизонт 28 дней.')
@@ -266,8 +301,11 @@ def create_app(db_path=None):
         if payload['as_of_date'] < source['data_as_of']:
             raise DomainError('INVALID_PARAMETERS', 'Дата расчёта не может предшествовать дате данных.')
         calculation_id = str(uuid4())
+        # Batch review calls at most five items; reserve before accepting the job.
+        # Idempotent retries return above admission and do not consume more quota.
+        admission = (lambda db: reserve_ai_reviews(request, units=5, db=db)) if payload['request_ai_review'] else None
         return queue(background, 'calculate', idempotency_key, digest(payload), 'calculation',
-                     lambda: (calculation_id, calculate(source, payload, calculation_id)), 'calculation')
+                     lambda: (calculation_id, calculate(source, payload, calculation_id)), 'calculation', admission)
 
     @app.get(prefix + '/calculations/{calculation_id}/recommendations')
     def recommendations(calculation_id: str):
@@ -283,7 +321,7 @@ def create_app(db_path=None):
             return result['details'][item_id]
 
     @app.post(prefix + '/calculations/{calculation_id}/items/{item_id}/ai-review')
-    def ai_review(calculation_id: str, item_id: str, payload: dict):
+    def ai_review(calculation_id: str, item_id: str, payload: dict, request: Request):
         revision = payload.get('expected_revision')
         if set(payload) != {'expected_revision'} or type(revision) is not int or revision < 1:
             raise DomainError('INVALID_PARAMETERS', 'Укажите текущую ревизию расчёта.')
@@ -294,6 +332,7 @@ def create_app(db_path=None):
             if item_id not in result['details']:
                 raise DomainError('NOT_FOUND', 'Товар не найден.', 404)
             detail = deepcopy(result['details'][item_id])
+        reserve_ai_reviews(request)
         judgement = review_ai(detail)
         validate('AIJudgement', judgement)
         with store.transaction() as db:
@@ -321,6 +360,7 @@ def create_app(db_path=None):
                 raise DomainError('NOT_FOUND', 'Товар не найден.', 404)
             detail = result['details'][item_id]
             item = detail['item']
+            previous_quantity = item['final_quantity']
             inbound_confirmation = payload.get('inbound_confirmation')
             if inbound_confirmation is not None:
                 if not inbound_confirmation['source_reference'].strip():
@@ -427,6 +467,9 @@ def create_app(db_path=None):
             response['items'] = [result['details'][i['item_id']]['item'] for i in response['items']]
             response['summary'] = summary(response['items'])
             store.put(db, 'calculation', calculation_id, result)
+            audit(db, 'calculation.override', calculation_id, item_id=item_id,
+                  previous_quantity=previous_quantity, final_quantity=quantity,
+                  reason=payload['reason'].strip(), revision=response['meta']['revision'])
             return result['details'][item_id]
 
     @app.post(prefix + '/calculations/{calculation_id}/approve', status_code=201)
@@ -477,6 +520,9 @@ def create_app(db_path=None):
                       'export_url': f'{prefix}/approvals/{approval_id}/export.csv'}
             store.put(db, 'approval', approval_id, {'public': public, 'meta': deepcopy(meta), 'items': deepcopy(items)})
             store.remember(db, scope, idempotency_key, fingerprint, public)
+            audit(db, 'calculation.approve', calculation_id, approval_id=approval_id,
+                  revision=meta['revision'], selected_item_ids=selected,
+                  acknowledged_issue_codes=payload['acknowledged_issue_codes'])
             return public
 
     @app.get(prefix + '/approvals/{approval_id}/export.csv')
@@ -496,6 +542,9 @@ def create_app(db_path=None):
         return Response(stream.getvalue().encode('utf-8-sig'), media_type='text/csv; charset=utf-8',
                         headers={'Content-Disposition': f'attachment; filename="tirek-{approval_id[:8]}.csv"'})
 
+    install_samples(app)
+    install_assistant(app, store)
+    install_frontend(app)
     return app
 
 

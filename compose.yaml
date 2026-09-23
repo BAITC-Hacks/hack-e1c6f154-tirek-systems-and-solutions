@@ -1,0 +1,18 @@
+services:
+  tirek:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8000"
+    environment:
+      DATA_DIR: /data
+      TIREK_ALLOWED_ORIGINS: ${TIREK_ALLOWED_ORIGINS:-http://127.0.0.1:8080,http://localhost:8080}
+      TIREK_COOKIE_SECURE: ${TIREK_COOKIE_SECURE:-0}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TIREK_ASSISTANT_MODEL: ${TIREK_ASSISTANT_MODEL:-}
+    volumes:
+      - tirek-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  tirek-data:

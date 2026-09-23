@@ -66,7 +66,8 @@ class AdapterIntegrationTests(unittest.TestCase):
         req.update(updates)
         (self.normalized / "current.json").write_text(json.dumps(self.profiles, ensure_ascii=False), encoding="utf-8")
         (self.normalized / "context.json").write_text(json.dumps(self.context, ensure_ascii=False), encoding="utf-8")
-        env = {"DATA_DIR": str(self.root), "TIREK_PIPELINE": "backend.app.ml_adapter:TirekCalculationPipeline"}
+        env = {"DATA_DIR": str(self.root), "TIREK_PIPELINE": "backend.app.ml_adapter:TirekCalculationPipeline",
+               "TIREK_AUTH_DISABLED": "1"}
         forecast = (self.frame, np.asarray([280.0]),
                     {"selected": "mean364", "best_ml": "ridge_100", "trained_as_of": "2026-09-21"}, "a" * 64)
         # Retain the actual production core. Source readers and model execution

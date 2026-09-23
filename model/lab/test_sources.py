@@ -122,6 +122,25 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(len(turnover), 24)
         self.assertEqual(turnover[pd.Timestamp("2024-01-01")], 100)
 
+    def test_explicit_inventory_moq_and_warehouse_enable_verified_profile(self):
+        headers = [None] * 57
+        for index, value in {2: "Код 1с", 4: "Категория 2026", 49: "Остаток", 50: "Зарезервировано",
+                             51: "Свободный остаток", 54: "СЭ в пути 24.09", 55: "Минимальная партия", 56: "Склад"}.items():
+            headers[index] = value
+        row = [None] * 57
+        for index, value in {2: "001", 49: 50, 50: 10, 51: 40, 54: 12, 55: 24, 56: "almaty"}.items():
+            row[index] = value
+        path = self.workbook("Товар на 22.09.2026.xlsx", [[None], headers, row])
+        current, audit = _read_current(path, {"001": 12}, {"001": "шт"})
+        self.assertEqual(current["001"]["min_order_qty"], 24)
+        self.assertTrue(current["001"]["warehouse_scope_verified"])
+        self.assertEqual(audit["missing_min_order_qty"], 0)
+        self.assertEqual(audit["unverified_warehouse_scope"], 0)
+        row[55] = -1
+        path = self.workbook("Товар на 22.09.2026.xlsx", [[None], headers, row])
+        with self.assertRaisesRegex(ValueError, "minimum order"):
+            _read_current(path, {"001": 12}, {"001": "шт"})
+
     def test_file_role_selection_rejects_missing_or_ambiguous_files(self):
         with self.assertRaisesRegex(ValueError, "Expected one file"):
             load_se(self.directory)

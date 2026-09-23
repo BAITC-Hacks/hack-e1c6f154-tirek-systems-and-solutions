@@ -13,6 +13,7 @@ export default function ItemDrawer({
   aiAvailable,
   sourceKind,
   onReviewed,
+  onAsk,
 }: {
   calculationId: string
   itemId: string | null
@@ -21,6 +22,7 @@ export default function ItemDrawer({
   aiAvailable: boolean
   sourceKind?: string
   onReviewed: () => Promise<void>
+  onAsk?: (itemId: string, sku: string) => void
 }) {
   const [detail, setDetail] = useState<ItemDetail | null>(null)
   const [error, setError] = useState('')
@@ -360,7 +362,7 @@ export default function ItemDrawer({
                           <small>{e.reference}</small>
                         </div>
                         <strong>
-                          {String(e.value ?? '—')} {e.unit}
+                          {typeof e.value === 'number' ? number(e.value) : String(e.value ?? '—')} {e.unit}
                         </strong>
                       </div>
                     ))}
@@ -580,7 +582,16 @@ export default function ItemDrawer({
               </div>
               {tab !== 'edit' && (
                 <div className="drawer-footer">
-                  <span>Ревизия {detail.meta.revision}</span>
+                  {onAsk ? (
+                    <button
+                      className="text-button"
+                      onClick={() => onAsk(detail.item.item_id, detail.item.sku)}
+                    >
+                      Обсудить с помощником
+                    </button>
+                  ) : (
+                    <span>Ревизия {detail.meta.revision}</span>
+                  )}
                   <button className="button button-primary" onClick={() => setTab('edit')}>
                     Скорректировать <ArrowRight size={17} />
                   </button>

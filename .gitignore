@@ -22,3 +22,5 @@ test-results/
 playwright-report/
 .impeccable/
 .logs/
+.tools/
+.local-data/

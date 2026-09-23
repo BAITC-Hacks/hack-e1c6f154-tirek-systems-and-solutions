@@ -10,6 +10,11 @@ from backend.app.contracts import validate
 from backend.app.main import create_app
 
 
+@pytest.fixture(autouse=True)
+def legacy_local_mode(monkeypatch):
+    monkeypatch.setenv('TIREK_AUTH_DISABLED', '1')
+
+
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv('DATA_DIR', str(tmp_path))

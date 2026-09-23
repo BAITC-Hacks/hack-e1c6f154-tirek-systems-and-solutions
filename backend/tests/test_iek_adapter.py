@@ -19,6 +19,7 @@ def workbook(rows):
 
 
 def test_observed_iek_import_real_weights_and_no_invented_order(tmp_path, monkeypatch):
+    monkeypatch.setenv('TIREK_AUTH_DISABLED', '1')
     monkeypatch.setenv('DATA_DIR', str(tmp_path))
     monkeypatch.delenv('TIREK_PIPELINE', raising=False)
     monkeypatch.delenv('TIREK_INGESTOR', raising=False)

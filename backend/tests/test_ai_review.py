@@ -13,6 +13,7 @@ from backend.app.main import create_app
 
 @pytest.fixture(autouse=True)
 def no_real_provider(monkeypatch):
+    monkeypatch.setenv('TIREK_AUTH_DISABLED', '1')
     for key in ('TIREK_LLM_BASE_URL', 'TIREK_LLM_MODEL', 'TIREK_LLM_API_KEY'):
         monkeypatch.delenv(key, raising=False)
 
@@ -100,3 +101,55 @@ def test_revision_changed_during_provider_call_discards_result(tmp_path, monkeyp
         path = '/api/v1/calculations/demo-calc-001/items/' + item['item_id']
         assert client.post(path + '/ai-review', json={'expected_revision': 1}).status_code == 409
         assert client.get(path).json()['item']['ai'] == item['ai']
+
+
+def test_single_and_batch_ai_review_share_account_quota_without_charging_retries(tmp_path, monkeypatch):
+    monkeypatch.setenv('DATA_DIR', str(tmp_path))
+    monkeypatch.delenv('TIREK_AUTH_DISABLED')
+    monkeypatch.setattr('backend.app.main.ai_configuration', lambda: {'available': True})
+    calls = []
+
+    def mocked_review(source):
+        calls.append(source['item']['item_id'])
+        return ai_review.unavailable('Mock provider, no external requests')
+
+    monkeypatch.setattr('backend.app.main.review_ai', mocked_review)
+    monkeypatch.setattr('backend.app.ai_review.review', mocked_review)
+    # The built-in demo explicitly marks requested reviews unavailable. Use its
+    # deterministic rows as fresh candidates, as a newly calculated upload would.
+    # Keep the real batch-review function and quota admission in this test.
+    monkeypatch.setattr('backend.app.pipeline.make_demo', lambda calculation_id, request:
+                        make_demo(calculation_id, {**request, 'request_ai_review': False}))
+    app = create_app(tmp_path / 'ai-quota.sqlite3')
+    payload = {'dataset_id': 'demo-systeme-v1', 'as_of_date': '2026-09-22', 'warehouse_ids': ['almaty'],
+               'category_codes': [], 'horizon_days': 28, 'lead_time_days': 7, 'review_period_days': 21,
+               'mode': 'scenario', 'category_policies': [], 'economic_profiles': [], 'growth_adjustments': [],
+               'budget_kzt': None, 'request_ai_review': True}
+    path = '/api/v1/calculations/demo-calc-001/items/se-ez9f34116/ai-review'
+    with TestClient(app) as first, TestClient(app) as second:
+        for client, email in ((first, 'first@example.test'), (second, 'second@example.test')):
+            registered = client.post('/api/v1/auth/register', json={
+                'email': email, 'name': 'Quota test', 'workspace_name': 'Private', 'password': 'Synthetic password 123!'})
+            assert registered.status_code == 201
+            client.headers['X-CSRF-Token'] = registered.json()['csrf_token']
+        # 1 direct review + 5 reserved batch items + 4 direct = 10 per minute.
+        assert first.post(path, json={'expected_revision': 1}).status_code == 200
+        created = first.post('/api/v1/calculations', json=payload, headers={'Idempotency-Key': 'batch-one'})
+        assert created.status_code == 202
+        job = first.get('/api/v1/jobs/' + created.json()['job_id']).json()
+        assert job['status'] == 'succeeded', job
+        assert len(calls) == 6
+        replayed = first.post('/api/v1/calculations', json=payload, headers={'Idempotency-Key': 'batch-one'})
+        assert replayed.status_code == 202 and replayed.json()['job_id'] == created.json()['job_id']
+        assert len(calls) == 6
+        for _ in range(4):
+            assert first.post(path, json={'expected_revision': 1}).status_code == 200
+        assert first.post(path, json={'expected_revision': 1}).status_code == 429
+        rejected = first.post('/api/v1/calculations', json=payload, headers={'Idempotency-Key': 'batch-two'})
+        assert rejected.status_code == 429
+        assert len(calls) == 10
+        assert len(first.get('/api/v1/workspace').json()['calculations']) == 2
+        assert second.post(path, json={'expected_revision': 1}).status_code == 200
+        # No external service means no paid quota: normal calculations still run.
+        payload['request_ai_review'] = False
+        assert first.post('/api/v1/calculations', json=payload, headers={'Idempotency-Key': 'no-ai'}).status_code == 202

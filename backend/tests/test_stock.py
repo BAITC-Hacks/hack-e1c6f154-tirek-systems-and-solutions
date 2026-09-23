@@ -13,6 +13,11 @@ STAMP = '2026-09-23T07:00:00Z'
 URL = '/api/v1/stock-monitoring/almaty/SYNTHETIC-SKU'
 
 
+@pytest.fixture(autouse=True)
+def isolated_legacy_mode(monkeypatch):
+    monkeypatch.setenv('TIREK_AUTH_DISABLED', '1')
+
+
 def initial(**updates):
     return {'sku': 'SYNTHETIC-SKU', 'warehouse_id': 'almaty', 'unit': 'шт', 'mode': 'scenario',
             'on_hand': 60, 'reserved': 0, 'evaluated_at': STAMP,

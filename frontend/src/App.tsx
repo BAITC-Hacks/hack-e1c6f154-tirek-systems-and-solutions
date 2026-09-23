@@ -45,6 +45,9 @@ import ItemDrawer from './components/ItemDrawer'
 import RecommendationTable from './components/RecommendationTable'
 import StockSimulator from './components/StockSimulator'
 import DataPage from './pages/DataPage'
+import { useSession } from './auth/SessionProvider'
+import AccountSettings from './components/AccountSettings'
+import Assistant from './components/Assistant'
 
 const navigation = [
   { to: '/', label: 'Обзор', icon: SquaresFour },
@@ -54,6 +57,7 @@ const navigation = [
 ]
 
 export default function App() {
+  const { session } = useSession()
   const navigate = useNavigate()
   const location = useLocation()
   const [workspace, setWorkspace] = useState<Workspace | null>(null)
@@ -63,6 +67,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [itemId, setItemId] = useState<string | null>(null)
+  const [assistantItem, setAssistantItem] = useState<{ id: string; sku: string } | null>(null)
   const [selected, setSelected] = useState<string[]>([])
   const [calculationOpen, setCalculationOpen] = useState(false)
   const [calculationDataset, setCalculationDataset] = useState<string | null>(null)
@@ -160,10 +165,9 @@ export default function App() {
             <Buildings size={21} />
           </span>
           <div>
-            <strong>Tirek workspace</strong>
+            <strong>{session.user?.workspace_name || 'Локальная проверка'}</strong>
             <span>Управление закупками</span>
           </div>
-          <CaretDown size={14} />
         </div>
         <span className="nav-label">РАБОЧЕЕ ПРОСТРАНСТВО</span>
         <nav aria-label="Основная навигация">
@@ -198,7 +202,7 @@ export default function App() {
           </NavLink>
           <div className="sidebar-status">
             <span className={`status-dot ${health ? 'online' : ''}`} />
-            {health ? 'Локальное рабочее пространство' : 'Подключение к серверу…'}
+            {health ? 'Сервер подключён' : 'Подключение к серверу…'}
           </div>
         </div>
       </aside>
@@ -246,9 +250,16 @@ export default function App() {
             <Link
               to="/settings"
               className="user-avatar"
-              aria-label="Настройки рабочего пространства"
+              aria-label={
+                session.user ? `Аккаунт: ${session.user.name}` : 'Настройки рабочего пространства'
+              }
             >
-              АД
+              {session.user?.name
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((part) => part[0])
+                .join('')
+                .toUpperCase() || 'ЛП'}
             </Link>
           </div>
         </header>
@@ -268,120 +279,129 @@ export default function App() {
               }}
             />
           ) : (
-            workspace &&
-            data && (
+            workspace && (
               <>
-                <div className="scenario-bar">
-                  <span>
-                    <span className="scenario-indicator" />
-                    <strong>
-                      {data.meta.mode === 'scenario' ? 'Сценарный расчёт' : 'Операционный расчёт'}
-                    </strong>
-                    <span className="scenario-detail">
-                      {activeDataset?.source_kind === 'synthetic'
-                        ? 'Синтетические данные · демонстрация платформы'
-                        : activeDataset?.source_kind === 'observed'
-                          ? 'Данные загруженных источников'
-                          : 'Смешанные источники'}
+                {data && (
+                  <div className="scenario-bar">
+                    <span>
+                      <span className="scenario-indicator" />
+                      <strong>
+                        {data.meta.mode === 'scenario' ? 'Сценарный расчёт' : 'Операционный расчёт'}
+                      </strong>
+                      <span className="scenario-detail">
+                        {activeDataset?.source_kind === 'synthetic'
+                          ? 'Синтетические данные · демонстрация платформы'
+                          : activeDataset?.source_kind === 'observed'
+                            ? 'Данные загруженных источников'
+                            : 'Смешанные источники'}
+                      </span>
                     </span>
-                  </span>
-                  <Link to="/settings">
-                    О режиме <ArrowUpRight size={14} />
-                  </Link>
-                </div>
+                    <Link to="/settings">
+                      О режиме <ArrowUpRight size={14} />
+                    </Link>
+                  </div>
+                )}
                 <Routes>
                   <Route
                     path="/"
                     element={
-                      <Overview
-                        data={data}
-                        onOpen={setItemId}
-                        onCalculate={() => setCalculationOpen(true)}
-                        selected={selected}
-                        onSelect={setSelected}
-                      />
+                      data ? (
+                        <Overview
+                          data={data}
+                          onOpen={setItemId}
+                          onCalculate={() => setCalculationOpen(true)}
+                          selected={selected}
+                          onSelect={setSelected}
+                        />
+                      ) : (
+                        <Welcome onCalculate={() => setCalculationOpen(true)} />
+                      )
                     }
                   />
                   <Route
                     path="/recommendations"
                     element={
-                      <>
-                        <div className="page-heading">
-                          <div>
-                            <h1>Рекомендации по закупке</h1>
-                            <p>
-                              Проверьте предложения, скорректируйте количество и зафиксируйте
-                              решение.
-                            </p>
+                      data ? (
+                        <>
+                          <div className="page-heading">
+                            <div>
+                              <h1>Рекомендации по закупке</h1>
+                              <p>
+                                Проверьте предложения, скорректируйте количество и зафиксируйте
+                                решение.
+                              </p>
+                            </div>
+                            <div className="heading-actions">
+                              <button className="button" onClick={() => setCalculationOpen(true)}>
+                                <ArrowClockwise size={17} />
+                                Пересчитать
+                              </button>
+                              <button
+                                className="button button-primary"
+                                disabled={!selected.length}
+                                onClick={() => setApprovalOpen(true)}
+                              >
+                                <Check size={17} />
+                                Утвердить{selected.length > 0 ? ` (${selected.length})` : ''}
+                              </button>
+                            </div>
                           </div>
-                          <div className="heading-actions">
-                            <button className="button" onClick={() => setCalculationOpen(true)}>
-                              <ArrowClockwise size={17} />
-                              Пересчитать
-                            </button>
-                            <button
-                              className="button button-primary"
-                              disabled={!selected.length}
-                              onClick={() => setApprovalOpen(true)}
-                            >
-                              <Check size={17} />
-                              Утвердить{selected.length > 0 ? ` (${selected.length})` : ''}
-                            </button>
-                          </div>
-                        </div>
-                        <Metrics data={data} />
-                        <div className="calculation-meta">
-                          <span>
-                            <span className="status-dot online" />
-                            Данные на {date(data.meta.data_as_of)}
-                          </span>
-                          <span>Горизонт {data.meta.horizon_days} дней</span>
-                          <span>Версия {data.meta.dataset_version}</span>
-                          <span>
-                            {data.meta.mode === 'scenario' ? 'Сценарий' : 'Операционный'} · ревизия{' '}
-                            {data.meta.revision}
-                          </span>
-                          <span>Правила {data.meta.policy_version}</span>
-                          <span>
-                            Метод:{' '}
-                            {[
-                              ...new Set(
-                                data.items.map((item) => item.forecast?.method).filter(Boolean),
-                              ),
-                            ].join(', ') || 'Нет позиций'}
-                          </span>
-                          <span>
-                            Модель:{' '}
-                            {[
-                              ...new Set(
-                                data.items.map((item) => item.forecast?.model_id).filter(Boolean),
-                              ),
-                            ].join(', ') || '—'}
-                          </span>
-                        </div>
-                        <RecommendationTable
-                          data={data}
-                          onOpen={setItemId}
-                          selected={selected}
-                          onSelect={setSelected}
-                        />
-                        {selected.length > 0 && (
-                          <div className="selection-bar">
+                          <Metrics data={data} />
+                          <div className="calculation-meta">
                             <span>
-                              <strong>{selected.length}</strong> позиций выбрано
+                              <span className="status-dot online" />
+                              Данные на {date(data.meta.data_as_of)}
                             </span>
-                            <button className="text-button" onClick={() => setSelected([])}>
-                              Снять выбор
-                            </button>
-                            <button
-                              className="button button-primary"
-                              onClick={() => setApprovalOpen(true)}
-                            >
-                              Проверить и утвердить <ArrowRight size={17} />
-                            </button>
+                            <span>Горизонт {data.meta.horizon_days} дней</span>
+                            <span>Версия {data.meta.dataset_version}</span>
+                            <span>
+                              {data.meta.mode === 'scenario' ? 'Сценарий' : 'Операционный'} ·
+                              ревизия {data.meta.revision}
+                            </span>
+                            <span>Правила {data.meta.policy_version}</span>
+                            <span>
+                              Метод:{' '}
+                              {[
+                                ...new Set(
+                                  data.items.map((item) => item.forecast?.method).filter(Boolean),
+                                ),
+                              ].join(', ') || 'Нет позиций'}
+                            </span>
+                            <span>
+                              Модель:{' '}
+                              {[
+                                ...new Set(
+                                  data.items.map((item) => item.forecast?.model_id).filter(Boolean),
+                                ),
+                              ].join(', ') || '—'}
+                            </span>
                           </div>
-                        )}
-                      </>
+                          <RecommendationTable
+                            data={data}
+                            onOpen={setItemId}
+                            selected={selected}
+                            onSelect={setSelected}
+                          />
+                          {selected.length > 0 && (
+                            <div className="selection-bar">
+                              <span>
+                                <strong>{selected.length}</strong> позиций выбрано
+                              </span>
+                              <button className="text-button" onClick={() => setSelected([])}>
+                                Снять выбор
+                              </button>
+                              <button
+                                className="button button-primary"
+                                onClick={() => setApprovalOpen(true)}
+                              >
+                                Проверить и утвердить <ArrowRight size={17} />
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <Welcome onCalculate={() => setCalculationOpen(true)} />
+                      )
                     }
                   />
                   <Route
@@ -425,20 +445,14 @@ export default function App() {
                 <footer className="page-footer">
                   <span>Tirek · Закупки с ясным обоснованием</span>
                   <span>
-                    {[...new Set(data.items.map((item) => item.supplier_name))].join(' · ')}{' '}
+                    {data
+                      ? [...new Set(data.items.map((item) => item.supplier_name))].join(' · ')
+                      : session.user?.workspace_name}{' '}
                     <span className="footer-dot">·</span> Алматы
                   </span>
                 </footer>
               </>
             )
-          )}
-          {!loading && !error && workspace && !data && (
-            <Empty title="Пока нет расчётов">
-              <p>Выберите набор данных, чтобы подготовить рекомендации.</p>
-              <button className="button button-primary" onClick={() => setCalculationOpen(true)}>
-                Создать расчёт
-              </button>
-            </Empty>
           )}
         </main>
       </div>
@@ -451,8 +465,13 @@ export default function App() {
           aiAvailable={!!health?.llm_available}
           sourceKind={activeDataset?.source_kind}
           onReviewed={refresh}
+          onAsk={(id, sku) => {
+            setItemId(null)
+            setAssistantItem({ id, sku })
+          }}
         />
       )}
+      <Assistant calculationId={data?.meta.calculation_id} item={assistantItem} />
       {workspace && (
         <CalculationModal
           open={calculationOpen}
@@ -461,6 +480,7 @@ export default function App() {
           initialDataset={calculationDataset || data?.meta.dataset_id || null}
           onComplete={async (id) => {
             currentId.current = id
+            setAssistantItem(null)
             setSelected([])
             await refresh()
             setCalculationOpen(false)
@@ -501,6 +521,51 @@ export default function App() {
         </div>
       )}
     </div>
+  )
+}
+
+function Welcome({ onCalculate }: { onCalculate: () => void }) {
+  return (
+    <section className="panel welcome-panel">
+      <span className="welcome-kicker">ПЕРВЫЙ РАСЧЁТ</span>
+      <h1>От исходных файлов к плану закупок</h1>
+      <p>
+        Загрузите набор источников, проверьте качество данных и получите объяснимую рекомендацию по
+        каждому товару.
+      </p>
+      <ol className="welcome-steps">
+        <li>
+          <Database size={24} />
+          <strong>1. Источники данных</strong>
+          <span>Шесть XLSX: продажи, остатки, сезонность, минимальные партии и товар в пути.</span>
+        </li>
+        <li>
+          <ChartLineUp size={24} />
+          <strong>2. Рекомендации</strong>
+          <span>
+            Запустите расчёт на 28 дней. Откройте товар: вкладки «Обзор» и «Обоснование» покажут
+            прогноз и причины.
+          </span>
+        </li>
+        <li>
+          <SealCheck size={24} />
+          <strong>3. История решений</strong>
+          <span>Проверьте количество, утвердите позиции и скачайте сохранённый снимок в CSV.</span>
+        </li>
+      </ol>
+      <div className="heading-actions">
+        <Link to="/data" className="button button-primary">
+          Загрузить данные <ArrowRight size={18} />
+        </Link>
+        <button className="button" onClick={onCalculate}>
+          Попробовать демонстрацию
+        </button>
+      </div>
+      <p className="field-hint">
+        Встроенная демонстрация использует готовые синтетические числа. ML-прогноз запускается
+        отдельно на загруженных файлах.
+      </p>
+    </section>
   )
 }
 
@@ -629,6 +694,18 @@ function Overview({
           <CheckCircle size={15} />
         </span>
       </div>
+      {data.meta.dataset_id === 'demo-systeme-v1' && (
+        <div className="workflow-guide">
+          <Info size={20} />
+          <span>
+            Сейчас открыт пример с готовыми числами. Для ML-прогноза загрузите свои XLSX, затем
+            выберите «Перейти к расчёту».
+          </span>
+          <Link to="/data" className="text-button">
+            Загрузить источники <ArrowRight size={15} />
+          </Link>
+        </div>
+      )}
       <Metrics data={data} />
       {data.meta.issues.some((issue) => issue.code === 'FORECAST_ONLY') && (
         <div className="notice warning">
@@ -762,6 +839,9 @@ function CalculationModal({
   const [mode, setMode] = useState<CalculationRequest['mode']>('scenario')
   const [leadTime, setLeadTime] = useState(7)
   const [policies, setPolicies] = useState('[]')
+  const [policyCategories, setPolicyCategories] = useState('')
+  const [policyQuantile, setPolicyQuantile] = useState('0.9')
+  const [policyRationale, setPolicyRationale] = useState('')
   const [economics, setEconomics] = useState('[]')
   const [growth, setGrowth] = useState('[]')
   const [busy, setBusy] = useState(false)
@@ -770,8 +850,8 @@ function CalculationModal({
   const controller = useRef<AbortController | null>(null)
   const operation = useRef<{ body: string; key: string } | null>(null)
   const source = workspace.datasets.find((value) => value.dataset_id === dataset)
-  const isDemo = source?.source_kind === 'synthetic'
-  const forecastOnly = source?.supplier_ids.includes('iek')
+  const isDemo = source?.dataset_id === 'demo-systeme-v1'
+  const forecastOnly = source?.issues.some((issue) => issue.code === 'FORECAST_ONLY')
   const available = !!source?.calculation_allowed && (isDemo || workspace.capabilities.ml_connected)
   function selectDataset(id: string) {
     const next = workspace.datasets.find((value) => value.dataset_id === id)
@@ -781,6 +861,8 @@ function CalculationModal({
     setMode('scenario')
     setLeadTime(7)
     setPolicies('[]')
+    setPolicyCategories('')
+    setPolicyRationale('')
     setEconomics('[]')
     setGrowth('[]')
     setError('')
@@ -870,9 +952,9 @@ function CalculationModal({
           <select value={dataset} onChange={(e) => selectDataset(e.target.value)} disabled={busy}>
             {workspace.datasets.map((d) => (
               <option key={d.dataset_id} value={d.dataset_id} disabled={!d.calculation_allowed}>
-                {d.source_kind === 'synthetic'
+                {d.dataset_id === 'demo-systeme-v1'
                   ? `Systeme Electric · демо, ${d.sku_count} позиций`
-                  : `Загрузка ${d.dataset_version} · ${d.calculation_allowed ? `${d.sku_count} позиций` : 'требуется нормализация'}`}
+                  : `${d.source_kind === 'synthetic' ? 'Учебные XLSX' : 'Загрузка'} ${d.dataset_version} · ${d.calculation_allowed ? `${d.sku_count} позиций` : 'требуется нормализация'}`}
               </option>
             ))}
           </select>
@@ -977,6 +1059,75 @@ function CalculationModal({
             </div>
             {!forecastOnly && (
               <>
+                <fieldset className="policy-builder" disabled={busy}>
+                  <legend>Политика запаса по категориям</legend>
+                  <p className="field-hint">
+                    Задайте желаемый квантиль спроса и обоснование для кодов категорий из ваших
+                    файлов. Это управленческая настройка, а не измеренная точность модели.
+                  </p>
+                  <div className="form-grid">
+                    <label className="field">
+                      Коды категорий для политики
+                      <input
+                        value={policyCategories}
+                        onChange={(e) => setPolicyCategories(e.target.value)}
+                        placeholder="Например: 7, 8"
+                      />
+                    </label>
+                    <label className="field">
+                      Квантиль спроса
+                      <select
+                        value={policyQuantile}
+                        onChange={(e) => setPolicyQuantile(e.target.value)}
+                      >
+                        <option value="0.5">50% · медиана</option>
+                        <option value="0.8">80%</option>
+                        <option value="0.9">90%</option>
+                        <option value="0.95">95%</option>
+                        <option value="0.99">99%</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label className="field">
+                    Основание политики
+                    <input
+                      value={policyRationale}
+                      maxLength={1000}
+                      onChange={(e) => setPolicyRationale(e.target.value)}
+                      placeholder="Например, согласовано закупщиком для критичных товаров"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="button"
+                    disabled={!policyCategories.trim() || !policyRationale.trim()}
+                    onClick={() => {
+                      const codes = [
+                        ...new Set(
+                          policyCategories
+                            .split(',')
+                            .map((value) => value.trim())
+                            .filter(Boolean),
+                        ),
+                      ]
+                      setPolicies(
+                        JSON.stringify(
+                          codes.map((category_raw) => ({
+                            category_raw,
+                            target_quantile: Number(policyQuantile),
+                            minimum_target_quantile: null,
+                            source_kind: 'manual',
+                            rationale: policyRationale.trim(),
+                          })),
+                          null,
+                          2,
+                        ),
+                      )
+                    }}
+                  >
+                    Применить политику к расчёту
+                  </button>
+                </fieldset>
                 <label className="field">
                   Политики категорий · JSON
                   <textarea
@@ -1330,14 +1481,16 @@ function ApprovalHistory({
 }
 
 function Settings({ health, workspace }: { health: Health | null; workspace: Workspace }) {
+  const { session } = useSession()
   return (
     <>
       <div className="page-heading">
         <div>
           <h1>Настройки пространства</h1>
-          <p>Режим работы, доступные возможности и подключение расчётного модуля.</p>
+          <p>Ваш аккаунт, доступные возможности и состояние расчётного модуля.</p>
         </div>
       </div>
+      <AccountSettings />
       <div className="settings-grid">
         <section className="panel settings-panel">
           <div className="panel-heading">
@@ -1346,7 +1499,7 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           </div>
           <div className="settings-row">
             <span>Название</span>
-            <strong>Tirek workspace</strong>
+            <strong>{session.user?.workspace_name || 'Локальная проверка'}</strong>
           </div>
           <div className="settings-row">
             <span>Склад</span>
@@ -1362,7 +1515,7 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           </div>
           <div className="settings-row">
             <span>Доступ</span>
-            <Badge>Локальный, один пользователь</Badge>
+            <Badge>{session.auth_enabled ? 'Личный аккаунт' : 'Авторизация отключена'}</Badge>
           </div>
         </section>
         <section className="panel settings-panel">
@@ -1402,16 +1555,21 @@ function Settings({ health, workspace }: { health: Health | null; workspace: Wor
           <Sparkle size={30} weight="light" />
         </span>
         <div>
-          <h2>Расчётный контур подключён</h2>
+          <h2>Где работает ML-прогноз</h2>
           <p>
-            Сейчас вы можете пройти весь сценарий закупщика на демонстрационных данных: изучить
-            рекомендацию, изменить количество, утвердить решение и выгрузить заказ.
+            Откройте «Источники данных», загрузите совместимые XLSX и дождитесь отчёта о качестве.
+            Нажмите «Перейти к расчёту». Прогноз, метод и количество к закупке появятся в
+            «Рекомендациях»; история и объяснение доступны по нажатию на товар.
           </p>
           <p>
             {workspace.capabilities.ml_connected
-              ? 'Доступны расчёт SE и прогноз продаж IEK. Для ИИ-проверки задайте TIREK_LLM_BASE_URL, TIREK_LLM_MODEL и TIREK_LLM_API_KEY в локальном backend/.env и перезапустите сервер. Ключ хранится только на сервере.'
+              ? 'Доступны расчёт SE и прогноз продаж IEK на 28 дней. Для IEK без текущего свободного остатка заказ не рассчитывается. Встроенная демонстрация содержит готовые синтетические числа и не проверяет качество ML.'
               : workspace.capabilities.ml_error ||
                 'Для расчёта по загруженным файлам требуется настроить адаптер модели.'}
+          </p>
+          <p>
+            ИИ-помощник доступен по кнопке внизу экрана. Если внешний провайдер не подключён,
+            работает локальная справка. Передача контекста расчёта включается отдельно в диалоге.
           </p>
           <Link className="text-button" to="/data">
             Посмотреть источники <ArrowRight size={17} />

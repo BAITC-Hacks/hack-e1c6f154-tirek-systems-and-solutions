@@ -148,6 +148,14 @@ def _read_current(path, multiples, units):
     # The header lacks a year. Do not silently roll a past day/month into next year.
     eta = pd.Timestamp(snapshot.year, int(eta_match[2]), int(eta_match[1]))
     eta_verified = eta >= snapshot
+    # Optional explicit fields extend the partner export without interpreting
+    # unrelated columns (or Кратность) as confirmed warehouse scope / MOQ.
+    optional = {}
+    for label in ("Минимальная партия", "Склад"):
+        positions = [index for index, value in enumerate(data[1]) if value == label]
+        if len(positions) > 1:
+            raise ValueError(f"Duplicate explicit inventory header: {label}")
+        optional[label] = positions[0] if positions else None
     audit.update(quantity_missing_cells=0, negative_quantity_cells=0, free_stock_identity_checked=0,
                  free_stock_identity_conflicts=0, component_sum_equals_on_hand=0)
     for code, row_number, row in _records(data, 2, 2, audit):
@@ -163,6 +171,13 @@ def _read_current(path, multiples, units):
         parts = [number(row[i]) for i in range(45, 49)]
         if on_hand is not None and all(value is not None for value in parts):
             audit["component_sum_equals_on_hand"] += int(np.isclose(sum(parts), on_hand, rtol=0, atol=1e-8))
+        minimum = number(row[optional["Минимальная партия"]]) if optional["Минимальная партия"] is not None else None
+        if optional["Минимальная партия"] is not None and row[optional["Минимальная партия"]] is not None:
+            if minimum is None or minimum < 0:
+                raise ValueError(f"Invalid explicit minimum order quantity for {code}")
+        warehouse = row[optional["Склад"]] if optional["Склад"] is not None else None
+        if warehouse is not None and warehouse not in ("almaty", "Алматы"):
+            raise ValueError(f"Unsupported explicit stock warehouse for {code}: {warehouse}")
         result[code] = {
             "sku": code, "supplier_id": "systeme-electric", "unit": units.get(code),
             "supplier_article": str(row[1]).strip() if row[1] is not None else None,
@@ -173,8 +188,9 @@ def _read_current(path, multiples, units):
             "free_stock_consistent": consistent,
             "inbound_quantity": inbound, "inbound_eta": str(eta.date()) if eta_verified else None,
             "inbound_eta_year_assumed_from_snapshot": True,
-            "inventory_as_of": str(snapshot.date()), "warehouse_scope_verified": False,
-            "order_multiple": multiples.get(code), "min_order_qty": None, "lead_time_days": None,
+            "inventory_as_of": str(snapshot.date()), "warehouse_scope_verified": warehouse is not None,
+            "warehouse_id": "almaty" if warehouse is not None else None,
+            "order_multiple": multiples.get(code), "min_order_qty": minimum, "lead_time_days": None,
             "reported_cost_unverified": number(row[5]), "unit_cost": None, "unit_sale_price": None,
             "reported_historical_growth": number(row[43]), "forward_growth_forecast": None,
             "source": f"{Path(path).name}:TDSheet:{row_number}",
@@ -184,6 +200,8 @@ def _read_current(path, multiples, units):
                  category_counts=dict(Counter(record["category"] for record in result.values())),
                  unit_counts=dict(Counter(record["unit"] or "unknown" for record in result.values())),
                  missing_multiple=sum(record["order_multiple"] is None for record in result.values()),
+                 missing_min_order_qty=sum(record["min_order_qty"] is None for record in result.values()),
+                 unverified_warehouse_scope=sum(not record["warehouse_scope_verified"] for record in result.values()),
                  negative_quantities_policy="Retained and flagged; require review before procurement.",
                  warehouse_components_policy="Do not sum component columns or add them to Остаток: their accounting scope is unverified.")
     return result, audit

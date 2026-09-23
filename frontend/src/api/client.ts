@@ -52,6 +52,21 @@ export type StockEventResult = {
 }
 
 const base = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/$/, '')
+let csrfToken: string | null = null
+export const sessionExpiredEvent = 'tirek:session-expired'
+export type User = { id: string; name: string; email: string; workspace_name: string }
+export type Session = { user: User | null; csrf_token: string | null; auth_enabled: boolean }
+export type AssistantStatus = {
+  available: boolean
+  mode: 'openai' | 'local'
+  model?: string
+  message: string
+}
+export type AssistantMessage = { role: 'user' | 'assistant'; content: string }
+export type AssistantAnswer = { answer: string; mode: 'openai' | 'local'; model?: string }
+export function setSessionToken(token: string | null) {
+  csrfToken = token
+}
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -65,7 +80,11 @@ export class ApiError extends Error {
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   let response: Response
   try {
-    response = await fetch(base + path, options)
+    const headers = new Headers(options?.headers)
+    if (csrfToken && !['GET', 'HEAD', 'OPTIONS'].includes(options?.method || 'GET')) {
+      headers.set('X-CSRF-Token', csrfToken)
+    }
+    response = await fetch(base + path, { ...options, headers, credentials: 'include' })
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error
     throw new ApiError(
@@ -75,6 +94,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     )
   }
   if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth/')) {
+      csrfToken = null
+      window.dispatchEvent(new Event(sessionExpiredEvent))
+    }
     const body = await response.json().catch(() => null)
     throw new ApiError(
       [
@@ -119,6 +142,22 @@ function json(body: unknown, method = 'POST', key?: string): RequestInit {
 }
 
 export const api = {
+  session: () => request<Session>('/auth/me'),
+  login: (email: string, password: string) =>
+    request<Session>('/auth/login', json({ email, password })),
+  register: (payload: { name: string; email: string; password: string; workspace_name: string }) =>
+    request<Session>('/auth/register', json(payload)),
+  logout: () => request<{ ok: boolean }>('/auth/logout', json({})),
+  changePassword: (current_password: string, new_password: string) =>
+    request<Session>('/auth/password', json({ current_password, new_password })),
+  assistantStatus: () => request<AssistantStatus>('/assistant/status'),
+  assistantChat: (payload: {
+    message: string
+    calculation_id?: string
+    item_id?: string
+    history: AssistantMessage[]
+    share_context: boolean
+  }) => request<AssistantAnswer>('/assistant/chat', json(payload)),
   workspace: () => request<Workspace>('/workspace'),
   health: () => request<Health>('/health'),
   recommendations: (id: string) => request<Recommendations>(`/calculations/${id}/recommendations`),
@@ -188,12 +227,38 @@ export const api = {
     return job
   },
   download: async (id: string) => {
-    const response = await fetch(`${base}/approvals/${id}/export.csv`)
+    const response = await fetch(`${base}/approvals/${id}/export.csv`, { credentials: 'include' })
+    if (response.status === 401) window.dispatchEvent(new Event(sessionExpiredEvent))
     if (!response.ok) throw new Error('Не удалось скачать CSV. Повторите попытку.')
     const url = URL.createObjectURL(await response.blob())
     const link = document.createElement('a')
     link.href = url
     link.download = `tirek-${id.slice(0, 8)}.csv`
+    document.body.append(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  },
+  downloadSample: async (supplier: string) => {
+    let response: Response
+    try {
+      response = await fetch(`${base}/samples?supplier_id=${encodeURIComponent(supplier)}`, {
+        credentials: 'include',
+      })
+    } catch {
+      throw new Error('Нет связи с сервером. Повторите скачивание учебного набора.')
+    }
+    if (response.status === 401) window.dispatchEvent(new Event(sessionExpiredEvent))
+    if (!response.ok) {
+      const body = await response.json().catch(() => null)
+      throw new Error(
+        body?.error?.message || 'Не удалось скачать учебный набор. Повторите попытку.',
+      )
+    }
+    const url = URL.createObjectURL(await response.blob())
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `tirek-synthetic-${supplier}.zip`
     document.body.append(link)
     link.click()
     link.remove()

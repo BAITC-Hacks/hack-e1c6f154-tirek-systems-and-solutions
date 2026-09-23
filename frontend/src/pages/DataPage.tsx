@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CheckCircle,
   CloudArrowUp,
+  DownloadSimple,
   FileXls,
   FolderOpen,
   Info,
@@ -44,10 +45,14 @@ export default function DataPage({
   const [error, setError] = useState('')
   const [job, setJob] = useState<Job | null>(null)
   const [busy, setBusy] = useState(false)
+  const [sampleBusy, setSampleBusy] = useState(false)
+  const [contextBusy, setContextBusy] = useState(false)
+  const [contextFilename, setContextFilename] = useState('')
   const [dragging, setDragging] = useState(false)
   const [reportId, setReportId] = useState(workspace.datasets[0]?.dataset_id)
   const controller = useRef<AbortController | null>(null)
   const input = useRef<HTMLInputElement>(null)
+  const contextInput = useRef<HTMLInputElement>(null)
   const key = useRef(crypto.randomUUID())
   useEffect(() => () => controller.current?.abort(), [])
   const report = workspace.datasets.find((d) => d.dataset_id === reportId) || workspace.datasets[0]
@@ -72,7 +77,7 @@ export default function DataPage({
     key.current = crypto.randomUUID()
   }
   async function upload() {
-    if (!files.length || busy) return
+    if (!files.length || busy || contextBusy) return
     setBusy(true)
     setError('')
     controller.current = new AbortController()
@@ -83,12 +88,42 @@ export default function DataPage({
       setReportId(result.resource_id!)
       setFiles([])
       setContext('')
+      setContextFilename('')
       key.current = crypto.randomUUID()
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setError((e as Error).message)
       if (e instanceof ApiError && e.status > 0) key.current = crypto.randomUUID()
     } finally {
       setBusy(false)
+    }
+  }
+  async function loadContext(file: File) {
+    if (busy || contextBusy) return
+    setError('')
+    if (!file.name.toLowerCase().endsWith('.json') || file.size >= 2 * 1024 * 1024) {
+      setError('Выберите файл JSON размером меньше 2 МБ.')
+      return
+    }
+    setContextBusy(true)
+    try {
+      const content = (await file.text()).replace(/^\uFEFF/, '')
+      const parsed: unknown = JSON.parse(content)
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error(
+          'Контекст должен быть JSON-объектом, а не массивом или отдельным значением.',
+        )
+      }
+      setContext(content)
+      setContextFilename(file.name)
+      key.current = crypto.randomUUID()
+    } catch (cause) {
+      setError(
+        cause instanceof SyntaxError
+          ? 'В файле некорректный JSON. Исправьте его и выберите снова.'
+          : (cause as Error).message,
+      )
+    } finally {
+      setContextBusy(false)
     }
   }
   return (
@@ -110,14 +145,14 @@ export default function DataPage({
             Поставщик файлов
             <select
               value={supplier}
-              disabled={busy}
+              disabled={busy || sampleBusy}
               onChange={(e) => {
                 setSupplier(e.target.value)
                 key.current = crypto.randomUUID()
               }}
             >
               <option value="systeme-electric">Systeme Electric</option>
-              <option value="iek">IEK · прогноз продаж</option>
+              <option value="iek">IEK</option>
             </select>
           </label>
           <div
@@ -138,7 +173,9 @@ export default function DataPage({
             </div>
             <h3>Перетащите файлы сюда</h3>
             <p>
-              Шесть источников Systeme Electric.
+              {supplier === 'iek'
+                ? 'Продажи IEK и актуальный складской снимок.'
+                : 'Шесть источников Systeme Electric.'}
               <br />
               Исходные файлы останутся без изменений.
             </p>
@@ -149,6 +186,7 @@ export default function DataPage({
             <input
               ref={input}
               type="file"
+              aria-label="Файлы XLSX"
               accept=".xlsx"
               multiple
               hidden
@@ -184,13 +222,42 @@ export default function DataPage({
           )}
           <details className="context-details">
             <summary>Дополнительный контекст · необязательно</summary>
+            <button
+              className="button"
+              type="button"
+              disabled={busy || contextBusy}
+              onClick={() => contextInput.current?.click()}
+            >
+              <FolderOpen size={17} />
+              {contextBusy ? 'Читаем файл…' : 'Выбрать JSON контекста'}
+            </button>
+            <input
+              ref={contextInput}
+              type="file"
+              accept=".json,application/json"
+              aria-label="Файл дополнительного контекста"
+              hidden
+              disabled={busy || contextBusy}
+              onChange={(event) => {
+                const file = event.target.files?.[0]
+                if (file) void loadContext(file)
+                event.target.value = ''
+              }}
+            />
+            <p className="field-hint" role="status">
+              {contextFilename ? `Прочитан ${contextFilename}. ` : ''}Файл останется локальным до
+              нажатия «Проверить и загрузить». В учебном архиве выберите
+              additional-context.SYNTHETIC.json.
+            </p>
             <label className="field">
               JSON с ценами, наличием и обязательствами
               <textarea
                 rows={5}
                 value={context}
+                disabled={busy || contextBusy}
                 onChange={(e) => {
                   setContext(e.target.value)
+                  setContextFilename('')
                   key.current = crypto.randomUUID()
                 }}
                 placeholder='{"client_labels": [], ...}'
@@ -211,7 +278,7 @@ export default function DataPage({
             <span>{files.length} из 6 файлов</span>
             <button
               className="button button-primary"
-              disabled={!files.length || busy}
+              disabled={!files.length || busy || contextBusy}
               onClick={() => void upload()}
             >
               Проверить и загрузить <ArrowRight size={17} />
@@ -219,6 +286,36 @@ export default function DataPage({
           </div>
         </section>
         <aside className="data-help">
+          <div className="notice">
+            <Info size={20} />
+            <div>
+              <strong>Попробуйте настоящий ML на учебных файлах</strong>
+              <p>
+                Синтетические XLSX и контекст для {supplier === 'iek' ? 'IEK' : 'Systeme Electric'}.
+                Скачайте ZIP, распакуйте, выберите XLSX и добавьте additional-context.SYNTHETIC.json
+                в дополнительный контекст. Эти файлы проходят импорт и запускают модель.
+              </p>
+              <button
+                className="button"
+                type="button"
+                disabled={sampleBusy || busy}
+                onClick={async () => {
+                  setSampleBusy(true)
+                  setError('')
+                  try {
+                    await api.downloadSample(supplier)
+                  } catch (cause) {
+                    setError((cause as Error).message)
+                  } finally {
+                    setSampleBusy(false)
+                  }
+                }}
+              >
+                <DownloadSimple size={17} />
+                {sampleBusy ? 'Готовим архив…' : 'Скачать учебный набор'}
+              </button>
+            </div>
+          </div>
           <h2>Что нужно для расчёта</h2>
           <p>Названия помогают определить роль каждого источника.</p>
           {Object.entries(roleLabels)
@@ -240,7 +337,7 @@ export default function DataPage({
             <Info size={20} />
             <p>
               {supplier === 'iek'
-                ? 'IEK: модель строит прогноз по динамике и помесячным продажам. Без актуального свободного остатка количество закупки не рассчитывается.'
+                ? 'IEK: модель строит прогноз по динамике и помесячным продажам. Для заказа добавьте актуальный свободный остаток и условия партии в стандартном формате; без них будет доступен только прогноз продаж.'
                 : 'Сохраните оригинальные имена и структуру выгрузок SE. Для расчёта нужны все шесть ролей. Дату складского снимка берём из имени файла.'}
             </p>
           </div>
@@ -258,13 +355,14 @@ export default function DataPage({
           <select
             id="dataset-choice"
             value={report?.dataset_id || ''}
+            disabled={busy}
             onChange={(e) => setReportId(e.target.value)}
           >
             {workspace.datasets.map((d) => (
               <option key={d.dataset_id} value={d.dataset_id}>
-                {d.source_kind === 'synthetic'
+                {d.dataset_id === 'demo-systeme-v1'
                   ? 'Демонстрационный набор'
-                  : `Загрузка ${d.dataset_version}`}
+                  : `${d.source_kind === 'synthetic' ? 'Учебные XLSX' : 'Загрузка'} ${d.dataset_version}`}
               </option>
             ))}
           </select>
@@ -273,12 +371,13 @@ export default function DataPage({
         {report?.calculation_allowed && (
           <div className="panel-bottom">
             <span className="muted">
-              {report.source_kind === 'synthetic'
+              {report.dataset_id === 'demo-systeme-v1'
                 ? 'Доступен сценарий на синтетических данных'
                 : 'Набор нормализован и доступен для расчёта'}
             </span>
             <button
               className="button button-primary"
+              disabled={busy || contextBusy}
               onClick={() => onCalculate(report.dataset_id)}
             >
               Перейти к расчёту <ArrowRight size={17} />
@@ -342,7 +441,7 @@ function DatasetReport({ report }: { report: Dataset }) {
                 <td>
                   <span className="check-status">
                     <CheckCircle size={17} />
-                    {report.source_kind === 'synthetic' ? 'Пример' : 'Проверен'}
+                    {report.dataset_id === 'demo-systeme-v1' ? 'Пример' : 'Прочитан'}
                   </span>
                 </td>
               </tr>

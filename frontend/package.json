@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "generate:types": "openapi-typescript ../contracts/openapi.yaml -o src/api/schema.d.ts",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run test:e2e:service",
+    "test:e2e:service": "playwright test e2e/auth.spec.ts e2e/ml-workflow.spec.ts",
+    "test:e2e:legacy": "playwright test e2e/platform.spec.ts",
     "format": "prettier --write src e2e *.ts *.json"
   },
   "dependencies": {

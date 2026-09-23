@@ -44,6 +44,16 @@ def _signature(payload):
     return json.dumps(payload, sort_keys=True, ensure_ascii=False, allow_nan=False, separators=(',', ':'))
 
 
+def _optional(store, db, kind, object_id):
+    """Use the authenticated store namespace for existence and replay checks too."""
+    try:
+        return store.get(db, kind, object_id)
+    except DomainError as exc:
+        if exc.code != 'NOT_FOUND':
+            raise
+        return None
+
+
 def _error(exc):
     if isinstance(exc, DomainError):
         status, code, message = exc.status, exc.code, exc.message
@@ -83,7 +93,7 @@ def _persist_result(store, db, result):
 def register_stock_routes(app, store):
     """Attach stock routes backed by the same transactional SQLite store as the API.
 
-    Event IDs are globally unique and replay original results. Replays never
+    Event IDs are unique within a workspace and replay original results. Replays never
     overwrite current state or duplicate transitions/queue records. PUT policies
     use server time; both timestamps and revisions must move monotonically.
     """
@@ -97,7 +107,7 @@ def register_stock_routes(app, store):
             validate_stock('State', state)
             object_id = _key(state['warehouse_id'], state['sku'])
             with store.transaction() as db:
-                if db.execute('SELECT 1 FROM objects WHERE kind=? AND id=?', ('stock_state', object_id)).fetchone():
+                if _optional(store, db, 'stock_state', object_id) is not None:
                     raise EventConflict('State already exists; apply a stock event or update its policy.')
                 store.put(db, 'stock_state', object_id, state)
             return state
@@ -119,10 +129,9 @@ def register_stock_routes(app, store):
         try:
             event = await _payload(request, 'StockEvent')
             with store.transaction() as db:
-                prior = db.execute('SELECT payload FROM objects WHERE kind=? AND id=?',
-                                   ('stock_event', event['event_id'])).fetchone()
+                prior = _optional(store, db, 'stock_event', event['event_id'])
                 if prior:
-                    saved = json.loads(prior[0])
+                    saved = prior
                     if saved['signature'] != _signature(event):
                         raise EventConflict('event_id reused with different content')
                     result = deepcopy(saved['result'])

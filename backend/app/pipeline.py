@@ -139,6 +139,9 @@ def calculate(dataset, request, calculation_id):
     if dataset['source_kind'] == 'synthetic':
         if request['mode'] != 'scenario':
             raise DomainError('INVALID_PARAMETERS', 'Синтетический набор доступен только в сценарном режиме.')
+    # Uploaded synthetic workbooks exercise the real normalizer/model/core.
+    # Only the reserved built-in dataset is served by the fixed demo fixture.
+    if dataset['dataset_id'] == 'demo-systeme-v1':
         if request['economic_profiles'] or request['growth_adjustments'] or request['category_policies']:
             raise DomainError('INVALID_PARAMETERS', 'Демо использует готовые профили. Пользовательские политики обрабатывает будущий расчётный модуль.')
         if (request['lead_time_days'], request['review_period_days']) != (7, 21):
