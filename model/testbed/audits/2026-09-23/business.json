@@ -1,0 +1,3527 @@
+{
+  "schema_version": "testbed-business-audit-v1",
+  "audit_date": "2026-09-23",
+  "calculator": "model.testbed.business:reference_calculate",
+  "integration_status": "reference_only",
+  "scope": "Frozen source and fixture review; no model/generator/final-seed tuning.",
+  "source_sha256": {
+    "model/testbed/business.py": "b3e82596ab0f8ed28b8cff75fd1ade2bc8c5be47173ba3d00f1b2f54a11bbdc9",
+    "model/testbed/fixtures/business_cases.json": "dc642d96a5cd925d5fdfb8c37d76230a7a28e5861d49802bede948a9ea5db78a",
+    "model/testbed/freeze.json": "54d0b8ed33887b0114c54fb45d62d88300dc20224d0afa35263fa7044282c6d6",
+    "docs/requirements-matrix.md": "21b2923219368883cbfa4bbb9f39c19e320f80219c6b7aa3a00c0919d2c56b2d",
+    "docs/decision-rules.md": "0465d5dbc4f0e5f53624cc25b6975f0c5c0d0abc3e55c03e7ddd049a8bd404f7"
+  },
+  "original_fixture_checks": {
+    "passed": 54,
+    "total": 54,
+    "failures": []
+  },
+  "independent_quantity_status_checks": {
+    "passed": 54,
+    "total": 54,
+    "cases": [
+      {
+        "id": "stock_base",
+        "proof": "280 - 70",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "stock_increased",
+        "proof": "280 - 100",
+        "independent_expected": [
+          {
+            "quantity": 180,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 180.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "stock_surplus_no_moq_order",
+        "proof": "max(0, 280 - 500); MOQ cannot create need",
+        "independent_expected": [
+          {
+            "quantity": 0,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "reserve_gross",
+        "proof": "280 - (70 - 20)",
+        "independent_expected": [
+          {
+            "quantity": 230,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 230.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "reserve_net_not_twice",
+        "proof": "280 - 50; provided free_stock already net",
+        "independent_expected": [
+          {
+            "quantity": 230,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 230.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_timely",
+        "proof": "280 - 70 - 100",
+        "independent_expected": [
+          {
+            "quantity": 110,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 110.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_late_gap",
+        "proof": "280 - 30 - 100; temporal adequacy audited separately",
+        "independent_expected": [
+          {
+            "quantity": 150,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 150.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_before_gap",
+        "proof": "280 - 30 - 100",
+        "independent_expected": [
+          {
+            "quantity": 150,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 150.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "ordinary_order_does_not_erase_gap",
+        "proof": "280 - 0",
+        "independent_expected": [
+          {
+            "quantity": 280,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 280.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_outside_horizon",
+        "proof": "280 - 70; receipt after horizon excluded",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_cancelled",
+        "proof": "280 - 70; cancelled receipt excluded",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_last_day",
+        "proof": "280 - 70 - 100; horizon total only, not timely adequacy",
+        "independent_expected": [
+          {
+            "quantity": 110,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 110.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "moq_and_multiple",
+        "proof": "ceil(max(280-275, 12)/5)*5",
+        "independent_expected": [
+          {
+            "quantity": 15,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 15.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "multiple_exact",
+        "proof": "(280 - 70)/7 = 30 exact batches",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "moq_unknown",
+        "proof": "280 - 70, provisional quantity, needs_review",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "needs_review"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "needs_review"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "multiple_unknown",
+        "proof": "280 - 70, provisional quantity, needs_review",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "needs_review"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "needs_review"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "category_A",
+        "proof": "F(140)=0.2, F(280)=0.8; q=0.8 => 280 - 70",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "category_B",
+        "proof": "F(280)=0.8 < q=0.9 => 420 - 70",
+        "independent_expected": [
+          {
+            "quantity": 350,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 350.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "external_growth",
+        "proof": "28*10*1.2 - 70 = 336 - 70",
+        "independent_expected": [
+          {
+            "quantity": 266,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 266.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "growth_partial_period",
+        "proof": "14*12 + 14*10 - 70 = 308 - 70",
+        "independent_expected": [
+          {
+            "quantity": 238,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 238.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "growth_outside_horizon",
+        "proof": "280 - 70; no overlapping date",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "growth_already_in_forecast",
+        "proof": "336 - 70; do not apply g-1 twice",
+        "independent_expected": [
+          {
+            "quantity": 266,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 266.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "growth_duplicate_id",
+        "proof": "280*1.2 - 70; g-1 counted once",
+        "independent_expected": [
+          {
+            "quantity": 266,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 266.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "material_only_uncovered",
+        "proof": "280 + (50-20) - (70-20)",
+        "independent_expected": [
+          {
+            "quantity": 260,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 260.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "material_fully_reserved",
+        "proof": "280 + (20-20) - (70-20)",
+        "independent_expected": [
+          {
+            "quantity": 230,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 230.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "material_after_horizon",
+        "proof": "280 - 70; future obligation excluded",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "material_due_before_supply",
+        "proof": "280 + 100 - 70; date gap remains",
+        "independent_expected": [
+          {
+            "quantity": 310,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 310.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_expensive_low_contribution",
+        "proof": "q=10/100=0.1 => 140 - 70",
+        "independent_expected": [
+          {
+            "quantity": 70,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 70.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_cheap_high_contribution",
+        "proof": "q=90/100=0.9 => 420 - 70",
+        "independent_expected": [
+          {
+            "quantity": 350,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 350.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_category_floor",
+        "proof": "max(10/100, 0.9)=0.9 => 420 - 70",
+        "independent_expected": [
+          {
+            "quantity": 350,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 350.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_rare_high_margin",
+        "proof": "P(D=0)=0.95 >= q=0.9 => target 0",
+        "independent_expected": [
+          {
+            "quantity": 0,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_frequent_low_unit_margin",
+        "proof": "q=1/2; deterministic D=280",
+        "independent_expected": [
+          {
+            "quantity": 280,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 280.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_project_only_obligation",
+        "proof": "regular target 0 + confirmed project 7",
+        "independent_expected": [
+          {
+            "quantity": 7,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 7.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "budget_equal",
+        "proof": "280 - 70; 210*100 = budget 21000",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "budget_exceeded",
+        "proof": "280 - 70; 210*100 - 20000 = 1000",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "budget_unknown_price",
+        "proof": "280 - 70; quantity known, cost unknown",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "unknown_price_without_budget",
+        "proof": "280 - 70; total cost remains unknown",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_stock",
+        "proof": "stock cannot be inferred",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "stale_stock",
+        "proof": "stock_current is false",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_reserve",
+        "proof": "gross stock without reserve is insufficient",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_lead",
+        "proof": "lead time is absent",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_policy",
+        "proof": "neither category policy nor economics",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "invalid_horizon",
+        "proof": "7+20 != 28",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_demand",
+        "proof": "one daily demand is missing",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "economics_wrong_horizon",
+        "proof": "economics 7 days != demand 28 days",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "missing_conversion",
+        "proof": "box to pieces factor absent",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "invalid_multiple",
+        "proof": "batch multiple cannot be 0",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "unit_boxes_to_pieces",
+        "proof": "need25, MOQ20 pieces, multiple20 => 40 pieces",
+        "independent_expected": [
+          {
+            "quantity": 40,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 40.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "unit_fractional_meters",
+        "proof": "need0.26, MOQ0.1, multiple0.1 => 0.3 metres",
+        "independent_expected": [
+          {
+            "quantity": 0.3,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 0.3,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "unit_missing_quantum",
+        "proof": "physical quantum is absent",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "unit_incompatible_multiple",
+        "proof": "half-piece batch conflicts with indivisible piece",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "two_suppliers_budget_total",
+        "proof": "210*100 + 210*200 = 63000; excess3000",
+        "independent_expected": [
+          {
+            "quantity": 210,
+            "status": "ok"
+          },
+          {
+            "quantity": 210,
+            "status": "ok"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          },
+          {
+            "quantity": 210.0,
+            "status": "ok"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "material_unit_mismatch",
+        "proof": "unconverted box obligation cannot be added to pieces",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      },
+      {
+        "id": "inbound_unit_mismatch",
+        "proof": "unconverted box receipt cannot be added to pieces",
+        "independent_expected": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "actual": [
+          {
+            "quantity": null,
+            "status": "needs_data"
+          }
+        ],
+        "passed": true,
+        "failures": []
+      }
+    ]
+  },
+  "adversarial_checker_mutations": [
+    {
+      "id": "status_quantity_approval_inconsistency",
+      "classification": "confirmed_checker_contract_gap",
+      "expected": "Every changed invalid response must be rejected",
+      "description": "Numeric quantity with needs_data; existing approval_blocked unchanged.",
+      "total_cases": 54,
+      "checker_passed": 54,
+      "mutated_cases": 38,
+      "false_pass_cases": 38,
+      "false_pass_ids": [
+        "stock_base",
+        "stock_increased",
+        "stock_surplus_no_moq_order",
+        "reserve_gross",
+        "reserve_net_not_twice",
+        "inbound_timely",
+        "inbound_late_gap",
+        "inbound_before_gap",
+        "ordinary_order_does_not_erase_gap",
+        "inbound_outside_horizon",
+        "inbound_cancelled",
+        "inbound_last_day",
+        "moq_and_multiple",
+        "multiple_exact",
+        "category_A",
+        "category_B",
+        "external_growth",
+        "growth_partial_period",
+        "growth_outside_horizon",
+        "growth_already_in_forecast",
+        "growth_duplicate_id",
+        "material_only_uncovered",
+        "material_fully_reserved",
+        "material_after_horizon",
+        "material_due_before_supply",
+        "economics_expensive_low_contribution",
+        "economics_cheap_high_contribution",
+        "economics_category_floor",
+        "economics_rare_high_margin",
+        "economics_frequent_low_unit_margin",
+        "economics_project_only_obligation",
+        "budget_equal",
+        "budget_exceeded",
+        "budget_unknown_price",
+        "unknown_price_without_budget",
+        "unit_boxes_to_pieces",
+        "unit_fractional_meters",
+        "two_suppliers_budget_total"
+      ],
+      "rejected_ids": []
+    },
+    {
+      "id": "rules_string_instead_of_list",
+      "classification": "confirmed_checker_contract_gap",
+      "expected": "Every changed invalid response must be rejected",
+      "description": "String membership passes contains; nonempty malformed type passes explanation check.",
+      "total_cases": 54,
+      "checker_passed": 54,
+      "mutated_cases": 54,
+      "false_pass_cases": 54,
+      "false_pass_ids": [
+        "stock_base",
+        "stock_increased",
+        "stock_surplus_no_moq_order",
+        "reserve_gross",
+        "reserve_net_not_twice",
+        "inbound_timely",
+        "inbound_late_gap",
+        "inbound_before_gap",
+        "ordinary_order_does_not_erase_gap",
+        "inbound_outside_horizon",
+        "inbound_cancelled",
+        "inbound_last_day",
+        "moq_and_multiple",
+        "multiple_exact",
+        "moq_unknown",
+        "multiple_unknown",
+        "category_A",
+        "category_B",
+        "external_growth",
+        "growth_partial_period",
+        "growth_outside_horizon",
+        "growth_already_in_forecast",
+        "growth_duplicate_id",
+        "material_only_uncovered",
+        "material_fully_reserved",
+        "material_after_horizon",
+        "material_due_before_supply",
+        "economics_expensive_low_contribution",
+        "economics_cheap_high_contribution",
+        "economics_category_floor",
+        "economics_rare_high_margin",
+        "economics_frequent_low_unit_margin",
+        "economics_project_only_obligation",
+        "budget_equal",
+        "budget_exceeded",
+        "budget_unknown_price",
+        "unknown_price_without_budget",
+        "missing_stock",
+        "stale_stock",
+        "missing_reserve",
+        "missing_lead",
+        "missing_policy",
+        "invalid_horizon",
+        "missing_demand",
+        "economics_wrong_horizon",
+        "missing_conversion",
+        "invalid_multiple",
+        "unit_boxes_to_pieces",
+        "unit_fractional_meters",
+        "unit_missing_quantum",
+        "unit_incompatible_multiple",
+        "two_suppliers_budget_total",
+        "material_unit_mismatch",
+        "inbound_unit_mismatch"
+      ],
+      "rejected_ids": []
+    },
+    {
+      "id": "supplier_row_group_mismatch",
+      "classification": "confirmed_checker_contract_gap",
+      "expected": "Every changed invalid response must be rejected",
+      "description": "All row supplier_id changed; supplier_groups deliberately left unchanged.",
+      "total_cases": 54,
+      "checker_passed": 54,
+      "mutated_cases": 54,
+      "false_pass_cases": 54,
+      "false_pass_ids": [
+        "stock_base",
+        "stock_increased",
+        "stock_surplus_no_moq_order",
+        "reserve_gross",
+        "reserve_net_not_twice",
+        "inbound_timely",
+        "inbound_late_gap",
+        "inbound_before_gap",
+        "ordinary_order_does_not_erase_gap",
+        "inbound_outside_horizon",
+        "inbound_cancelled",
+        "inbound_last_day",
+        "moq_and_multiple",
+        "multiple_exact",
+        "moq_unknown",
+        "multiple_unknown",
+        "category_A",
+        "category_B",
+        "external_growth",
+        "growth_partial_period",
+        "growth_outside_horizon",
+        "growth_already_in_forecast",
+        "growth_duplicate_id",
+        "material_only_uncovered",
+        "material_fully_reserved",
+        "material_after_horizon",
+        "material_due_before_supply",
+        "economics_expensive_low_contribution",
+        "economics_cheap_high_contribution",
+        "economics_category_floor",
+        "economics_rare_high_margin",
+        "economics_frequent_low_unit_margin",
+        "economics_project_only_obligation",
+        "budget_equal",
+        "budget_exceeded",
+        "budget_unknown_price",
+        "unknown_price_without_budget",
+        "missing_stock",
+        "stale_stock",
+        "missing_reserve",
+        "missing_lead",
+        "missing_policy",
+        "invalid_horizon",
+        "missing_demand",
+        "economics_wrong_horizon",
+        "missing_conversion",
+        "invalid_multiple",
+        "unit_boxes_to_pieces",
+        "unit_fractional_meters",
+        "unit_missing_quantum",
+        "unit_incompatible_multiple",
+        "two_suppliers_budget_total",
+        "material_unit_mismatch",
+        "inbound_unit_mismatch"
+      ],
+      "rejected_ids": []
+    },
+    {
+      "id": "reason_boolean_instead_of_text",
+      "classification": "confirmed_checker_contract_gap",
+      "expected": "Every changed invalid response must be rejected",
+      "description": "True is truthy but cannot explain a procurement recommendation.",
+      "total_cases": 54,
+      "checker_passed": 54,
+      "mutated_cases": 54,
+      "false_pass_cases": 54,
+      "false_pass_ids": [
+        "stock_base",
+        "stock_increased",
+        "stock_surplus_no_moq_order",
+        "reserve_gross",
+        "reserve_net_not_twice",
+        "inbound_timely",
+        "inbound_late_gap",
+        "inbound_before_gap",
+        "ordinary_order_does_not_erase_gap",
+        "inbound_outside_horizon",
+        "inbound_cancelled",
+        "inbound_last_day",
+        "moq_and_multiple",
+        "multiple_exact",
+        "moq_unknown",
+        "multiple_unknown",
+        "category_A",
+        "category_B",
+        "external_growth",
+        "growth_partial_period",
+        "growth_outside_horizon",
+        "growth_already_in_forecast",
+        "growth_duplicate_id",
+        "material_only_uncovered",
+        "material_fully_reserved",
+        "material_after_horizon",
+        "material_due_before_supply",
+        "economics_expensive_low_contribution",
+        "economics_cheap_high_contribution",
+        "economics_category_floor",
+        "economics_rare_high_margin",
+        "economics_frequent_low_unit_margin",
+        "economics_project_only_obligation",
+        "budget_equal",
+        "budget_exceeded",
+        "budget_unknown_price",
+        "unknown_price_without_budget",
+        "missing_stock",
+        "stale_stock",
+        "missing_reserve",
+        "missing_lead",
+        "missing_policy",
+        "invalid_horizon",
+        "missing_demand",
+        "economics_wrong_horizon",
+        "missing_conversion",
+        "invalid_multiple",
+        "unit_boxes_to_pieces",
+        "unit_fractional_meters",
+        "unit_missing_quantum",
+        "unit_incompatible_multiple",
+        "two_suppliers_budget_total",
+        "material_unit_mismatch",
+        "inbound_unit_mismatch"
+      ],
+      "rejected_ids": []
+    }
+  ],
+  "boundary_probes": [
+    {
+      "id": "decimal_exact_batch_boundary",
+      "classification": "confirmed_reference_defect",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "м",
+            "order_unit": "м",
+            "unit_quantum": 0.01,
+            "on_hand": 279.9,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 0.1,
+            "order_multiple": 0.1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 0.1
+      },
+      "actual_selected": {
+        "item.quantity": 0.2
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 0.2,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 279.9,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 28,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "м",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 20.0,
+        "total_cost_kzt": 20.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.quantity"
+      ],
+      "rationale": "Decimal(280)-Decimal(279.9)=0.1; exact 0.1 batch => 0.1."
+    },
+    {
+      "id": "decimal_exact_budget_boundary",
+      "classification": "confirmed_reference_defect",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0.3,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 277,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 0.1,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "total_cost_kzt": 0.3,
+        "budget_excess_kzt": 0,
+        "approval_blocked": false,
+        "rules": []
+      },
+      "actual_selected": {
+        "total_cost_kzt": 0.30000000000000004,
+        "budget_excess_kzt": 5.551115123125783e-17,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-02"
+        ]
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 3.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 277,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 28,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 0.1
+          }
+        ],
+        "known_cost_kzt": 0.30000000000000004,
+        "total_cost_kzt": 0.30000000000000004,
+        "budget_excess_kzt": 5.551115123125783e-17,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-02"
+        ],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "approval_blocked",
+        "rules"
+      ],
+      "rationale": "Decimal(3)*Decimal(0.1)=Decimal(0.3), equal to budget; no BUDGET-02."
+    },
+    {
+      "id": "negative_daily_demand",
+      "classification": "confirmed_reference_validation_gap",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.status": "needs_data",
+        "item.quantity": null,
+        "approval_blocked": true
+      },
+      "actual_selected": {
+        "item.status": "ok",
+        "item.quantity": 210.0,
+        "approval_blocked": false
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": -280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": null,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.status",
+        "item.quantity",
+        "approval_blocked"
+      ],
+      "rationale": "Regular demand cannot be negative; this contract has no return events."
+    },
+    {
+      "id": "negative_price",
+      "classification": "confirmed_reference_validation_gap",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": -100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.status": "needs_data",
+        "item.quantity": null,
+        "approval_blocked": true
+      },
+      "actual_selected": {
+        "item.status": "ok",
+        "item.quantity": 210.0,
+        "approval_blocked": false
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": -100
+          }
+        ],
+        "known_cost_kzt": -21000.0,
+        "total_cost_kzt": -21000.0,
+        "budget_excess_kzt": 0,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.status",
+        "item.quantity",
+        "approval_blocked"
+      ],
+      "rationale": "A negative procurement unit price cannot silently decrease the budget total."
+    },
+    {
+      "id": "negative_inbound",
+      "classification": "confirmed_reference_validation_gap",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": -20,
+                "expected_at": "2026-04-05",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.status": "needs_data",
+        "item.quantity": null,
+        "approval_blocked": true
+      },
+      "actual_selected": {
+        "item.status": "ok",
+        "item.quantity": 230.0,
+        "approval_blocked": false
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 230.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": -20,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23000.0,
+        "total_cost_kzt": 23000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.status",
+        "item.quantity",
+        "approval_blocked"
+      ],
+      "rationale": "Confirmed receipt quantity must be nonnegative; returns require a separate typed movement."
+    },
+    {
+      "id": "economic_provenance",
+      "classification": "confirmed_reference_defect",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": {
+              "underage_cost": 1,
+              "overage_cost": 1,
+              "horizon_days": 28,
+              "source": "audit-owner-approved-v3"
+            },
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.economics_source": "audit-owner-approved-v3"
+      },
+      "actual_selected": {
+        "item.economics_source": "synthetic-profile"
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-01",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.5,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": "synthetic-profile",
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.economics_source"
+      ],
+      "rationale": "The supplied economics source must be retained rather than replaced with synthetic-profile."
+    },
+    {
+      "id": "unknown_moq_known_multiple",
+      "classification": "reference_contract_ambiguity",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 69,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": null,
+            "order_multiple": 5,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 215,
+        "item.status": "needs_review",
+        "approval_blocked": true
+      },
+      "actual_selected": {
+        "item.quantity": 211.0,
+        "item.status": "needs_review",
+        "approval_blocked": true
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 211.0,
+            "status": "needs_review",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-04"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 69,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 7,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21100.0,
+        "total_cost_kzt": 21100.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.quantity"
+      ],
+      "rationale": "Known multiple 5 can be honoured: ceil((280-69)/5)*5=215. Current output is provisional raw need211; approval remains blocked."
+    },
+    {
+      "id": "unknown_multiple_known_moq",
+      "classification": "reference_contract_ambiguity",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 279,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 10,
+            "order_multiple": null,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 10,
+        "item.status": "needs_review",
+        "approval_blocked": true
+      },
+      "actual_selected": {
+        "item.quantity": 1.0,
+        "item.status": "needs_review",
+        "approval_blocked": true
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 1.0,
+            "status": "needs_review",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-04"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 279,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 28,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 100.0,
+        "total_cost_kzt": 100.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": true,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": false,
+      "differing_fields": [
+        "item.quantity"
+      ],
+      "rationale": "Known minimum10 can be honoured even if multiple is unknown. Current provisional need1 remains blocked; define contract explicitly."
+    },
+    {
+      "id": "net_stock_without_gross_or_reserve",
+      "classification": "additional_boundary_control",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": null,
+            "reserved": null,
+            "free_stock": 50,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 230,
+        "item.free_stock": 50,
+        "item.status": "ok"
+      },
+      "actual_selected": {
+        "item.quantity": 230.0,
+        "item.free_stock": 50,
+        "item.status": "ok"
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 230.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 50,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 6,
+            "early_shortfall": 10,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 23000.0,
+        "total_cost_kzt": 23000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": true,
+      "differing_fields": [],
+      "rationale": "Explicit free_stock50 is already net; 280-50=230."
+    },
+    {
+      "id": "overdue_obligation",
+      "classification": "additional_boundary_control",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "requirement_id": "overdue",
+                "quantity": 80,
+                "already_accounted_quantity": 0,
+                "needed_at": "2026-03-31",
+                "unit": "шт"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 290,
+        "item.first_deficit_day": 1,
+        "item.early_shortfall": 70,
+        "item.requires_expedite": true
+      },
+      "actual_selected": {
+        "item.quantity": 290.0,
+        "item.first_deficit_day": 1,
+        "item.early_shortfall": 70,
+        "item.requires_expedite": true
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 290.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03",
+              "SUPPLY-02",
+              "SUPPLY-01"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 80,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 1,
+            "early_shortfall": 70,
+            "requires_expedite": true,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 29000.0,
+        "total_cost_kzt": 29000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": true,
+      "differing_fields": [],
+      "rationale": "Overdue80 is due day1: 280+80-70=290; day6 balance70-60-80=-70."
+    },
+    {
+      "id": "unreconfirmed_overdue_inbound",
+      "classification": "additional_boundary_control",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-03-31",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 210,
+        "item.inbound_in_horizon": 0
+      },
+      "actual_selected": {
+        "item.quantity": 210.0,
+        "item.inbound_in_horizon": 0
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 210.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 21000.0,
+        "total_cost_kzt": 21000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": true,
+      "differing_fields": [],
+      "rationale": "Past ETA without an updated future ETA cannot reduce need."
+    },
+    {
+      "id": "ordinary_receipt_on_first_deficit_day",
+      "classification": "additional_boundary_control",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 60,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 220,
+        "item.first_deficit_day": 7,
+        "item.early_shortfall": 0,
+        "item.requires_expedite": false
+      },
+      "actual_selected": {
+        "item.quantity": 220.0,
+        "item.first_deficit_day": 7,
+        "item.early_shortfall": 0.0,
+        "item.requires_expedite": false
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 220.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 60,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": 7,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 22000.0,
+        "total_cost_kzt": 22000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": true,
+      "differing_fields": [],
+      "rationale": "Start-of-day7 ordinary receipt precedes end-of-day7 demand, so there is no pre-ETA shortage."
+    },
+    {
+      "id": "unknown_price_zero_order",
+      "classification": "additional_boundary_control",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 500,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": null,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "item.quantity": 0,
+        "total_cost_kzt": 0,
+        "approval_blocked": false,
+        "rules": []
+      },
+      "actual_selected": {
+        "item.quantity": 0,
+        "total_cost_kzt": 0,
+        "approval_blocked": false,
+        "rules": []
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 500,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 0,
+            "first_deficit_day": null,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": null
+          }
+        ],
+        "known_cost_kzt": 0,
+        "total_cost_kzt": 0,
+        "budget_excess_kzt": 0,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "passed": true,
+      "differing_fields": [],
+      "rationale": "Unknown price for a zero quantity does not consume budget."
+    },
+    {
+      "id": "late_inbound_residual_gap_with_suggested_order",
+      "classification": "confirmed_reference_temporal_limitation",
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-29",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "minimum_backlog_balance": -90,
+        "first_unmet_day": 19,
+        "unmet_quantity": 90,
+        "SUPPLY-02_visible": true
+      },
+      "actual_selected": {
+        "minimum_backlog_balance": -90.0,
+        "first_unmet_day": 19,
+        "unmet_quantity": 90.0,
+        "SUPPLY-02_visible": false,
+        "first_deficit_day_without_order": 8,
+        "requires_expedite": false,
+        "approval_blocked": false
+      },
+      "actual": {
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "quantity": 110.0,
+            "status": "ok",
+            "rules": [
+              "POLICY-02",
+              "SUPPLY-03"
+            ],
+            "missing": [],
+            "reason": "Synthetic reference calculation",
+            "forecast_mean": 280,
+            "target_stock": 280.0,
+            "target_quantile": 0.8,
+            "free_stock": 70,
+            "material_uncovered": 0,
+            "inbound_in_horizon": 100,
+            "first_deficit_day": 8,
+            "early_shortfall": 0.0,
+            "requires_expedite": false,
+            "economics_source": null,
+            "unit": "шт",
+            "unit_cost": 100
+          }
+        ],
+        "known_cost_kzt": 11000.0,
+        "total_cost_kzt": 11000.0,
+        "budget_excess_kzt": null,
+        "approval_blocked": false,
+        "rules": [],
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ]
+        }
+      },
+      "trajectory_with_suggested_order": [
+        {
+          "day": 1,
+          "date": "2026-04-02",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 60.0,
+          "physical_balance_end": 60.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 2,
+          "date": "2026-04-03",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 50.0,
+          "physical_balance_end": 50.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 3,
+          "date": "2026-04-04",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 40.0,
+          "physical_balance_end": 40.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 4,
+          "date": "2026-04-05",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 30.0,
+          "physical_balance_end": 30.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 5,
+          "date": "2026-04-06",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 20.0,
+          "physical_balance_end": 20.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 6,
+          "date": "2026-04-07",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 10.0,
+          "physical_balance_end": 10.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 7,
+          "date": "2026-04-08",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 110.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 110.0,
+          "physical_balance_end": 110.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 8,
+          "date": "2026-04-09",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 100.0,
+          "physical_balance_end": 100.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 9,
+          "date": "2026-04-10",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 90.0,
+          "physical_balance_end": 90.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 10,
+          "date": "2026-04-11",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 80.0,
+          "physical_balance_end": 80.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 11,
+          "date": "2026-04-12",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 70.0,
+          "physical_balance_end": 70.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 12,
+          "date": "2026-04-13",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 60.0,
+          "physical_balance_end": 60.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 13,
+          "date": "2026-04-14",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 50.0,
+          "physical_balance_end": 50.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 14,
+          "date": "2026-04-15",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 40.0,
+          "physical_balance_end": 40.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 15,
+          "date": "2026-04-16",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 30.0,
+          "physical_balance_end": 30.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 16,
+          "date": "2026-04-17",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 20.0,
+          "physical_balance_end": 20.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 17,
+          "date": "2026-04-18",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 10.0,
+          "physical_balance_end": 10.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 18,
+          "date": "2026-04-19",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 0.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 0.0
+        },
+        {
+          "day": 19,
+          "date": "2026-04-20",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -10.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 20,
+          "date": "2026-04-21",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -20.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 21,
+          "date": "2026-04-22",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -30.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 22,
+          "date": "2026-04-23",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -40.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 23,
+          "date": "2026-04-24",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -50.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 24,
+          "date": "2026-04-25",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -60.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 25,
+          "date": "2026-04-26",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -70.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 26,
+          "date": "2026-04-27",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -80.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 27,
+          "date": "2026-04-28",
+          "existing_inbound": 0.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": -90.0,
+          "physical_balance_end": 0.0,
+          "unmet_demand": 10.0
+        },
+        {
+          "day": 28,
+          "date": "2026-04-29",
+          "existing_inbound": 100.0,
+          "ordinary_order_receipt": 0.0,
+          "regular_demand": 10.0,
+          "backlog_balance_end": 0.0,
+          "physical_balance_end": 90.0,
+          "unmet_demand": 0.0
+        }
+      ],
+      "passed": false,
+      "differing_fields": [
+        "SUPPLY-02_visible"
+      ],
+      "rationale": "Order110 arrives start day7; day18 ends at0; days19..27 lose10/day; existing100 arrives day28. 90 units cannot be served on time. Reference first_deficit_day8 is WITHOUT proposed order and is not itself erroneous. requires_expedite only covers d<lead_time; it is not a general certificate of feasible supply. Documentation does not explicitly require approval_blocked for timing gaps, so unblocked status alone is not declared a contract violation."
+    }
+  ],
+  "findings": [
+    {
+      "id": "BIZ-01",
+      "severity": "high",
+      "classification": "confirmed_checker_defect",
+      "location": "model/testbed/business.py:153",
+      "title": "Subset assertions lack common response schema and cross-field invariants",
+      "evidence": [
+        "status_quantity_approval_inconsistency",
+        "rules_string_instead_of_list",
+        "supplier_row_group_mismatch",
+        "reason_boolean_instead_of_text"
+      ],
+      "impact": "Every mutated adapter still reports54/54; row supplier groups, status/quantity/approval, reason and rules types are not enforced."
+    },
+    {
+      "id": "BIZ-02",
+      "severity": "medium",
+      "classification": "confirmed_reference_defect",
+      "location": "model/testbed/business.py:101",
+      "additional_location": "model/testbed/business.py:13",
+      "title": "Binary-float subtraction before Decimal rounds an exact batch up twice",
+      "evidence": [
+        "decimal_exact_batch_boundary"
+      ],
+      "impact": "0.1 metres required but0.2 recommended; current fractional fixture does not hit an exact boundary."
+    },
+    {
+      "id": "BIZ-03",
+      "severity": "medium",
+      "classification": "confirmed_reference_defect",
+      "location": "model/testbed/business.py:136",
+      "additional_location": "model/testbed/business.py:143",
+      "title": "Float currency comparison falsely blocks an equal budget",
+      "evidence": [
+        "decimal_exact_budget_boundary"
+      ],
+      "impact": "3*0.1 exceeds0.3 only in binary representation; BUDGET-02 emitted incorrectly."
+    },
+    {
+      "id": "BIZ-04",
+      "severity": "high",
+      "classification": "confirmed_reference_temporal_limitation",
+      "location": "model/testbed/business.py:98",
+      "additional_location": "model/testbed/business.py:124",
+      "title": "Late supply can leave a shortage after normal-order ETA without SUPPLY-02",
+      "evidence": [
+        "late_inbound_residual_gap_with_suggested_order"
+      ],
+      "impact": "Existing inbound_last_day passes despite90 unmet units even after ordering suggested110 at day7; requires_expedite=False cannot mean all demand is covered."
+    },
+    {
+      "id": "BIZ-05",
+      "severity": "medium",
+      "classification": "confirmed_reference_validation_gap",
+      "location": "model/testbed/business.py:44",
+      "additional_location": "model/testbed/business.py:136",
+      "title": "Negative demand, receipt quantity and price accepted as valid procurement data",
+      "evidence": [
+        "negative_daily_demand",
+        "negative_price",
+        "negative_inbound"
+      ],
+      "impact": "Missing-value fixtures do not establish numeric-domain validation; negative price can make budget usage negative."
+    },
+    {
+      "id": "BIZ-06",
+      "severity": "medium",
+      "classification": "confirmed_reference_defect",
+      "location": "model/testbed/business.py:134",
+      "title": "Economics provenance is replaced with a fixed synthetic label",
+      "evidence": [
+        "economic_provenance"
+      ],
+      "impact": "The supplied scenario/source cannot be traced from the output."
+    },
+    {
+      "id": "BIZ-07",
+      "severity": "low",
+      "classification": "reference_contract_ambiguity",
+      "location": "model/testbed/business.py:103",
+      "title": "One unknown supplier constraint causes the known constraint to be ignored",
+      "evidence": [
+        "unknown_moq_known_multiple",
+        "unknown_multiple_known_moq"
+      ],
+      "impact": "Returned provisional quantity violates the known MOQ or multiple, but needs_review and approval_blocked are correctly set. Clarify whether quantity is raw need or a constrained recommendation."
+    }
+  ],
+  "counts": {
+    "checker_mutation_probes": 4,
+    "boundary_probes": 14,
+    "boundary_matches": 5,
+    "confirmed_reference_defect_or_gap_probes": 7,
+    "contract_ambiguity_probes": 2
+  },
+  "interpretation": "These are deterministic procurement checks and mutation-detection observations, not forecast accuracy or a combined quality percentage. Production calculator is not connected."
+}

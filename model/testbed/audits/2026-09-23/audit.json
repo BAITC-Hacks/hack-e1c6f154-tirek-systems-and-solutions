@@ -1,0 +1,165 @@
+{
+  "schema_version": "testbed-audit-summary-v1",
+  "audited_commit": "2001beaa7ec508bf7a9cf6aabaca03fd83a22f76",
+  "candidate_source_commit": "710714a4344a54dc082886c62931d67a824cf097",
+  "audit_date": "2026-09-23",
+  "subagents": [
+    "audit_generator",
+    "audit_metrics",
+    "audit_business"
+  ],
+  "root_reran_all_probes": true,
+  "frozen_candidate_unchanged": true,
+  "audit_status": "findings_open",
+  "executions": [
+    {
+      "name": "generator",
+      "exit_code": 0,
+      "log": "generator-run.log"
+    },
+    {
+      "name": "metrics",
+      "exit_code": 0,
+      "log": "metrics-run.log"
+    },
+    {
+      "name": "business",
+      "exit_code": 0,
+      "log": "business-run.log"
+    }
+  ],
+  "forecast_quality": {
+    "rows": 384,
+    "failed_rows": 0,
+    "wape_realized": 0.2584883819605464,
+    "wape_expectation": 0.24690866874842082,
+    "target_wape": 0.1,
+    "target_met": false
+  },
+  "existing_checks": {
+    "unit_tests": {
+      "passed": 25,
+      "total": 25,
+      "evidence": "unit-tests.log"
+    },
+    "business_fixtures": {
+      "passed": 54,
+      "total": 54,
+      "integration_status": "reference_only"
+    },
+    "paired_project_checks": {
+      "passed": 64,
+      "total": 64
+    }
+  },
+  "independent_checks": {
+    "generator_cases": 72,
+    "generator_sku_cases": 288,
+    "metric_rows": 672,
+    "metric_assertions_confirmed": 2309,
+    "quantity_status_expectations_passed": 54,
+    "business_probes": {
+      "checker_mutation_probes": 4,
+      "boundary_probes": 14,
+      "boundary_matches": 5,
+      "confirmed_reference_defect_or_gap_probes": 7,
+      "contract_ambiguity_probes": 2
+    }
+  },
+  "findings": [
+    {
+      "id": "GEN-01",
+      "area": "generator",
+      "severity": "high",
+      "title": "Observed event_id exposes historical project and recurring classifications",
+      "status": "confirmed_open",
+      "evidence": "generator.json"
+    },
+    {
+      "id": "GEN-02",
+      "area": "generator",
+      "severity": "medium",
+      "title": "Incomplete request validation",
+      "status": "confirmed_open",
+      "evidence": "generator.json"
+    },
+    {
+      "id": "MET-001",
+      "area": "metrics",
+      "severity": "medium",
+      "title": "All 28 daily predictions can be finite and individually valid while their sum overflows to infinity. evaluate then aborts in MH4 ceil(inf), before writing any report; the failure-retention contract does not cover this numeric failure.",
+      "status": "confirmed_open",
+      "evidence": "metrics.json"
+    },
+    {
+      "id": "BIZ-01",
+      "area": "business",
+      "severity": "high",
+      "title": "Subset assertions lack common response schema and cross-field invariants",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-02",
+      "area": "business",
+      "severity": "medium",
+      "title": "Binary-float subtraction before Decimal rounds an exact batch up twice",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-03",
+      "area": "business",
+      "severity": "medium",
+      "title": "Float currency comparison falsely blocks an equal budget",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-04",
+      "area": "business",
+      "severity": "high",
+      "title": "Late supply can leave a shortage after normal-order ETA without SUPPLY-02",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-05",
+      "area": "business",
+      "severity": "medium",
+      "title": "Negative demand, receipt quantity and price accepted as valid procurement data",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-06",
+      "area": "business",
+      "severity": "medium",
+      "title": "Economics provenance is replaced with a fixed synthetic label",
+      "status": "confirmed_open",
+      "evidence": "business.json"
+    },
+    {
+      "id": "BIZ-07",
+      "area": "business",
+      "severity": "low",
+      "title": "One unknown supplier constraint causes the known constraint to be ignored",
+      "status": "contract_ambiguity",
+      "evidence": "business.json"
+    }
+  ],
+  "finding_counts": {
+    "high": 3,
+    "medium": 6,
+    "low": 1
+  },
+  "confirmed_findings": 9,
+  "contract_ambiguities": 1,
+  "evidence_sha256": {
+    "generator.json": "9fad8cf5fa1419137dc3507834e299aa7bc91d32a21b4f845292020978b106c5",
+    "metrics.json": "35145fef822f7a3a9a8c0fa47c71e0480e3740e65d2630981152c713f78fcac2",
+    "business.json": "571e97356735e22571526a0a98f53ac6914f574b96fa1372ff48144f6af69772",
+    "replay.json": "5ffdf15914d5997ec27b2ddcc1edbd4a6d3d14ff57d3f67d74430d1c2570f885"
+  },
+  "interpretation": "Forecast errors, existing test pass counts and audit findings are separate. Known defects are intentionally reproduced by successful audit probes. No combined quality percentage is defined. The final replay is not a new holdout."
+}

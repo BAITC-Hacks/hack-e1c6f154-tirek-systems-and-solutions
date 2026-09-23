@@ -1,0 +1,35 @@
+test_business_fixtures (test_testbed.BaselineAndBusinessTests.test_business_fixtures) ... ok
+test_checker_detects_wrong_quantity_null_and_nonfinite (test_testbed.BaselineAndBusinessTests.test_checker_detects_wrong_quantity_null_and_nonfinite) ... ok
+test_incomplete_day_not_treated_as_zero_or_complete_sales (test_testbed.BaselineAndBusinessTests.test_incomplete_day_not_treated_as_zero_or_complete_sales) ... ok
+test_one_client_split_across_days (test_testbed.BaselineAndBusinessTests.test_one_client_split_across_days) ... ok
+test_regular_large_customer_not_excluded (test_testbed.BaselineAndBusinessTests.test_regular_large_customer_not_excluded) ... ok
+test_stockout_correction_exceeds_raw_sales_forecast (test_testbed.BaselineAndBusinessTests.test_stockout_correction_exceeds_raw_sales_forecast) ... ok
+test_duplicate_import_identifiers_rejected (test_testbed.BoundaryTests.test_duplicate_import_identifiers_rejected) ... ok
+test_future_observations_and_unannounced_promotion_rejected (test_testbed.BoundaryTests.test_future_observations_and_unannounced_promotion_rejected) ... ok
+test_no_hidden_top_level_or_nested_fields (test_testbed.BoundaryTests.test_no_hidden_top_level_or_nested_fields) ... ok
+test_prediction_exact_coverage_length_and_finiteness (test_testbed.BoundaryTests.test_prediction_exact_coverage_length_and_finiteness) ... ok
+test_process_crash_missing_output_timeout (test_testbed.BoundaryTests.test_process_crash_missing_output_timeout) ... ok
+test_process_transport_and_mutation_isolation (test_testbed.BoundaryTests.test_process_transport_and_mutation_isolation) ... ok
+test_all_scenarios_public_boundary (test_testbed.GenerationTests.test_all_scenarios_public_boundary) ... ok
+test_availability_censors_and_never_creates_demand (test_testbed.GenerationTests.test_availability_censors_and_never_creates_demand) ... ok
+test_determinism_and_seed_variation (test_testbed.GenerationTests.test_determinism_and_seed_variation) ... ok
+test_generator_poisson_expectation_sanity_development_only (test_testbed.GenerationTests.test_generator_poisson_expectation_sanity_development_only) ... ok
+test_new_product_has_only_post_launch_history (test_testbed.GenerationTests.test_new_product_has_only_post_launch_history) ... ok
+test_paired_regular_truth_and_projects_separate (test_testbed.GenerationTests.test_paired_regular_truth_and_projects_separate) ... ok
+test_private_future_mutation_cannot_affect_input_or_forecast (test_testbed.GenerationTests.test_private_future_mutation_cannot_affect_input_or_forecast) ... ok
+test_unannounced_shock_not_in_public_context (test_testbed.GenerationTests.test_unannounced_shock_not_in_public_context) ... ok
+test_failed_adapter_stays_in_report (test_testbed.MetricAndFreezeTests.test_failed_adapter_stays_in_report) ... development: seed=101, scenario=stable
+development: seed=101, scenario=single_project
+development: seed=101, scenario=split_project
+ok
+test_failed_rows_make_complete_metric_unavailable (test_testbed.MetricAndFreezeTests.test_failed_rows_make_complete_metric_unavailable) ... ok
+test_freeze_refuses_changed_source_and_overwrite (test_testbed.MetricAndFreezeTests.test_freeze_refuses_changed_source_and_overwrite) ... ok
+test_seed_sets_disjoint_and_fixed (test_testbed.MetricAndFreezeTests.test_seed_sets_disjoint_and_fixed) ... ok
+test_wape_weighting_zero_rows_and_separate_expectation (test_testbed.MetricAndFreezeTests.test_wape_weighting_zero_rows_and_separate_expectation) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 7.690s
+
+OK
+{"output": "/tmp/tmp27extx5z", "overall": {"rows": 12, "failed_rows": 12, "realized_regular_quantity": 12795, "expected_regular_quantity": 13104.0, "project_quantity": 4014, "zero_realized_rows": 0, "absolute_error_realized": null, "wape_realized": null, "bias_realized": null, "absolute_error_expectation": null, "wape_expectation": null, "bias_expectation": null, "daily_wape_realized": null, "daily_wape_expectation": null}, "business_passed": 54, "business_total": 54, "forecast_target_met": false}
+Frozen candidate: /tmp/tmpnyku17m_/freeze.json; sha256=92f248fc7e310e82691a9cbb92a0aa654634c94d10b5131f1f6643aee6b24d85

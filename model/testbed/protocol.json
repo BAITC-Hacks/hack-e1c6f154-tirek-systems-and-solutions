@@ -1,0 +1,21 @@
+{
+  "version": "testbed-v2.0",
+  "mode": "synthetic",
+  "development_seeds": [101, 202, 303],
+  "final_seeds": [909, 1337, 2027, 4099],
+  "origins": ["2025-07-01", "2026-04-01"],
+  "history_days": 560,
+  "horizon_days": 28,
+  "items_per_case": 4,
+  "forecast_target_wape": 0.1,
+  "project_forecast_tolerance_fraction": 0.1,
+  "project_quantity_tolerance_fraction": 0.1,
+  "project_minimum_batch": 1,
+  "baseline": {"window_days": 56, "client_window_days": 7, "recurring_weeks": 3, "project_daily_multiplier": 8},
+  "scenarios": ["stable", "seasonal_growth", "intermittent", "new_product", "full_stockout", "partial_stockout", "single_project", "split_project", "recurring_client", "known_promotion", "demand_shock", "combined"],
+  "metric_primary": "sum(abs(predicted_horizon - realized_regular_horizon)) / sum(realized_regular_horizon)",
+  "metric_expectation": "sum(abs(predicted_horizon - expected_regular_horizon)) / sum(expected_regular_horizon)",
+  "zero_denominator": "null (undefined); retain absolute error, zero-target count and row",
+  "failure_policy": "retain failed rows; aggregate metrics null if any prediction missing; never score only successful subset as complete",
+  "final_policy": "Freeze code, protocol, fixtures and adapter before final seeds. Do not tune from final outcomes. A rerun of frozen code is a reproducibility check, not a new holdout."
+}

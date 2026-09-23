@@ -1,0 +1,373 @@
+{
+  "audit": "generator and leakage; no forecast tuning",
+  "candidate_freeze_sha256": "54d0b8ed33887b0114c54fb45d62d88300dc20224d0afa35263fa7044282c6d6",
+  "cases": 72,
+  "censoring_moments": {
+    "combined/availability=0.25": {
+      "expected_units": 8000.5,
+      "observed_units": 8111,
+      "variance": 6000.375,
+      "z_score": 1.4265042882905696
+    },
+    "combined/availability=0.5": {
+      "expected_units": 17451.0,
+      "observed_units": 17472,
+      "variance": 8725.5,
+      "z_score": 0.2248144039991374
+    },
+    "partial_stockout/availability=0.25": {
+      "expected_units": 4904.75,
+      "observed_units": 4992,
+      "variance": 3678.5625,
+      "z_score": 1.4385546527437871
+    },
+    "partial_stockout/availability=0.5": {
+      "expected_units": 9752.0,
+      "observed_units": 9719,
+      "variance": 4876.0,
+      "z_score": -0.47258734885411896
+    }
+  },
+  "checks": {
+    "aligned_truth_project_dates": 288,
+    "analogue_history_time_boundary": 2016,
+    "baseline_invariant_to_event_id": 72,
+    "censoring_bounds": 147936,
+    "censoring_mean": 4,
+    "deterministic_case": 72,
+    "document_conservation": 147936,
+    "event_time_boundary": 136027,
+    "explicit_future_and_private_rejection": 4,
+    "external_process_matches_baseline": 1,
+    "full_stockout_zero_sales": 2064,
+    "future_starts_after_cutoff": 288,
+    "history_time_boundary": 147936,
+    "independent_censor_replay": 147936,
+    "independent_recurring_replay": 14112,
+    "intermittent_analytic_expectation": 24,
+    "intermittent_moments": 4,
+    "known_promotions_time_boundary": 96,
+    "new_product_history_length": 24,
+    "new_product_nonzero_future": 24,
+    "paired_regular_truth": 24,
+    "poisson_moments": 15,
+    "private_future_mutation_does_not_change_public_input": 72,
+    "public_top_level": 72,
+    "single_split_equal_total": 24,
+    "truth_dimensions": 288,
+    "valid_public_request": 72
+  },
+  "development_seeds": [
+    101,
+    202,
+    303
+  ],
+  "examples": [
+    {
+      "event_id": "SKU-001-2025-06-13-2",
+      "origin": "2025-07-01",
+      "quantity": 111,
+      "scenario": "single_project",
+      "seed": 101
+    },
+    {
+      "event_id": "SKU-002-2025-06-13-2",
+      "origin": "2025-07-01",
+      "quantity": 266,
+      "scenario": "single_project",
+      "seed": 101
+    },
+    {
+      "event_id": "SKU-003-2025-06-13-2",
+      "origin": "2025-07-01",
+      "quantity": 598,
+      "scenario": "single_project",
+      "seed": 101
+    }
+  ],
+  "final_seeds_generated": [],
+  "findings": [
+    {
+      "evidence": {
+        "actual": "Suffix 0=normal, 1=recurring, >=2=project; exact historical-unit reconstruction",
+        "details": [
+          "historical_project_id_leakage",
+          "historical_recurring_id_leakage"
+        ],
+        "expected": "Opaque event identifiers without evaluator classification",
+        "not_future_demand_leakage": true,
+        "source": [
+          "generator.py:129",
+          "generator.py:132",
+          "generator.py:138"
+        ]
+      },
+      "id": "GEN-01",
+      "severity": "high",
+      "status": "confirmed",
+      "title": "Observed event_id exposes historical project and recurring classifications"
+    },
+    {
+      "evidence": {
+        "actual": "Five malformed development-request mutations accepted",
+        "details": [
+          "input_validation_mutations"
+        ],
+        "expected": "Reject invalid horizon types/ranges, non-boolean complete and invalid promotion dates/ranges",
+        "source": [
+          "adapters.py:9",
+          "adapters.py:33",
+          "adapters.py:36"
+        ]
+      },
+      "id": "GEN-02",
+      "severity": "medium",
+      "status": "confirmed",
+      "title": "Incomplete request validation"
+    }
+  ],
+  "historical_project_id_leakage": {
+    "all_observed_events": 136027,
+    "decoded_project_units": 29211,
+    "events_with_project_suffix": 624,
+    "false_negative_units": 0,
+    "false_positive_units": 0,
+    "history_rows": 147936,
+    "mismatched_days": 0,
+    "true_positive_units": 29211,
+    "true_sold_project_units": 29211
+  },
+  "historical_recurring_id_leakage": {
+    "decoded_recurring_units": 674259,
+    "false_negative_units": 0,
+    "false_positive_units": 0,
+    "mismatched_days": 0,
+    "true_recurring_units": 674259
+  },
+  "input_validation_mutations": [
+    {
+      "accepted": false,
+      "expected_acceptance": false,
+      "mutation": "future_history"
+    },
+    {
+      "accepted": false,
+      "expected_acceptance": false,
+      "mutation": "future_event"
+    },
+    {
+      "accepted": false,
+      "expected_acceptance": false,
+      "mutation": "future_promotion_announcement"
+    },
+    {
+      "accepted": false,
+      "expected_acceptance": false,
+      "mutation": "private_field"
+    },
+    {
+      "accepted": true,
+      "expected_acceptance": false,
+      "mutation": "negative_horizon"
+    },
+    {
+      "accepted": true,
+      "expected_acceptance": false,
+      "mutation": "boolean_horizon"
+    },
+    {
+      "accepted": true,
+      "expected_acceptance": false,
+      "mutation": "string_complete"
+    },
+    {
+      "accepted": true,
+      "expected_acceptance": false,
+      "mutation": "reversed_promotion"
+    },
+    {
+      "accepted": true,
+      "expected_acceptance": false,
+      "mutation": "invalid_promotion_date"
+    }
+  ],
+  "intermittent_moments": [
+    {
+      "expected_mean": 1.28,
+      "mean_z_score": 1.580901763240935,
+      "n": 3528,
+      "positive_frequency": 0.07511337868480726,
+      "sample_mean": 1.4441609977324263,
+      "sku": "SKU-001"
+    },
+    {
+      "expected_mean": 2.88,
+      "mean_z_score": -0.30006567744534235,
+      "n": 3528,
+      "positive_frequency": 0.08475056689342404,
+      "sample_mean": 2.8092403628117912,
+      "sku": "SKU-002"
+    },
+    {
+      "expected_mean": 6.4,
+      "mean_z_score": -0.16388064617312187,
+      "n": 3528,
+      "positive_frequency": 0.0782312925170068,
+      "sample_mean": 6.313775510204081,
+      "sku": "SKU-003"
+    },
+    {
+      "expected_mean": 14.4,
+      "mean_z_score": -0.2010463038435534,
+      "n": 3528,
+      "positive_frequency": 0.08475056689342404,
+      "sample_mean": 14.16156462585034,
+      "sku": "SKU-004"
+    }
+  ],
+  "limitations": [
+    "Trusted adapter process is not an OS sandbox.",
+    "SKU index fixes demand scale across seeds; synthetic identifier generalization is untested.",
+    "Expectation conditions on private shocks, not only information available at cutoff.",
+    "Complete flags are always true in generated evaluation scenarios.",
+    "No production data or inventory-demand feedback is modeled.",
+    "Findings do not imply baseline used the leaked ID; it is invariant to ID replacement in all development cases."
+  ],
+  "origins": [
+    "2025-07-01",
+    "2026-04-01"
+  ],
+  "poisson_moments": [
+    {
+      "mean": 0,
+      "mean_z_score": 0,
+      "n": 10000,
+      "sample_mean": 0,
+      "sample_variance": 0,
+      "seed": 101
+    },
+    {
+      "mean": 0.1,
+      "mean_z_score": -0.2213594362117885,
+      "n": 10000,
+      "sample_mean": 0.0993,
+      "sample_variance": 0.10044955495549555,
+      "seed": 101
+    },
+    {
+      "mean": 1,
+      "mean_z_score": -0.33999999999999586,
+      "n": 10000,
+      "sample_mean": 0.9966,
+      "sample_variance": 1.0252909690969096,
+      "seed": 101
+    },
+    {
+      "mean": 20,
+      "mean_z_score": -0.4919349550499194,
+      "n": 10000,
+      "sample_mean": 19.978,
+      "sample_variance": 19.731889188918892,
+      "seed": 101
+    },
+    {
+      "mean": 70,
+      "mean_z_score": -0.15179403338541148,
+      "n": 10000,
+      "sample_mean": 69.9873,
+      "sample_variance": 67.5166903790379,
+      "seed": 101
+    },
+    {
+      "mean": 0,
+      "mean_z_score": 0,
+      "n": 10000,
+      "sample_mean": 0,
+      "sample_variance": 0,
+      "seed": 202
+    },
+    {
+      "mean": 0.1,
+      "mean_z_score": -2.403331021727971,
+      "n": 10000,
+      "sample_mean": 0.0924,
+      "sample_variance": 0.09227146714671468,
+      "seed": 202
+    },
+    {
+      "mean": 1,
+      "mean_z_score": 0.42999999999999705,
+      "n": 10000,
+      "sample_mean": 1.0043,
+      "sample_variance": 1.0103825482548254,
+      "seed": 202
+    },
+    {
+      "mean": 20,
+      "mean_z_score": 0.6551679174074209,
+      "n": 10000,
+      "sample_mean": 20.0293,
+      "sample_variance": 20.264067916791678,
+      "seed": 202
+    },
+    {
+      "mean": 70,
+      "mean_z_score": 0.519924445060396,
+      "n": 10000,
+      "sample_mean": 70.0435,
+      "sample_variance": 70.28063581358136,
+      "seed": 202
+    },
+    {
+      "mean": 0,
+      "mean_z_score": 0,
+      "n": 10000,
+      "sample_mean": 0,
+      "sample_variance": 0,
+      "seed": 303
+    },
+    {
+      "mean": 0.1,
+      "mean_z_score": -0.6640783086353611,
+      "n": 10000,
+      "sample_mean": 0.0979,
+      "sample_variance": 0.09992558255825583,
+      "seed": 303
+    },
+    {
+      "mean": 1,
+      "mean_z_score": -0.39000000000000146,
+      "n": 10000,
+      "sample_mean": 0.9961,
+      "sample_variance": 0.9965844484448445,
+      "seed": 303
+    },
+    {
+      "mean": 20,
+      "mean_z_score": 0.08720665112252687,
+      "n": 10000,
+      "sample_mean": 20.0039,
+      "sample_variance": 20.174502240224022,
+      "seed": 303
+    },
+    {
+      "mean": 70,
+      "mean_z_score": 0.6992087364605618,
+      "n": 10000,
+      "sample_mean": 70.0585,
+      "sample_variance": 70.7137491249125,
+      "seed": 303
+    }
+  ],
+  "probe_sha256": "ec18be909817e89db8e58e60b183458cadbc9ee98c4c657ea8bb89d0146f5666",
+  "sku_cases": 288,
+  "summary": {
+    "confirmed_findings": 2,
+    "forecast_quality_measured_by_this_probe": false,
+    "high_findings": 1,
+    "medium_findings": 1,
+    "probe_completed": true,
+    "unexpected_invariant_failures": 0
+  },
+  "unexpected_invariant_failures": []
+}

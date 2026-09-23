@@ -1,0 +1,17 @@
+{
+  "frozen_candidate_unchanged": true,
+  "final_replay_byte_identical": true,
+  "files_sha256": {
+    "report.json": "e4aaf2fa2a7975e3a784a25ac9c0a2f6852c0c7ae8a9ee9dc40732480e38ebf3",
+    "rows.csv": "3374ddee2f49cf2fe16e2fab708cad0fca9adb8a31ee9628a2d9afad2ba6a4e4",
+    "report.md": "4cffc65ce824aab311b8bc4f56e15c944cd7a86ccbd56c5808a0cdc2ed8c2359"
+  },
+  "forecast_rows": 384,
+  "unique_scenario_seed_origin_sku_rows": 384,
+  "metrics_recomputed_from_rows": true,
+  "csv_rows_verified": true,
+  "unit_tests_passed": 25,
+  "business_cases_passed": 54,
+  "paired_project_checks_passed": 64,
+  "note": "Replay of frozen code for reproducibility only; no generator/model tuning after final evaluation."
+}
