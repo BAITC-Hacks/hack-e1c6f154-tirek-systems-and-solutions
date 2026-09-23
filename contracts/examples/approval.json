@@ -1,0 +1,12 @@
+{
+  "approval_id": "demo-approval-001",
+  "calculation_id": "demo-calc-001",
+  "revision": 1,
+  "mode": "scenario",
+  "status": "approved",
+  "approved_at": "2026-09-23T10:00:00+05:00",
+  "selected_item_ids": [
+    "demo-item-001"
+  ],
+  "export_url": "/api/v1/approvals/demo-approval-001/export.csv"
+}

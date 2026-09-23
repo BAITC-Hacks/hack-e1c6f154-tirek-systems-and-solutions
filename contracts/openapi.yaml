@@ -1,0 +1,1529 @@
+openapi: 3.1.0
+info:
+  title: Tirek Replenishment API
+  version: 1.0.0
+  description: Предлагаемый контракт четырёхчасового MVP. Эндпоинты ещё не реализованы.
+    Примеры синтетические. Реальные данные, сценарные допущения и доступность ИИ маркируются
+    явно.
+servers:
+- url: http://127.0.0.1:8000/api/v1
+  description: Локальный backend MVP
+tags:
+- name: System
+- name: Datasets
+- name: Jobs
+- name: Calculations
+- name: Approvals
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+      - System
+      summary: Готовность и реализованные возможности
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /datasets/import:
+    post:
+      operationId: importDataset
+      tags:
+      - Datasets
+      summary: Импорт фиксированного набора XLSX и дополнительного контекста
+      responses:
+        '202':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - &id001
+        name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 1
+        description: Один ключ на логическую операцию. Повтор того же содержимого
+          возвращает тот же результат; другое содержимое с тем же ключом → 409.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                supplier_id:
+                  type: string
+                  minLength: 1
+                files:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: binary
+                context:
+                  type: string
+                  description: JSON-строка по схеме AdditionalContext. Схема проверяется
+                    сервером после разбора JSON; файл не является командой.
+              required:
+              - supplier_id
+              - files
+  /jobs/{job_id}:
+    get:
+      operationId: getJob
+      tags:
+      - Jobs
+      summary: Статус задачи
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+  /datasets/{dataset_id}:
+    get:
+      operationId: getDataset
+      tags:
+      - Datasets
+      summary: Отчёт импорта
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetReport'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+  /calculations:
+    post:
+      operationId: startCalculation
+      tags:
+      - Calculations
+      summary: Запустить прогноз и расчёт
+      responses:
+        '202':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - *id001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationRequest'
+  /calculations/{calculation_id}/recommendations:
+    get:
+      operationId: listRecommendations
+      tags:
+      - Calculations
+      summary: Получить позиции и основания; группировку строить по supplier_id
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsResponse'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: calculation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+  /calculations/{calculation_id}/items/{item_id}:
+    get:
+      operationId: getItem
+      tags:
+      - Calculations
+      summary: Карточка товара
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDetail'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: &id002
+      - name: calculation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+    patch:
+      operationId: overrideItem
+      tags:
+      - Calculations
+      summary: Сохранить ручное количество с причиной
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDetail'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: *id002
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OverrideRequest'
+  /calculations/{calculation_id}/approve:
+    post:
+      operationId: approveCalculation
+      tags:
+      - Approvals
+      summary: Проверить и зафиксировать снимок выбранных позиций
+      responses:
+        '201':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Approval'
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: calculation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      - *id001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalRequest'
+  /approvals/{approval_id}/export.csv:
+    get:
+      operationId: exportApproval
+      tags:
+      - Approvals
+      summary: CSV утверждённого снимка
+      parameters:
+      - name: approval_id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: UTF-8 BOM, разделитель ;, без автоматической отправки поставщику
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: attachment; filename="order-<approval_id>.csv"
+          content:
+            text/csv:
+              schema:
+                type: string
+        '404':
+          description: Ошибка с кодом и описанием
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Issue:
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          minLength: 1
+        severity:
+          type: string
+          enum:
+          - info
+          - warning
+          - error
+        message:
+          type: string
+          minLength: 1
+        affected_skus:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        source_reference:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+      required:
+      - code
+      - severity
+      - message
+      - affected_skus
+      - source_reference
+    Evidence:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          minLength: 1
+        source_kind: &id005
+          type: string
+          enum:
+          - observed
+          - manual
+          - synthetic
+        reference:
+          type: string
+          minLength: 1
+        label:
+          type: string
+          minLength: 1
+        value:
+          type:
+          - string
+          - number
+          - boolean
+          - 'null'
+        unit:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+      required:
+      - id
+      - source_kind
+      - reference
+      - label
+      - value
+      - unit
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id:
+          type: string
+          minLength: 1
+        error:
+          type: object
+          additionalProperties: false
+          properties:
+            code:
+              type: string
+              minLength: 1
+            message:
+              type: string
+              minLength: 1
+            details:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                properties:
+                  field:
+                    anyOf:
+                    - type: string
+                      minLength: 1
+                    - type: 'null'
+                  message:
+                    type: string
+                    minLength: 1
+                required:
+                - field
+                - message
+          required:
+          - code
+          - message
+          - details
+      required:
+      - request_id
+      - error
+    Health:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - degraded
+        api_version:
+          type: string
+          minLength: 1
+        supported_suppliers:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        supported_horizons:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+        llm_available:
+          type: boolean
+        max_file_count:
+          type: integer
+          minimum: 1
+        max_total_upload_bytes:
+          type: integer
+          minimum: 1
+      required:
+      - status
+      - api_version
+      - supported_suppliers
+      - supported_horizons
+      - llm_available
+      - max_file_count
+      - max_total_upload_bytes
+    Job:
+      type: object
+      additionalProperties: false
+      properties:
+        job_id:
+          type: string
+          minLength: 1
+        kind:
+          type: string
+          enum:
+          - import
+          - calculation
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - succeeded
+          - failed
+        stage:
+          type: string
+          minLength: 1
+        progress_pct:
+          anyOf:
+          - type: number
+            minimum: 0
+            maximum: 100
+          - type: 'null'
+        resource_type:
+          anyOf:
+          - type: string
+            enum:
+            - dataset
+            - calculation
+          - type: 'null'
+        resource_id:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+        error:
+          anyOf:
+          - $ref: '#/components/schemas/Error'
+          - type: 'null'
+        created_at: &id003
+          type: string
+          format: date-time
+        updated_at: *id003
+      required:
+      - job_id
+      - kind
+      - status
+      - stage
+      - progress_pct
+      - resource_type
+      - resource_id
+      - error
+      - created_at
+      - updated_at
+      description: succeeded требует resource_type/resource_id и error=null; failed
+        требует error. Для queued/running resource_id может быть null. Статус подтверждает
+        выполнение backend.
+    SourceFile:
+      type: object
+      additionalProperties: false
+      properties:
+        role:
+          type: string
+          enum:
+          - sales_transactions
+          - sales_monthly
+          - stock_monthly
+          - seasonality
+          - moq
+          - current_stock_inbound
+          - additional_context
+        filename:
+          type: string
+          minLength: 1
+        sha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        rows_read:
+          type: integer
+          minimum: 0
+        rows_used:
+          type: integer
+          minimum: 0
+        data_as_of:
+          anyOf:
+          - &id004
+            type: string
+            format: date
+          - type: 'null'
+      required:
+      - role
+      - filename
+      - sha256
+      - rows_read
+      - rows_used
+      - data_as_of
+    DatasetReport:
+      type: object
+      additionalProperties: false
+      properties:
+        dataset_id:
+          type: string
+          minLength: 1
+        dataset_version:
+          type: string
+          minLength: 1
+        data_as_of: *id004
+        timezone:
+          const: Asia/Almaty
+        source_kind:
+          type: string
+          enum:
+          - observed
+          - synthetic
+          - mixed
+        supplier_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        sku_count:
+          type: integer
+          minimum: 0
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceFile'
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+        calculation_allowed:
+          type: boolean
+      required:
+      - dataset_id
+      - dataset_version
+      - data_as_of
+      - timezone
+      - source_kind
+      - supplier_ids
+      - sku_count
+      - sources
+      - issues
+      - calculation_allowed
+    ClientLabel:
+      type: object
+      additionalProperties: false
+      properties:
+        source_event_id:
+          type: string
+          minLength: 1
+        pseudonymous_client_id:
+          type: string
+          minLength: 1
+      required:
+      - source_event_id
+      - pseudonymous_client_id
+      description: Только обезличенный ID. Не передавать ФИО, телефон, адрес или необработанный
+        клиентский справочник.
+    StockoutInterval:
+      type: object
+      additionalProperties: false
+      properties:
+        sku:
+          type: string
+          minLength: 1
+        warehouse_id:
+          type: string
+          minLength: 1
+        start_date: *id004
+        end_date: *id004
+        source_kind: *id005
+        reference:
+          type: string
+          minLength: 1
+      required:
+      - sku
+      - warehouse_id
+      - start_date
+      - end_date
+      - source_kind
+      - reference
+      description: Даты включительно; end_date >= start_date, интервал не выходит
+        за доступную историю. Наблюдаемые и синтетические интервалы разделены; месячный
+        нулевой остаток не превращается в точный интервал.
+    PriceObservation:
+      type: object
+      additionalProperties: false
+      properties:
+        sku:
+          type: string
+          minLength: 1
+        effective_date: *id004
+        selling_price:
+          type: number
+          minimum: 0
+        unit_cost:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        variable_selling_cost:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        source_kind: *id005
+        reference:
+          type: string
+          minLength: 1
+      required:
+      - sku
+      - effective_date
+      - selling_price
+      - unit_cost
+      - variable_selling_cost
+      - source_kind
+      - reference
+    MaterialRequirement:
+      type: object
+      additionalProperties: false
+      properties:
+        requirement_id:
+          type: string
+          minLength: 1
+        sku:
+          type: string
+          minLength: 1
+        warehouse_id:
+          type: string
+          minLength: 1
+        quantity:
+          type: number
+          minimum: 0
+        unit:
+          type: string
+          minLength: 1
+        needed_at: *id004
+        already_accounted_quantity:
+          type: number
+          minimum: 0
+        source_kind: *id005
+        reference:
+          type: string
+          minLength: 1
+      required:
+      - requirement_id
+      - sku
+      - warehouse_id
+      - quantity
+      - unit
+      - needed_at
+      - already_accounted_quantity
+      - source_kind
+      - reference
+      description: Потребность строки материальной ведомости. already_accounted_quantity
+        <= quantity; в дополнительный спрос входит только неучтённая часть, чтобы
+        не повторять резерв/подтверждённый заказ.
+    AdditionalContext:
+      type: object
+      additionalProperties: false
+      properties:
+        client_labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientLabel'
+        stockout_intervals:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockoutInterval'
+        price_observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceObservation'
+        material_requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/MaterialRequirement'
+      required: []
+      description: Нормализованные дополнительные входы. Отсутствующий массив означает,
+        что источник не передан; его отсутствие отражается в отчёте, а не заполняется
+        выдуманными фактами.
+    EconomicProfile:
+      type: object
+      additionalProperties: false
+      properties:
+        sku:
+          type: string
+          minLength: 1
+        underage_cost:
+          type: number
+          minimum: 0
+        overage_cost:
+          type: number
+          exclusiveMinimum: 0
+        unit_cost:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0
+          - type: 'null'
+        currency:
+          const: KZT
+        horizon_days:
+          type: integer
+          minimum: 1
+        source_kind: *id005
+        rationale:
+          type: string
+          minLength: 1
+      required:
+      - sku
+      - underage_cost
+      - overage_cost
+      - unit_cost
+      - currency
+      - horizon_days
+      - source_kind
+      - rationale
+      description: Затраты на единицу за указанный горизонт. Без unit_cost недоступны
+        стоимость заказа, отдача капитала и проверка денежного бюджета.
+    CategoryPolicy:
+      type: object
+      additionalProperties: false
+      properties:
+        category_raw:
+          type: string
+          minLength: 1
+        target_quantile: &id006
+          type: number
+          exclusiveMinimum: 0
+          exclusiveMaximum: 1
+        minimum_target_quantile:
+          anyOf:
+          - *id006
+          - type: 'null'
+        source_kind: *id005
+        rationale:
+          type: string
+          minLength: 1
+      required:
+      - category_raw
+      - target_quantile
+      - minimum_target_quantile
+      - source_kind
+      - rationale
+      description: target_quantile применяется при отсутствии экономического профиля;
+        minimum_target_quantile, если указан, задаёт нижнюю границу также экономического
+        выбора. target_quantile ниже указанного минимума отклоняется. Смысл исходных
+        числовых категорий не угадывается.
+    GrowthAdjustment:
+      type: object
+      additionalProperties: false
+      properties:
+        sku:
+          type: string
+          minLength: 1
+        rate:
+          type: number
+          exclusiveMinimum: -1
+        valid_from: *id004
+        valid_to: *id004
+        source_kind: *id005
+        rationale:
+          type: string
+          minLength: 1
+      required:
+      - sku
+      - rate
+      - valid_from
+      - valid_to
+      - source_kind
+      - rationale
+      description: 'Внешняя поправка прироста: 0.10 = +10%. Применять только на заданный
+        период отдельно от уже учтённого исторического тренда. valid_to >= valid_from.'
+    CalculationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        dataset_id:
+          type: string
+          minLength: 1
+        as_of_date: *id004
+        warehouse_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        category_codes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        horizon_days:
+          type: integer
+          minimum: 1
+        lead_time_days:
+          type: integer
+          minimum: 1
+        review_period_days:
+          type: integer
+          minimum: 1
+        mode:
+          type: string
+          enum:
+          - operational
+          - scenario
+        category_policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryPolicy'
+        economic_profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/EconomicProfile'
+        growth_adjustments:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrowthAdjustment'
+        budget_kzt:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0
+          - type: 'null'
+        request_ai_review:
+          type: boolean
+      required:
+      - dataset_id
+      - as_of_date
+      - warehouse_ids
+      - category_codes
+      - horizon_days
+      - lead_time_days
+      - review_period_days
+      - mode
+      - category_policies
+      - economic_profiles
+      - growth_adjustments
+      - budget_kzt
+      - request_ai_review
+      description: horizon_days = lead_time_days + review_period_days; поддержанный
+        горизонт проверяется через health. Пустой фильтр означает все значения. В
+        operational синтетические параметры и наборы с синтетическими или смешанными
+        наблюдениями запрещены. economic_profiles могут быть
+        пустыми, если задана политика категорий. Дубли/противоречащие профили → 422.
+    Forecast:
+      type: object
+      additionalProperties: false
+      properties:
+        horizon_days:
+          type: integer
+          minimum: 1
+        period_start: *id004
+        period_end: *id004
+        method:
+          type: string
+          enum:
+          - ml
+          - baseline
+          - contract_example
+        model_id:
+          type: string
+          minLength: 1
+        mean:
+          type: number
+          minimum: 0
+        p10:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        p50:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        p90:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        target_quantile:
+          anyOf:
+          - type: number
+            minimum: 0
+            maximum: 1
+          - type: 'null'
+        target_stock:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        calibration_status:
+          type: string
+          enum:
+          - measured
+          - insufficient_data
+          - not_applicable
+        note:
+          type: string
+          minLength: 1
+      required:
+      - horizon_days
+      - period_start
+      - period_end
+      - method
+      - model_id
+      - mean
+      - p10
+      - p50
+      - p90
+      - target_quantile
+      - target_stock
+      - calibration_status
+      - note
+      description: Количество за весь горизонт. Если квантили рассчитаны, p10 <= p50
+        <= p90. Сумма дневных квантилей не является квантилем общего спроса.
+    AIJudgement:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum:
+          - reviewed
+          - not_requested
+          - unavailable
+        verdict:
+          anyOf:
+          - type: string
+            enum:
+            - supports
+            - needs_review
+            - recalculate
+          - type: 'null'
+        reasons:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        evidence_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        rule_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        suggested_action:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+        provider_model:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+      required:
+      - status
+      - verdict
+      - reasons
+      - evidence_ids
+      - rule_ids
+      - suggested_action
+      - provider_model
+      description: reviewed требует verdict и реальный вызов LLM; остальные состояния
+        имеют verdict=null. Не меняет количество. ID доказательств и правил проверяются
+        backend.
+    Recommendation:
+      type: object
+      additionalProperties: false
+      properties:
+        item_id:
+          type: string
+          minLength: 1
+        supplier_id:
+          type: string
+          minLength: 1
+        supplier_name:
+          type: string
+          minLength: 1
+        sku:
+          type: string
+          minLength: 1
+        supplier_article:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+        name:
+          type: string
+          minLength: 1
+        unit:
+          type: string
+          minLength: 1
+        warehouse_id:
+          type: string
+          minLength: 1
+        category_raw:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+        policy_basis:
+          anyOf:
+          - type: string
+            enum:
+            - economic
+            - service_policy
+          - type: 'null'
+        decision_status:
+          type: string
+          enum:
+          - ready
+          - no_order
+          - needs_data
+          - needs_review
+        urgency:
+          type: string
+          enum:
+          - low
+          - normal
+          - high
+          - critical
+          - unknown
+        free_stock:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        inbound_within_horizon:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        material_requirement_uncovered:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        forecast:
+          anyOf:
+          - $ref: '#/components/schemas/Forecast'
+          - type: 'null'
+        min_order_qty:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        order_multiple:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0
+          - type: 'null'
+        recommended_quantity:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        final_quantity:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        override_reason:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+        unit_cost_kzt:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        order_cost_kzt:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        marginal_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+        economics_source:
+          anyOf:
+          - *id005
+          - type: 'null'
+        reason:
+          type: string
+          minLength: 1
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/Evidence'
+        ai:
+          $ref: '#/components/schemas/AIJudgement'
+      required:
+      - item_id
+      - supplier_id
+      - supplier_name
+      - sku
+      - supplier_article
+      - name
+      - unit
+      - warehouse_id
+      - category_raw
+      - policy_basis
+      - decision_status
+      - urgency
+      - free_stock
+      - inbound_within_horizon
+      - material_requirement_uncovered
+      - forecast
+      - min_order_qty
+      - order_multiple
+      - recommended_quantity
+      - final_quantity
+      - override_reason
+      - unit_cost_kzt
+      - order_cost_kzt
+      - marginal_value
+      - economics_source
+      - reason
+      - issues
+      - evidence
+      - ai
+      description: order_cost_kzt относится к final_quantity и не включает общую доставку.
+        null — неизвестно/не рассчитано. needs_data не утверждается ручным вводом
+        без устранения критичного пробела.
+    CalculationMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        calculation_id:
+          type: string
+          minLength: 1
+        dataset_id:
+          type: string
+          minLength: 1
+        dataset_version:
+          type: string
+          minLength: 1
+        data_as_of: *id004
+        as_of_date: *id004
+        mode:
+          type: string
+          enum:
+          - operational
+          - scenario
+        revision:
+          type: integer
+          minimum: 1
+        policy_version:
+          type: string
+          minLength: 1
+        created_at: *id003
+        horizon_days:
+          type: integer
+          minimum: 1
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+      required:
+      - calculation_id
+      - dataset_id
+      - dataset_version
+      - data_as_of
+      - as_of_date
+      - mode
+      - revision
+      - policy_version
+      - created_at
+      - horizon_days
+      - issues
+    RecommendationsResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        meta:
+          $ref: '#/components/schemas/CalculationMetadata'
+        summary:
+          type: object
+          additionalProperties: false
+          properties:
+            item_count:
+              type: integer
+              minimum: 0
+            ready_count:
+              type: integer
+              minimum: 0
+            no_order_count:
+              type: integer
+              minimum: 0
+            needs_data_count:
+              type: integer
+              minimum: 0
+            needs_review_count:
+              type: integer
+              minimum: 0
+            known_order_cost_kzt:
+              type: number
+              minimum: 0
+            order_cost_complete:
+              type: boolean
+          required:
+          - item_count
+          - ready_count
+          - no_order_count
+          - needs_data_count
+          - needs_review_count
+          - known_order_cost_kzt
+          - order_cost_complete
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+      required:
+      - meta
+      - summary
+      - items
+    HistoryPoint:
+      type: object
+      additionalProperties: false
+      properties:
+        period_start: *id004
+        period_end: *id004
+        observed_sales:
+          anyOf:
+          - type: number
+          - type: 'null'
+        regular_sales:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        estimated_lost_demand:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        source_kind: *id005
+      required:
+      - period_start
+      - period_end
+      - observed_sales
+      - regular_sales
+      - estimated_lost_demand
+      - source_kind
+    InboundDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        order_id:
+          type: string
+          minLength: 1
+        quantity:
+          type: number
+          minimum: 0
+        expected_at: *id004
+        source_reference:
+          type: string
+          minLength: 1
+      required:
+      - order_id
+      - quantity
+      - expected_at
+      - source_reference
+    ItemDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        meta:
+          $ref: '#/components/schemas/CalculationMetadata'
+        item:
+          $ref: '#/components/schemas/Recommendation'
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoryPoint'
+        inbound:
+          type: array
+          items:
+            $ref: '#/components/schemas/InboundDetail'
+        economic_profile:
+          anyOf:
+          - $ref: '#/components/schemas/EconomicProfile'
+          - type: 'null'
+        applied_rule_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+      required:
+      - meta
+      - item
+      - history
+      - inbound
+      - economic_profile
+      - applied_rule_ids
+    OverrideRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        expected_revision:
+          type: integer
+          minimum: 1
+        final_quantity:
+          anyOf:
+          - type: number
+            minimum: 0
+          - type: 'null'
+        reason:
+          type: string
+          minLength: 1
+      required:
+      - expected_revision
+      - final_quantity
+      - reason
+      description: null исключает позицию из выбора; причина обязательна. Проверки
+        единиц, известных MOQ/кратности выполняются сервером; revision увеличивается.
+    ApprovalRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        expected_revision:
+          type: integer
+          minimum: 1
+        selected_item_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+        acknowledged_issue_codes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+      required:
+      - expected_revision
+      - selected_item_ids
+      - acknowledged_issue_codes
+      description: Выбранные позиции имеют известное допустимое final_quantity. Подтверждение
+        предупреждений не отменяет жёсткие ограничения и не разрешает отправку поставщику.
+    Approval:
+      type: object
+      additionalProperties: false
+      properties:
+        approval_id:
+          type: string
+          minLength: 1
+        calculation_id:
+          type: string
+          minLength: 1
+        revision:
+          type: integer
+          minimum: 1
+        mode:
+          type: string
+          enum:
+          - operational
+          - scenario
+        status:
+          const: approved
+        approved_at: *id003
+        selected_item_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        export_url:
+          type: string
+          minLength: 1
+      required:
+      - approval_id
+      - calculation_id
+      - revision
+      - mode
+      - status
+      - approved_at
+      - selected_item_ids
+      - export_url
+      description: Неизменяемый снимок. CSV строится по этому снимку даже после следующей
+        корректировки расчёта.
+security: []

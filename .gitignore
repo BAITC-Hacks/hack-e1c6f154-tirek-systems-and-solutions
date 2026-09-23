@@ -1,0 +1,14 @@
+# Local validation and future development environments
+.venv*/
+__pycache__/
+.pytest_cache/
+.env
+.env.*
+!.env.example
+
+# Partner data and generated local artifacts stay outside Git
+data/
+uploads/
+models/
+*.sqlite
+*.sqlite3

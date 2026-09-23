@@ -1,0 +1,36 @@
+{
+  "dataset_id": "demo-dataset-v1",
+  "as_of_date": "2026-09-22",
+  "warehouse_ids": [
+    "demo-almaty"
+  ],
+  "category_codes": [],
+  "horizon_days": 28,
+  "lead_time_days": 7,
+  "review_period_days": 21,
+  "mode": "scenario",
+  "category_policies": [
+    {
+      "category_raw": "demo",
+      "target_quantile": 0.9,
+      "minimum_target_quantile": null,
+      "source_kind": "synthetic",
+      "rationale": "Условная политика примера."
+    }
+  ],
+  "economic_profiles": [
+    {
+      "sku": "DEMO-CHEAP-001",
+      "underage_cost": 1500,
+      "overage_cost": 100,
+      "unit_cost": 1000,
+      "currency": "KZT",
+      "horizon_days": 28,
+      "source_kind": "synthetic",
+      "rationale": "Условные индивидуальные затраты для демонстрации контракта; не факт партнёра."
+    }
+  ],
+  "growth_adjustments": [],
+  "budget_kzt": 100000,
+  "request_ai_review": false
+}

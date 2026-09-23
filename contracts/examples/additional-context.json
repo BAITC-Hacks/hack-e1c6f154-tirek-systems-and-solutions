@@ -1,0 +1,32 @@
+{
+  "client_labels": [
+    {
+      "source_event_id": "demo-sale-001",
+      "pseudonymous_client_id": "client-demo-a"
+    }
+  ],
+  "stockout_intervals": [
+    {
+      "sku": "DEMO-CHEAP-001",
+      "warehouse_id": "demo-almaty",
+      "start_date": "2026-08-01",
+      "end_date": "2026-08-03",
+      "source_kind": "synthetic",
+      "reference": "separate-stockout-test"
+    }
+  ],
+  "price_observations": [],
+  "material_requirements": [
+    {
+      "requirement_id": "demo-bom-line-001",
+      "sku": "DEMO-CHEAP-001",
+      "warehouse_id": "demo-almaty",
+      "quantity": 10,
+      "unit": "шт",
+      "needed_at": "2026-10-01",
+      "already_accounted_quantity": 10,
+      "source_kind": "synthetic",
+      "reference": "separate-material-statement-test"
+    }
+  ]
+}

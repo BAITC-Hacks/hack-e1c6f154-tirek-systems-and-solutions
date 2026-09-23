@@ -1,0 +1,74 @@
+{
+  "dataset_id": "demo-dataset-v1",
+  "dataset_version": "demo-v1",
+  "data_as_of": "2026-09-22",
+  "timezone": "Asia/Almaty",
+  "source_kind": "synthetic",
+  "supplier_ids": [
+    "demo-supplier-a",
+    "demo-supplier-b"
+  ],
+  "sku_count": 2,
+  "sources": [
+    {
+      "role": "sales_transactions",
+      "filename": "demo-sales_transactions.xlsx",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    },
+    {
+      "role": "sales_monthly",
+      "filename": "demo-sales_monthly.xlsx",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    },
+    {
+      "role": "stock_monthly",
+      "filename": "demo-stock_monthly.xlsx",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    },
+    {
+      "role": "seasonality",
+      "filename": "demo-seasonality.xlsx",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    },
+    {
+      "role": "moq",
+      "filename": "demo-moq.xlsx",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    },
+    {
+      "role": "current_stock_inbound",
+      "filename": "demo-current_stock_inbound.xlsx",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "rows_read": 2,
+      "rows_used": 2,
+      "data_as_of": "2026-09-22"
+    }
+  ],
+  "issues": [
+    {
+      "code": "MISSING_CURRENT_STOCK",
+      "severity": "error",
+      "message": "Нужен актуальный свободный остаток.",
+      "affected_skus": [
+        "DEMO-NO-STOCK-002"
+      ],
+      "source_reference": null
+    }
+  ],
+  "calculation_allowed": true
+}

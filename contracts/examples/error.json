@@ -1,0 +1,13 @@
+{
+  "request_id": "demo-request-001",
+  "error": {
+    "code": "STALE_REVISION",
+    "message": "Расчёт изменён. Обновите данные перед утверждением.",
+    "details": [
+      {
+        "field": "expected_revision",
+        "message": "Передана ревизия 1, текущая ревизия 2."
+      }
+    ]
+  }
+}

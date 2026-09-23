@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "calculation_id": "demo-calc-001",
+    "dataset_id": "demo-dataset-v1",
+    "dataset_version": "demo-v1",
+    "data_as_of": "2026-09-22",
+    "as_of_date": "2026-09-22",
+    "mode": "scenario",
+    "revision": 1,
+    "policy_version": "contract-demo-v1",
+    "created_at": "2026-09-23T10:00:00+05:00",
+    "horizon_days": 28,
+    "issues": []
+  },
+  "item": {
+    "item_id": "demo-item-001",
+    "supplier_id": "demo-supplier-a",
+    "supplier_name": "Демонстрационный поставщик A",
+    "sku": "DEMO-CHEAP-001",
+    "supplier_article": "DEMO-001",
+    "name": "Условный товар для примера",
+    "unit": "шт",
+    "warehouse_id": "demo-almaty",
+    "category_raw": "demo",
+    "policy_basis": "economic",
+    "decision_status": "ready",
+    "urgency": "normal",
+    "free_stock": 30,
+    "inbound_within_horizon": 20,
+    "material_requirement_uncovered": 0,
+    "forecast": {
+      "horizon_days": 28,
+      "period_start": "2026-09-23",
+      "period_end": "2026-10-20",
+      "method": "contract_example",
+      "model_id": "contract-example-no-trained-model",
+      "mean": 105,
+      "p10": 75,
+      "p50": 100,
+      "p90": 118,
+      "target_quantile": 0.9375,
+      "target_stock": 120,
+      "calibration_status": "not_applicable",
+      "note": "Синтетические числа для UI, не результат обучения."
+    },
+    "min_order_qty": 12,
+    "order_multiple": 12,
+    "recommended_quantity": 72,
+    "final_quantity": 72,
+    "override_reason": null,
+    "unit_cost_kzt": 1000,
+    "order_cost_kzt": 72000,
+    "marginal_value": null,
+    "economics_source": "synthetic",
+    "reason": "Условная цель 120, свободный остаток 30, своевременное поступление 20: базовая потребность 70, партия 72 при кратности 12. Все значения сценарные.",
+    "issues": [],
+    "evidence": [
+      {
+        "id": "e-target",
+        "source_kind": "synthetic",
+        "reference": "contract-example",
+        "label": "Целевой запас",
+        "value": 120,
+        "unit": "шт"
+      },
+      {
+        "id": "e-stock",
+        "source_kind": "synthetic",
+        "reference": "contract-example",
+        "label": "Свободный остаток",
+        "value": 30,
+        "unit": "шт"
+      },
+      {
+        "id": "e-inbound",
+        "source_kind": "synthetic",
+        "reference": "contract-example",
+        "label": "Своевременное поступление",
+        "value": 20,
+        "unit": "шт"
+      },
+      {
+        "id": "e-multiple",
+        "source_kind": "synthetic",
+        "reference": "contract-example",
+        "label": "Кратность",
+        "value": 12,
+        "unit": "шт"
+      }
+    ],
+    "ai": {
+      "status": "not_requested",
+      "verdict": null,
+      "reasons": [
+        "Синтетический пример формы ответа; LLM не вызывался."
+      ],
+      "evidence_ids": [],
+      "rule_ids": [],
+      "suggested_action": null,
+      "provider_model": null
+    }
+  },
+  "history": [
+    {
+      "period_start": "2026-08-26",
+      "period_end": "2026-09-22",
+      "observed_sales": 100,
+      "regular_sales": 100,
+      "estimated_lost_demand": null,
+      "source_kind": "synthetic"
+    }
+  ],
+  "inbound": [
+    {
+      "order_id": "demo-inbound-001",
+      "quantity": 20,
+      "expected_at": "2026-09-26",
+      "source_reference": "contract-example"
+    }
+  ],
+  "economic_profile": {
+    "sku": "DEMO-CHEAP-001",
+    "underage_cost": 1500,
+    "overage_cost": 100,
+    "unit_cost": 1000,
+    "currency": "KZT",
+    "horizon_days": 28,
+    "source_kind": "synthetic",
+    "rationale": "Условные индивидуальные затраты для демонстрации контракта; не факт партнёра."
+  },
+  "applied_rule_ids": [
+    "economic-fractile",
+    "inbound-date-check",
+    "order-multiple"
+  ]
+}

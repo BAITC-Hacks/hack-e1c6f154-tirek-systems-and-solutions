@@ -1,0 +1,12 @@
+{
+  "calculation-request.json": "CalculationRequest",
+  "job-succeeded.json": "Job",
+  "dataset-report.json": "DatasetReport",
+  "recommendations.json": "RecommendationsResponse",
+  "item-detail.json": "ItemDetail",
+  "approval.json": "Approval",
+  "additional-context.json": "AdditionalContext",
+  "override-request.json": "OverrideRequest",
+  "approval-request.json": "ApprovalRequest",
+  "error.json": "Error"
+}
