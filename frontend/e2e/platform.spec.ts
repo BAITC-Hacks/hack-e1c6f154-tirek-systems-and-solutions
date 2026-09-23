@@ -30,6 +30,17 @@ async function freshScenario(request: APIRequestContext) {
     .toBe('succeeded')
 }
 
+test('frontend proxies API requests as JSON', async ({ request }) => {
+  for (const path of ['/api/v1/health', '/api/v1/workspace']) {
+    const response = await request.get(path)
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toContain('application/json')
+    const body = await response.json()
+    if (path.endsWith('/health')) expect(body.status).toBe('ok')
+    else expect(body.datasets).toBeInstanceOf(Array)
+  }
+})
+
 test('desktop overview, search, drawer and data sources', async ({ page, request }) => {
   await freshScenario(request)
   const errors: string[] = []
@@ -121,6 +132,40 @@ test('failed API stays an error and never falls back to mock data', async ({ pag
   await page.getByRole('button', { name: 'Повторить', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Запасы под контролем.' })).toBeVisible()
 })
+
+for (const invalidResponse of [
+  {
+    contentType: 'text/html',
+    body: '<!doctype html><html></html>',
+    message: 'Сервер вернул неверный формат данных',
+  },
+  {
+    contentType: 'application/json',
+    body: '{broken',
+    message: 'Не удалось прочитать данные сервера',
+  },
+]) {
+  test(`invalid API response (${invalidResponse.contentType}) is readable and recoverable`, async ({
+    page,
+  }) => {
+    const errors: string[] = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    await page.route('**/api/v1/workspace', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: invalidResponse.contentType,
+        body: invalidResponse.body,
+      }),
+    )
+    await page.goto('/')
+    await expect(page.getByRole('alert')).toContainText(invalidResponse.message)
+    await expect(page.getByRole('alert')).not.toContainText('Unexpected token')
+    await page.unroute('**/api/v1/workspace')
+    await page.getByRole('button', { name: 'Повторить', exact: true }).click()
+    await expect(page.getByRole('heading', { name: 'Запасы под контролем.' })).toBeVisible()
+    expect(errors).toEqual([])
+  })
+}
 
 test('new calculation dialog runs a background job with the selected category', async ({
   page,

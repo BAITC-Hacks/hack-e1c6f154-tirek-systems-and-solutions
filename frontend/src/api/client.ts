@@ -47,7 +47,24 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       response.status,
     )
   }
-  return response.json() as Promise<T>
+  const contentType = response.headers.get('content-type') || ''
+  if (!/^application\/(?:[\w.-]+\+)?json(?:\s*;|$)/i.test(contentType)) {
+    throw new ApiError(
+      'Сервер вернул неверный формат данных. Проверьте подключение к API и перезапустите проект.',
+      'INVALID_RESPONSE',
+      response.status,
+    )
+  }
+  try {
+    return (await response.json()) as T
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') throw error
+    throw new ApiError(
+      'Не удалось прочитать данные сервера. Повторите запрос.',
+      'INVALID_JSON',
+      response.status,
+    )
+  }
 }
 
 function json(body: unknown, method = 'POST', key?: string): RequestInit {
