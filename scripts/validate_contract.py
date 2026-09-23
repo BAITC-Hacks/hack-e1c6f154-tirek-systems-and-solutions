@@ -23,6 +23,14 @@ def require(condition, message):
 def main():
     spec = yaml.safe_load((CONTRACTS / "openapi.yaml").read_text(encoding="utf-8"))
     validate(spec)
+    monitoring = yaml.safe_load((CONTRACTS / "stock-monitoring.openapi.yaml").read_text(encoding="utf-8"))
+    validate(monitoring)
+    for name, schema_name in (("event", "StockEvent"), ("result", "EventResult")):
+        payload = json.loads((CONTRACTS / "monitoring-examples" / f"{name}.json").read_text(encoding="utf-8"))
+        Draft202012Validator(
+            {"$ref": f"#/components/schemas/{schema_name}", "components": monitoring["components"]},
+            format_checker=FormatChecker(),
+        ).validate(payload)
     mapping = json.loads((CONTRACTS / "example-schemas.json").read_text(encoding="utf-8"))
     examples_dir = CONTRACTS / "examples"
     require(
@@ -107,7 +115,7 @@ def main():
             path = target.split("#", 1)[0]
             require((document.parent / path).exists(), f"Broken link in {document.relative_to(ROOT)}: {target}")
 
-    print(f"OK: OpenAPI, {len(examples)} schema-valid examples, sample consistency and {len(markdown_files)} Markdown files.")
+    print(f"OK: two OpenAPI specs, {len(examples) + 2} schema-valid examples, sample consistency and {len(markdown_files)} Markdown files.")
     print("No application, trained model or HTTP server was tested.")
 
 

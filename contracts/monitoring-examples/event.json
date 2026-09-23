@@ -1,0 +1,12 @@
+{
+  "event_id": "demo-sale-001",
+  "sku": "DEMO-001",
+  "warehouse_id": "demo-almaty",
+  "unit": "шт",
+  "expected_revision": 1,
+  "occurred_at": "2026-09-23T12:00:00+05:00",
+  "event_type": "sale",
+  "on_hand": 39,
+  "reserved": 0,
+  "source_reference": "simulation:issue-21-from-60"
+}

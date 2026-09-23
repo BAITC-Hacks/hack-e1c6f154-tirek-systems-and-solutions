@@ -1,0 +1,381 @@
+openapi: 3.1.0
+info:
+  title: Tirek Stock Monitoring Extension
+  version: 0.1.0
+  description: ТЗ API мониторинга; HTTP-сервер ещё не реализован. Синтетическая симуляция
+    не является подключением к системе учёта.
+servers:
+- url: http://127.0.0.1:8000/api/v1
+security: []
+paths:
+  /stock-monitoring/{warehouse_id}/{sku}:
+    get:
+      operationId: getStockState
+      summary: Актуальный уровень остатка
+      responses:
+        '200':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '404':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - in: path
+        name: warehouse_id
+        required: true
+        schema: &id001
+          type: string
+          minLength: 1
+      - in: path
+        name: sku
+        required: true
+        schema: *id001
+  /stock-monitoring/{warehouse_id}/{sku}/policy:
+    put:
+      operationId: updateStockPolicy
+      summary: Применить индивидуальную цель/пороги
+      responses:
+        '200':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '404':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyUpdate'
+      parameters:
+      - in: path
+        name: warehouse_id
+        required: true
+        schema: *id001
+      - in: path
+        name: sku
+        required: true
+        schema: *id001
+  /stock-events:
+    post:
+      operationId: applyStockEvent
+      summary: Принять складское событие и сразу проверить пороги
+      responses:
+        '200':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResult'
+        '404':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockEvent'
+components:
+  schemas:
+    Thresholds:
+      type: object
+      additionalProperties: false
+      properties:
+        warning_pct:
+          type: number
+          exclusiveMinimum: 0
+          exclusiveMaximum: 100
+        high_pct:
+          type: number
+          exclusiveMinimum: 0
+          exclusiveMaximum: 100
+        critical_pct:
+          type: number
+          exclusiveMinimum: 0
+          exclusiveMaximum: 100
+        hysteresis_pp:
+          type: number
+          minimum: 0
+          maximum: 20
+      required:
+      - warning_pct
+      - high_pct
+      - critical_pct
+      - hysteresis_pp
+      description: 0 < critical < high < warning < 100; warning + hysteresis < 100.
+        Восстановление при >= порог + hysteresis. Ухудшение немедленное.
+    Policy:
+      type: object
+      additionalProperties: false
+      properties:
+        reference_stock:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0
+          - type: 'null'
+        reference_kind:
+          type: string
+          enum:
+          - manual
+          - calculation
+          - unavailable
+        reference_id:
+          anyOf:
+          - *id001
+          - type: 'null'
+        source_kind:
+          type: string
+          enum:
+          - observed
+          - manual
+          - synthetic
+        policy_version: *id001
+        thresholds:
+          $ref: '#/components/schemas/Thresholds'
+      required:
+      - reference_stock
+      - reference_kind
+      - reference_id
+      - source_kind
+      - policy_version
+      - thresholds
+      description: reference_stock фиксирован между изменениями политики. null только
+        при unavailable. Все количества в единице товара.
+    State:
+      type: object
+      additionalProperties: false
+      properties:
+        sku: *id001
+        warehouse_id: *id001
+        unit: *id001
+        mode:
+          type: string
+          enum:
+          - operational
+          - scenario
+        revision: &id004
+          type: integer
+          minimum: 1
+        on_hand:
+          anyOf:
+          - &id002
+            type: number
+            minimum: 0
+          - type: 'null'
+        reserved:
+          anyOf:
+          - *id002
+          - type: 'null'
+        free_stock:
+          anyOf:
+          - *id002
+          - type: 'null'
+        policy:
+          $ref: '#/components/schemas/Policy'
+        remaining_pct:
+          anyOf:
+          - *id002
+          - type: 'null'
+        observed_level: &id003
+          type: string
+          enum:
+          - normal
+          - warning
+          - high
+          - critical
+          - stockout
+          - unknown
+        active_level: *id003
+        evaluated_at: &id005
+          type: string
+          format: date-time
+        issues:
+          type: array
+          items: *id001
+      required:
+      - sku
+      - warehouse_id
+      - unit
+      - mode
+      - revision
+      - on_hand
+      - reserved
+      - free_stock
+      - policy
+      - remaining_pct
+      - observed_level
+      - active_level
+      - evaluated_at
+      - issues
+      description: 'free_stock=on_hand-reserved. Противоречивый учёт: free_stock=null
+        и unknown. Известный нулевой свободный запас даёт stockout даже при неизвестной
+        базе. В пути не включается. policy.source_kind=synthetic разрешён только в
+        scenario.'
+    StockEvent:
+      type: object
+      additionalProperties: false
+      properties:
+        event_id: *id001
+        sku: *id001
+        warehouse_id: *id001
+        unit: *id001
+        expected_revision: *id004
+        occurred_at: *id005
+        event_type:
+          type: string
+          enum:
+          - sale
+          - receipt
+          - reservation
+          - release
+          - adjustment
+        on_hand: *id002
+        reserved: *id002
+        source_reference: *id001
+      required:
+      - event_id
+      - sku
+      - warehouse_id
+      - unit
+      - expected_revision
+      - occurred_at
+      - event_type
+      - on_hand
+      - reserved
+      - source_reference
+      description: АБСОЛЮТНЫЙ снимок после события; reserved <= on_hand. Хронология
+        принятия определяется revision, occurred_at служит для аудита. Одинаковый
+        event_id+payload идемпотентен, другой payload →409. Продажа зарезервированного
+        товара меняет оба значения.
+    Transition:
+      type: object
+      additionalProperties: false
+      properties:
+        transition_id: *id001
+        cause:
+          type: string
+          enum:
+          - inventory_event
+          - policy_changed
+        event_id:
+          anyOf:
+          - *id001
+          - type: 'null'
+        from_level: *id003
+        to_level: *id003
+        kind:
+          type: string
+          enum:
+          - escalation
+          - recovery
+          - data_quality
+          - policy_changed
+        created_at: *id005
+      required:
+      - transition_id
+      - cause
+      - event_id
+      - from_level
+      - to_level
+      - kind
+      - created_at
+      description: Один переход сразу в итоговый уровень; без перехода null, без повторного
+        уведомления. Уведомление внутреннее; отправка поставщику отсутствует.
+    EventResult:
+      type: object
+      additionalProperties: false
+      properties:
+        state:
+          $ref: '#/components/schemas/State'
+        transition:
+          anyOf:
+          - $ref: '#/components/schemas/Transition'
+          - type: 'null'
+        deduplicated:
+          type: boolean
+        recalculation_requested:
+          type: boolean
+      required:
+      - state
+      - transition
+      - deduplicated
+      - recalculation_requested
+      description: Дубликат возвращает прежнее состояние/переход с deduplicated=true;
+        UI не должен откатывать свежую revision и повторять сигнал. recalculation_requested
+        означает принятую очередь, не завершённый расчёт.
+    PolicyUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        expected_revision: *id004
+        policy:
+          $ref: '#/components/schemas/Policy'
+        reason: *id001
+      required:
+      - expected_revision
+      - policy
+      - reason
+      description: Новая policy_version обязательна. Атомарно повышает общую revision
+        и переоценивает уровень без старого гистерезиса; переход помечен policy_changed,
+        даже если уровень не изменился.
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        code: *id001
+        message: *id001
+      required:
+      - code
+      - message

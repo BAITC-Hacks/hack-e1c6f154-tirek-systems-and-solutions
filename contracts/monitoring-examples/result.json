@@ -1,0 +1,41 @@
+{
+  "state": {
+    "sku": "DEMO-001",
+    "warehouse_id": "demo-almaty",
+    "unit": "шт",
+    "mode": "scenario",
+    "revision": 2,
+    "on_hand": 39,
+    "reserved": 0,
+    "free_stock": 39,
+    "policy": {
+      "reference_stock": 100,
+      "reference_kind": "manual",
+      "reference_id": "demo-target-100",
+      "source_kind": "synthetic",
+      "policy_version": "demo-policy-v1",
+      "thresholds": {
+        "warning_pct": 40,
+        "high_pct": 30,
+        "critical_pct": 20,
+        "hysteresis_pp": 3
+      }
+    },
+    "remaining_pct": 39,
+    "observed_level": "warning",
+    "active_level": "warning",
+    "evaluated_at": "2026-09-23T12:00:00+05:00",
+    "issues": []
+  },
+  "transition": {
+    "transition_id": "demo-transition-001",
+    "cause": "inventory_event",
+    "event_id": "demo-sale-001",
+    "from_level": "normal",
+    "to_level": "warning",
+    "kind": "escalation",
+    "created_at": "2026-09-23T12:00:00+05:00"
+  },
+  "deduplicated": false,
+  "recalculation_requested": false
+}
