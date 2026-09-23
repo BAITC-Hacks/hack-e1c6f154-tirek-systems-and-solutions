@@ -39,7 +39,7 @@ def review(detail):
                   'calculation_revision': meta['revision']},
         recommended_quantity=item['recommended_quantity'],
         product_text=item['name'],
-        allowed_rule_ids=detail['applied_rule_ids'],
+        allowed_rule_ids=list(dict.fromkeys([*detail['applied_rule_ids'], 'AI-01'])),
     )
     instruction = context['instruction'] + (
         '\nОтветь только JSON на русском. Поля: status="reviewed", verdict (supports/needs_review/recalculate), '

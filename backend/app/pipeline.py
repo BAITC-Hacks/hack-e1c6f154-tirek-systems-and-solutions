@@ -51,7 +51,8 @@ def _checked_ai(item, detail, meta, request, provenance):
             evidence=item['evidence'],
             versions={'dataset_version': meta['dataset_version'], 'policy_version': meta['policy_version'],
                       'calculation_revision': meta['revision']},
-            allowed_rule_ids=detail['applied_rule_ids'], recommended_quantity=item['recommended_quantity'],
+            allowed_rule_ids=list(dict.fromkeys([*detail['applied_rule_ids'], 'AI-01'])),
+            recommended_quantity=item['recommended_quantity'],
             product_text=item['name'])
         if raw['status'] != 'reviewed':
             if (raw['verdict'] is not None or raw['suggested_action'] is not None or raw['provider_model'] is not None

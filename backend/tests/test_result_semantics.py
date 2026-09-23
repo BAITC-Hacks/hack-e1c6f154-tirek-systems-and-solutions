@@ -39,7 +39,8 @@ def mock_review(result, item, detail, meta):
         'request_context': build_ai_context(
             evidence=item['evidence'], versions={'dataset_version': meta['dataset_version'],
                 'policy_version': meta['policy_version'], 'calculation_revision': meta['revision']},
-            allowed_rule_ids=detail['applied_rule_ids'], recommended_quantity=item['recommended_quantity'],
+            allowed_rule_ids=list(dict.fromkeys([*detail['applied_rule_ids'], 'AI-01'])),
+            recommended_quantity=item['recommended_quantity'],
             product_text=item['name'])}}
 
 
