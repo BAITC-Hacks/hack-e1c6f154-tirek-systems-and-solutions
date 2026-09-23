@@ -7,8 +7,8 @@ __pycache__/
 !.env.example
 
 # Partner data and generated local artifacts stay outside Git
-/data/
-/uploads/
-/models/
+data/
+uploads/
+models/
 *.sqlite
 *.sqlite3
