@@ -55,6 +55,10 @@ def generate(scenario, seed, origin):
         regular_rng = rng_for(seed, origin, family, index, "regular")
         censor_rng = rng_for(seed, origin, index, "availability")
         project_rng = rng_for(seed, origin, index, "project")
+        document_rng = rng_for(seed, origin, scenario, index, "opaque-document-identifiers-v2.1")
+        def document_id():
+            # The identifier has no purchase-class, date, client or volume component.
+            return f"evt_{document_rng.getrandbits(128):032x}"
         client_rng = rng_for(seed, origin, index, "client-identities")
         client_ids = {key: f"client-{client_rng.getrandbits(80):020x}" for key in list(range(11)) + [77, 93]}
         phase = rng_for(seed, origin, index, "phase").uniform(-math.pi, math.pi)
@@ -126,17 +130,19 @@ def generate(scenario, seed, origin):
             # No event is labeled with the evaluator's project/regular classification.
             normal = sold_regular - recurring
             if normal > 0:
-                item["events"].append({"event_id": f"{sku}-{stamp}-0", "date": stamp,
+                item["events"].append({"event_id": document_id(), "date": stamp,
                     "client_id": client_ids[day.toordinal() % 11], "quantity": normal})
             if recurring:
-                item["events"].append({"event_id": f"{sku}-{stamp}-1", "date": stamp,
+                item["events"].append({"event_id": document_id(), "date": stamp,
                     "client_id": client_ids[77], "quantity": recurring})
             if sold_project:
                 pieces = 5 if scenario in {"split_project", "combined"} else 1
                 for piece in range(pieces):
                     amount = sold_project // pieces + (piece < sold_project % pieces)
-                    item["events"].append({"event_id": f"{sku}-{stamp}-{piece + 2}", "date": stamp,
+                    item["events"].append({"event_id": document_id(), "date": stamp,
                         "client_id": client_ids[93], "quantity": amount})
+        # Insertion order must not encode the event's private classification either.
+        document_rng.shuffle(item["events"])
         if scenario == "new_product":
             analog_rng = rng_for(seed, origin, index, "analogue")
             for offset in range(-83, 1):

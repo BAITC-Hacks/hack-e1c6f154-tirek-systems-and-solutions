@@ -1,6 +1,6 @@
 {
-  "schema_version": "procurement-fixtures-v2",
-  "expected_source": "Hand-authored arithmetic and policy cases, independent of reference_calculate",
+  "schema_version": "procurement-fixtures-v3",
+  "expected_source": "Hand-authored arithmetic and policy cases; review-2 independent boundary expectations, with normative time-feasible late-inbound quantity200. Never calculated from reference output.",
   "cases": [
     {
       "id": "stock_base",
@@ -1155,12 +1155,25 @@
         "items": [
           {
             "sku": "0001",
-            "quantity": 110,
-            "first_deficit_day": 8
+            "quantity": 200,
+            "first_deficit_day": 8,
+            "aggregate_need": 110,
+            "temporal_lower_bound": 200,
+            "mean_unmet_with_order": 0,
+            "planning_unmet_with_order": 0
           }
         ]
       },
-      "contains": []
+      "contains": [
+        {
+          "path": [
+            "items",
+            0,
+            "rules"
+          ],
+          "value": "SUPPLY-02"
+        }
+      ]
     },
     {
       "id": "moq_and_multiple",
@@ -5368,6 +5381,3244 @@
         "total_cost_kzt": null
       },
       "contains": []
+    },
+    {
+      "id": "regression_net_stock_without_gross_reserve",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": null,
+            "reserved": null,
+            "free_stock": 50,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "free_stock": 50,
+            "quantity": 230,
+            "status": "ok"
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Net50 needs280 - 50 =230; no second reserve subtraction."
+    },
+    {
+      "id": "regression_net_stock_overrides_conflicting_gross",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 999,
+            "reserved": 800,
+            "free_stock": 50,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "free_stock": 50,
+            "quantity": 230
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Explicit net stock is authoritative under the documented contract."
+    },
+    {
+      "id": "regression_overdue_commitment",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "quantity": 80,
+                "already_accounted_quantity": 0,
+                "needed_at": "2026-03-31"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 290,
+            "first_deficit_day": 1,
+            "early_shortfall": 70,
+            "requires_expedite": true
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Overdue80 belongs on day1; quantity280+80-70=290; balance at day6 is70-80-60=-70."
+    },
+    {
+      "id": "regression_partial_commitment_not_double_reserved",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 20,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "quantity": 50,
+                "already_accounted_quantity": 20,
+                "needed_at": "2026-04-10"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "free_stock": 50,
+            "material_uncovered": 30,
+            "quantity": 260
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "50 net stock; uncovered30; 280+30-50=260."
+    },
+    {
+      "id": "regression_same_day_receipt_before_commitment",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-03",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [
+              {
+                "quantity": 100,
+                "already_accounted_quantity": 0,
+                "needed_at": "2026-04-03"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 210,
+            "early_shortfall": 0,
+            "requires_expedite": false
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Receipt100 at day2 start covers commitment100 that day; regular70 covers first7 days."
+    },
+    {
+      "id": "regression_overdue_inbound_not_reconfirmed",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-03-31",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 210,
+            "inbound_in_horizon": 0
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Old ETA cannot be treated as a new future receipt."
+    },
+    {
+      "id": "regression_ordinary_eta_equals_first_deficit",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 60,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 220,
+            "first_deficit_day": 7,
+            "early_shortfall": 0,
+            "requires_expedite": false
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Normal order arrives at day7 start before demand; first6 days consume60."
+    },
+    {
+      "id": "regression_receipt_after_horizon_excluded",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-30",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 210,
+            "inbound_in_horizon": 0
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Horizon ends April29; April30 receipt is outside."
+    },
+    {
+      "id": "regression_cancelled_receipt_excluded",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-05",
+                "status": "cancelled"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 210,
+            "inbound_in_horizon": 0
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Cancelled receipt provides no supply."
+    },
+    {
+      "id": "regression_moq_multiple_box_conversion",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "box",
+            "unit_quantum": 1,
+            "on_hand": 255,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 2,
+            "order_multiple": 2,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": [],
+            "order_to_base_factor": 10
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 40,
+            "unit": "шт"
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Need25 pieces; MOQ2 boxes=20; multiple2 boxes=20; final40 pieces."
+    },
+    {
+      "id": "regression_moq_does_not_create_need",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 500,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 100,
+            "order_multiple": 50,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 0
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Demand280 already covered; supplier MOQ is conditional on ordering."
+    },
+    {
+      "id": "regression_price_unknown_zero_quantity",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 500,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": null,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 0
+          }
+        ],
+        "total_cost_kzt": 0,
+        "approval_blocked": false
+      },
+      "contains": [],
+      "expected_rationale": "No selected quantity, so unknown price consumes no budget."
+    },
+    {
+      "id": "regression_unknown_price_positive_quantity",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 999999,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": null,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 210
+          }
+        ],
+        "total_cost_kzt": null,
+        "approval_blocked": true,
+        "rules": [
+          "BUDGET-01"
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Unknown positive-order price is not zero."
+    },
+    {
+      "id": "regression_two_supplier_decimal_budget",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 60000,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          },
+          {
+            "sku": "0002",
+            "supplier_id": "supplier-B",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 200,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "known_cost_kzt": 63000,
+        "total_cost_kzt": 63000,
+        "budget_excess_kzt": 3000,
+        "approval_blocked": true,
+        "supplier_groups": {
+          "supplier-A": [
+            "0001"
+          ],
+          "supplier-B": [
+            "0002"
+          ]
+        },
+        "items": [
+          {
+            "sku": "0001"
+          },
+          {
+            "sku": "0002"
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Independent total: Decimal210*100 + Decimal210*200 =63000; budget60000 leaves excess3000; suppliers remain separate."
+    },
+    {
+      "id": "regression_rare_high_margin_does_not_force_stock",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 0,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 0,
+                "probability": 0.95
+              },
+              {
+                "quantity": 560,
+                "probability": 0.05
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 5,
+            "economics": {
+              "underage_cost": 9,
+              "overage_cost": 1,
+              "horizon_days": 28,
+              "source": "synthetic-profile"
+            },
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 0,
+            "target_stock": 0
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "P(D=0)=0.95 exceeds economic quantile0.9."
+    },
+    {
+      "id": "regression_project_commitment_does_not_become_regular",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 0,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 0,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 10000,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "requirement_id": "bom-1",
+                "quantity": 7,
+                "already_accounted_quantity": 0,
+                "needed_at": "2026-04-20",
+                "unit": "шт"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "forecast_mean": 0,
+            "target_stock": 0,
+            "quantity": 7
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Confirmed project7 stays separate from regular forecast0."
+    },
+    {
+      "id": "regression_economic_floor_respected",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "B",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 140,
+                "probability": 0.2
+              },
+              {
+                "quantity": 280,
+                "probability": 0.6
+              },
+              {
+                "quantity": 420,
+                "probability": 0.2
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": {
+              "underage_cost": 10,
+              "overage_cost": 90,
+              "horizon_days": 28,
+              "source": "synthetic-profile"
+            },
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "target_quantile": 0.9,
+            "quantity": 350
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Category floor0.9 overrides raw economic quantile0.1."
+    },
+    {
+      "id": "regression_growth_is_not_applied_twice",
+      "requirements": [
+        "MH1"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [
+              {
+                "id": "g-1",
+                "rate": 0.2,
+                "valid_from": "2026-04-02",
+                "valid_to": "2026-04-29",
+                "source": "synthetic-plan"
+              },
+              {
+                "id": "g-1",
+                "rate": 0.2,
+                "valid_from": "2026-04-02",
+                "valid_to": "2026-04-29",
+                "source": "synthetic-plan"
+              }
+            ],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "forecast_mean": 336,
+            "quantity": 266
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "One shared growth ID is applied only once."
+    },
+    {
+      "id": "regression_exact_decimal_batch_boundary",
+      "requirements": [
+        "SUPPLY-03"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "м",
+            "order_unit": "м",
+            "unit_quantum": 0.01,
+            "on_hand": 279.9,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 0.1,
+            "order_multiple": 0.1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 0.1
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Decimal(280)-Decimal(279.9)=0.1; one exact batch."
+    },
+    {
+      "id": "regression_exact_decimal_budget_boundary",
+      "requirements": [
+        "BUDGET-02"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0.3,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 277,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 0.1,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "total_cost_kzt": 0.3,
+        "budget_excess_kzt": 0,
+        "approval_blocked": false,
+        "rules": [],
+        "items": [
+          {
+            "sku": "0001"
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Decimal(3)*Decimal(0.1)=Decimal(0.3), exactly equal to budget."
+    },
+    {
+      "id": "regression_negative_demand",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10,
+              -10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Regular demand cannot be negative; returns are not represented by this field."
+    },
+    {
+      "id": "regression_negative_price",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": 0,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": -100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "A procurement price cannot silently reduce budget spend; no credit/return type exists here."
+    },
+    {
+      "id": "regression_negative_receipt",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": -20,
+                "expected_at": "2026-04-05",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Confirmed receipt is a nonnegative incoming quantity."
+    },
+    {
+      "id": "regression_negative_lead_time",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": -1,
+            "review_period_days": 29,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Sum(-1,29)=28 does not make negative lead time valid."
+    },
+    {
+      "id": "regression_negative_review_period",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 29,
+            "review_period_days": -1,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Review period cannot be negative even when lead+review matches horizon."
+    },
+    {
+      "id": "regression_negative_accounted_commitment",
+      "requirements": [
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "quantity": 50,
+                "already_accounted_quantity": -20,
+                "needed_at": "2026-04-10"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "An already-accounted portion cannot be negative; current arithmetic invents70 from50."
+    },
+    {
+      "id": "regression_economic_source_preserved",
+      "requirements": [
+        "POLICY-01",
+        "MH5"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": {
+              "underage_cost": 1,
+              "overage_cost": 1,
+              "horizon_days": 28,
+              "source": "audit-owner-approved-v3"
+            },
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "economics_source": "audit-owner-approved-v3"
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "The explicitly supplied economics source must survive in the recommendation."
+    },
+    {
+      "id": "regression_malformed_receipt_date",
+      "requirements": [
+        "DATA-01",
+        "SUPPLY-02"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-05x",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Invalid ISO date must be rejected; lexical range inclusion and exact calendar equality disagree."
+    },
+    {
+      "id": "regression_malformed_commitment_date",
+      "requirements": [
+        "DATA-01",
+        "SUPPLY-02"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [
+              {
+                "quantity": 100,
+                "already_accounted_quantity": 0,
+                "needed_at": "2026-04-02x"
+              }
+            ],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "needs_data",
+            "quantity": null
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "Invalid ISO date must be rejected; lexical range inclusion and exact calendar equality disagree."
+    },
+    {
+      "id": "regression_accepted_mass_quantile_one",
+      "requirements": [
+        "POLICY-01",
+        "DATA-01"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 0.9999999999
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": {
+              "underage_cost": 1,
+              "overage_cost": 0,
+              "horizon_days": 28,
+              "source": "audit"
+            },
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "status": "ok",
+            "target_quantile": 1,
+            "target_stock": 280,
+            "quantity": 210
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "CDF mass0.9999999999 passes isclose(.,1); q1 traversal then falls through. Singleton280 requires target280 or explicit rejection."
+    },
+    {
+      "id": "regression_unknown_moq_known_multiple",
+      "requirements": [
+        "SUPPLY-03",
+        "SUPPLY-04"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 69,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": null,
+            "order_multiple": 5,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 215,
+            "status": "needs_review"
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "If quantity is a constrained recommendation, round211 to215; README also permits provisional raw need211. Contract must choose."
+    },
+    {
+      "id": "regression_unknown_multiple_known_moq",
+      "requirements": [
+        "SUPPLY-03",
+        "SUPPLY-04"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 279,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 10,
+            "order_multiple": null,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 10,
+            "status": "needs_review"
+          }
+        ],
+        "approval_blocked": true
+      },
+      "contains": [],
+      "expected_rationale": "If quantity is constrained, known MOQ10 still applies; documented provisional raw need1 is also plausible."
+    },
+    {
+      "id": "regression_late_inbound_gap_after_normal_eta",
+      "requirements": [
+        "SUPPLY-02"
+      ],
+      "input": {
+        "as_of": "2026-04-01",
+        "horizon_days": 28,
+        "budget_kzt": null,
+        "category_policies": {
+          "A": {
+            "target_quantile": 0.8,
+            "minimum_target_quantile": null
+          },
+          "B": {
+            "target_quantile": 0.9,
+            "minimum_target_quantile": 0.9
+          }
+        },
+        "items": [
+          {
+            "sku": "0001",
+            "supplier_id": "supplier-A",
+            "category_raw": "A",
+            "unit": "шт",
+            "order_unit": "шт",
+            "unit_quantum": 1,
+            "on_hand": 70,
+            "reserved": 0,
+            "free_stock": null,
+            "stock_current": true,
+            "lead_time_days": 7,
+            "review_period_days": 21,
+            "daily_mean": [
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "horizon_distribution": [
+              {
+                "quantity": 280,
+                "probability": 1
+              }
+            ],
+            "min_order_qty": 1,
+            "order_multiple": 1,
+            "unit_cost": 100,
+            "economics": null,
+            "inbound": [
+              {
+                "quantity": 100,
+                "expected_at": "2026-04-29",
+                "status": "confirmed"
+              }
+            ],
+            "material_requirements": [],
+            "growth_adjustments": [],
+            "growth_already_included": []
+          }
+        ]
+      },
+      "expected": {
+        "items": [
+          {
+            "quantity": 200,
+            "aggregate_need": 110,
+            "temporal_lower_bound": 200,
+            "mean_unmet_with_order": 0,
+            "planning_unmet_with_order": 0,
+            "requires_expedite": false
+          }
+        ]
+      },
+      "contains": [],
+      "expected_rationale": "Repaired time-feasible bound: 270 demand before day28 -70 stock =200 ordinary units."
     }
   ]
 }

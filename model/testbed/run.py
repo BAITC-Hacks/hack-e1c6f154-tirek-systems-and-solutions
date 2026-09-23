@@ -13,11 +13,12 @@ import sys
 from .adapters import call_external
 from .business import check_cases
 from .generator import PROTOCOL, generate
-from .metrics import aggregate
+from .metrics import aggregate, checked_sum
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_ADAPTER = "model.testbed.baseline:forecast"
+DEFAULT_ADAPTER = "model.testbed.seasonal:forecast"
 DEFAULT_CALCULATOR = "model.testbed.business:reference_calculate"
+DEFAULT_MANIFEST = ROOT / "freeze-v2.1.json"
 
 
 def digest(data):
@@ -81,7 +82,7 @@ def forecast_checks(predictions, seeds):
                     changed = predictions[(seed, origin, scenario, sku)]
                     passed = False
                     forecast_difference = quantity_difference = None
-                    if base is not None and changed is not None:
+                    if base is not None and changed is not None and math.isfinite(base) and math.isfinite(changed):
                         forecast_difference = abs(changed - base)
                         # Fixed procurement context: zero stock, no path, MOQ=multiple=1.
                         quantity_difference = abs(math.ceil(changed) - math.ceil(base))
@@ -94,7 +95,13 @@ def forecast_checks(predictions, seeds):
 
 def evaluate(args):
     manifest_hash = None
-    if args.split == "final":
+    if args.split == "final" and PROTOCOL.get("final_seeds_exposed"):
+        raise ValueError("Historical final seeds were already exposed. Use --split regression; this is not a new holdout.")
+    output = Path(args.output)
+    protected = (ROOT / "reports/development", ROOT / "reports/final")
+    if any(output.resolve() == path.resolve() or path.resolve() in output.resolve().parents for path in protected):
+        raise ValueError("Historical v2.0 reports are immutable. Choose a versioned output directory, e.g. reports/v2.1/development.")
+    if args.split in {"final", "regression"}:
         verify_manifest(args.manifest, args.adapter, args.calculator)
         manifest_hash = digest(Path(args.manifest).read_bytes())
     seeds = PROTOCOL["development_seeds" if args.split == "development" else "final_seeds"]
@@ -114,14 +121,23 @@ def evaluate(args):
                     realized = case.truth[sku]["regular_realized"][-PROTOCOL["horizon_days"]:]
                     expectation = case.truth[sku]["regular_expectation"][-PROTOCOL["horizon_days"]:]
                     project = case.projects[sku]["one_off_quantity"][-PROTOCOL["horizon_days"]:]
-                    forecast_total = sum(forecast[sku]) if sku in forecast else None
+                    row_error = error
+                    forecast_total = daily_error = daily_expected_error = None
+                    if sku in forecast:
+                        try:
+                            forecast_total = checked_sum(forecast[sku], "forecast_horizon")
+                            daily_error = checked_sum((abs(a-b) for a, b in zip(forecast[sku], realized)), "daily_error")
+                            daily_expected_error = checked_sum((abs(a-b) for a, b in zip(forecast[sku], expectation)), "daily_expectation_error")
+                        except (ValueError, OverflowError) as exc:
+                            row_error = f"NumericalForecastError: {exc}"
+                            forecast_total = daily_error = daily_expected_error = None
                     predictions[(seed, origin, scenario, sku)] = forecast_total
                     rows.append({"seed": seed, "scenario": scenario, "origin": origin, "sku": sku, "unit": item["unit"],
                                  "forecast_quantity": forecast_total, "realized_regular_quantity": sum(realized),
                                  "expected_regular_quantity": sum(expectation), "project_quantity": sum(project),
-                                 "daily_absolute_error": sum(abs(a-b) for a,b in zip(forecast[sku], realized)) if sku in forecast else None,
-                                 "daily_absolute_error_expectation": sum(abs(a-b) for a,b in zip(forecast[sku], expectation)) if sku in forecast else None,
-                                 "input_sha256": input_hash, "error": error})
+                                 "daily_absolute_error": daily_error,
+                                 "daily_absolute_error_expectation": daily_expected_error,
+                                 "input_sha256": input_hash, "error": row_error})
             print(f"{args.split}: seed={seed}, scenario={scenario}", file=sys.stderr)
     business = check_cases(lambda request: call_external(args.calculator, request, args.timeout, kind="business"))
     overall = aggregate(rows)
@@ -131,11 +147,13 @@ def evaluate(args):
     groups["scenario_seed"] = {f"{scenario}/{seed}": aggregate(r for r in rows if r["scenario"] == scenario and r["seed"] == seed)
                                for scenario in PROTOCOL["scenarios"] for seed in seeds}
     checks = forecast_checks(predictions, seeds)
-    report = {"schema_version": "testbed-report-v2", "mode": "synthetic", "split": args.split, "seeds": seeds,
+    report = {"schema_version": "testbed-report-v2.1", "mode": "synthetic", "split": args.split, "seeds": seeds,
+              "candidate_version": PROTOCOL["version"],
+              "evaluation_status": "regression_on_previously_exposed_seeds" if args.split == "regression" else args.split,
               "adapter": args.adapter, "calculator": args.calculator, "python_version": platform.python_version(),
               "manifest_sha256": manifest_hash, "source_hashes": file_hashes(),
               "forecast_target_wape": PROTOCOL["forecast_target_wape"],
-              "forecast_target_met": overall["wape_realized"] is not None and overall["wape_realized"] <= PROTOCOL["forecast_target_wape"],
+              "forecast_target_met": not overall["numerical_failure"] and overall["wape_realized"] is not None and overall["wape_realized"] <= PROTOCOL["forecast_target_wape"],
               "overall": overall, "groups": groups, "rows": rows,
               "business": {"integration_status": "reference_only" if args.calculator == DEFAULT_CALCULATOR else "external_adapter",
                            "passed": sum(r["passed"] for r in business), "total": len(business), "cases": business},
@@ -148,7 +166,6 @@ def evaluate(args):
                               "Reference business results do not validate an unconnected production calculator.",
                               "Paired MH4 quantity uses a fixed zero-stock, unit-batch projection; full calculator cases are separate.",
                               "WAPE is pooled only for the common base unit шт; economics and other units are checked separately."]}
-    output = Path(args.output)
     dump(output / "report.json", report)
     with (output / "rows.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
@@ -157,7 +174,7 @@ def evaluate(args):
     (output / "report.md").write_text(markdown(report), encoding="utf-8")
     print(json.dumps({"output": str(output), "overall": overall, "business_passed": report["business"]["passed"],
                       "business_total": len(business), "forecast_target_met": report["forecast_target_met"]}, ensure_ascii=False))
-    if overall["failed_rows"] or report["business"]["passed"] != len(business) or report["paired_project_checks"]["passed"] != len(checks):
+    if overall["failed_rows"] or overall["numerical_failure"] or report["business"]["passed"] != len(business) or report["paired_project_checks"]["passed"] != len(checks):
         return 2
     if args.require_target and not report["forecast_target_met"]:
         return 3
@@ -170,13 +187,15 @@ def percent(value):
 
 def markdown(report):
     overall, business = report["overall"], report["business"]
-    lines = [f"# Testbed v2 — {report['split']}", "", f"Synthetic; adapter `{report['adapter']}`; seeds {report['seeds']}.", "",
+    lines = [f"# {report['candidate_version']} — {report['split']}", "", f"Synthetic; adapter `{report['adapter']}`; seeds {report['seeds']}.", "",
+             f"Статус оценки: **{report['evaluation_status']}**. Повтор просмотренных seeds не является новым holdout.", "",
              f"WAPE по реализованному скрытому регулярному спросу: **{percent(overall['wape_realized'])}**.",
              f"WAPE относительно математического ожидания: **{percent(overall['wape_expectation'])}**.",
              f"Цель ≤10%: **{'достигнута' if report['forecast_target_met'] else 'не достигнута'}**; это не гарантия качества.",
              f"Бизнес-проверки: **{business['passed']}/{business['total']}**, статус `{business['integration_status']}`.",
              f"Парные MH4 (прогноз и количество): **{report['paired_project_checks']['passed']}/{report['paired_project_checks']['total']}**.",
              f"Строк: {overall['rows']}; ошибок адаптера: {overall['failed_rows']}. Проектный спрос исключён из цели, сохранён отдельно.",
+             f"Численный отказ агрегирования: {overall['numerical_failure']}; детали: {overall['numerical_errors']}.",
              "90% пройденных тестов не означает 90% качества прогноза.", "",
              "| Сценарий / seed | Строк | WAPE реализация | WAPE ожидание | Ошибки |", "|---|---:|---:|---:|---:|"]
     for key, group in report["groups"]["scenario_seed"].items():
@@ -197,14 +216,14 @@ def main():
     frozen = commands.add_parser("freeze")
     frozen.add_argument("--artifact", action="append", default=[], help="Model weights/config dependency file to freeze (repeatable)")
     run = commands.add_parser("evaluate")
-    run.add_argument("--split", choices=("development", "final"), default="development")
+    run.add_argument("--split", choices=("development", "final", "regression"), default="development")
     run.add_argument("--output", required=True)
     run.add_argument("--timeout", type=float, default=30)
     run.add_argument("--require-target", action="store_true")
     for command in (frozen, run):
         command.add_argument("--adapter", default=DEFAULT_ADAPTER)
         command.add_argument("--calculator", default=DEFAULT_CALCULATOR)
-        command.add_argument("--manifest", default=str(ROOT / "freeze.json"))
+        command.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     export = commands.add_parser("export-development")
     export.add_argument("--scenario", choices=PROTOCOL["scenarios"], default="stable")
     export.add_argument("--seed", type=int, choices=PROTOCOL["development_seeds"], default=101)
@@ -213,6 +232,9 @@ def main():
     business.add_argument("--calculator", default=DEFAULT_CALCULATOR)
     business.add_argument("--timeout", type=float, default=30)
     business.add_argument("--output", required=True)
+    sources = commands.add_parser("inspect-sources", help="Read-only readiness audit of the provided partner ZIP/XLSX exports")
+    sources.add_argument("--input-dir", required=True)
+    sources.add_argument("--output", required=True)
     args = parser.parse_args()
     try:
         if args.command == "freeze":
@@ -226,6 +248,12 @@ def main():
             dump(args.output, result)
             print(f"Business checks: {result['passed']}/{result['total']}; {result['integration_status']}")
             return 0 if result["passed"] == len(rows) else 2
+        elif args.command == "inspect-sources":
+            from .sources import inspect_sources
+            result = inspect_sources(args.input_dir)
+            dump(args.output, result)
+            print(f"Source readiness report saved to {args.output}; raw workbooks unchanged.")
+            return 2 if result["missing_changed_or_invalid_workbooks"] else 0
         else:
             case = generate(args.scenario, args.seed, PROTOCOL["origins"][0])
             dump(Path(args.output) / "model-input.json", case.observed)

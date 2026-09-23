@@ -8,7 +8,7 @@ def forecast(request):
     cutoff = date.fromisoformat(request["as_of"])
     output = {}
     for item in request["items"]:
-        rows = item["history"]
+        rows = sorted(item["history"], key=lambda row: row["date"])
         clean = [r["observed_quantity"] / r["availability_fraction"] for r in rows
                  if r["availability_fraction"] and r["complete"]]
         typical = statistics.median(clean) if clean else 0
@@ -35,11 +35,16 @@ def forecast(request):
                     factor *= promo["planned_multiplier"]
             return factor
         numerator = denominator = 0.0
-        for row in rows[-56:]:
+        window_start = (cutoff - timedelta(days=55)).isoformat()
+        for row in rows:
+            if not window_start <= row["date"] <= request["as_of"]:
+                continue
             if row["complete"] and row["availability_fraction"]:
                 numerator += max(0, row["observed_quantity"] - excluded[row["date"]]) / promotion(row["date"])
                 denominator += row["availability_fraction"]
-        rate = numerator / denominator if denominator else 0
+        if not denominator and not item["analogue_history"]:
+            raise ValueError(f"{item['sku']}: no complete available observations or explicit analogue; demand is unknown")
+        rate = numerator / denominator if denominator else statistics.mean(r["quantity"] for r in item["analogue_history"])
         if len(rows) < 28 and item["analogue_history"]:
             analogue = statistics.mean(r["quantity"] for r in item["analogue_history"])
             weight = min(1, len(rows) / 28)
