@@ -1,0 +1,61 @@
+{
+  "model_id": "se-demand-28d-d712b0646810",
+  "horizon_days": 28,
+  "loss_function": "Poisson",
+  "iterations": 500,
+  "depth": 6,
+  "learning_rate": 0.05,
+  "random_seed": 42,
+  "features": [
+    "sku",
+    "age_days",
+    "month_sin",
+    "month_cos",
+    "target_month",
+    "sum7",
+    "sum14",
+    "sum28",
+    "sum56",
+    "sum84",
+    "week2",
+    "week3",
+    "week4",
+    "nonzero28",
+    "nonzero84",
+    "std28",
+    "max28",
+    "days_since_sale",
+    "trend28",
+    "robust_sum28",
+    "large_day_excess28",
+    "prior_year28",
+    "seasonal_available"
+  ],
+  "categorical_features": [
+    "sku"
+  ],
+  "target_transform": "target / max(sum84 / 3, 10)",
+  "baseline_name": "seasonal_blend",
+  "preferred_method_on_validation": "seasonal_blend",
+  "residual_quantiles": [
+    -1.5925648115085098,
+    -0.46313697416817223,
+    0.9827141533889279
+  ],
+  "residual_scale": "max(sum84 / 3, 1)",
+  "trained_as_of": "2026-09-21",
+  "source_data_as_of": "2026-09-22",
+  "python": "3.12.14",
+  "catboost": "1.2.8",
+  "created_at": "2026-09-23T09:32:59.365589+00:00",
+  "final_fit": {
+    "training_rows": 41505,
+    "train_origin_min": "2025-03-26",
+    "train_origin_max": "2026-08-24",
+    "train_label_end_max": "2026-09-21",
+    "cutoff": "2026-09-21",
+    "seconds": 8.392
+  },
+  "candidate": "ScaledPoisson",
+  "model_sha256": "d712b0646810a448e1ce4f968dcece91ef0b5c6e86bb27c9a000095e2190681a"
+}

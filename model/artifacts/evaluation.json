@@ -1,0 +1,303 @@
+{
+  "source": {
+    "filename": "Динамика продаж_Syseme Electric_2025-2026.xlsx",
+    "sha256": "5ca3997c13f1f65d73db5141122b92deab64f1029bf9b43fd3dd7ade65151128",
+    "input_rows": 77313,
+    "used_rows": 76997,
+    "excluded_rows": 316,
+    "negative_rows": 302,
+    "undated_or_missing_sku_rows": 1,
+    "non_invoice_rows": 3,
+    "sku_count": 565,
+    "warehouse": "Алматы",
+    "unit": "шт",
+    "first_positive_sale": "2025-01-04",
+    "data_as_of": "2026-09-22",
+    "observed_positive_quantity": 6841676.0,
+    "client_id_available": false,
+    "daily_availability_available": false,
+    "last_day_completeness": "unverified; final day excluded from evaluation targets",
+    "quantity_policy": "positive invoice quantities; returns/corrections are not abs() and are not latent demand"
+  },
+  "validation_origin": "2026-06-29",
+  "validation_forecast_end": "2026-07-27",
+  "validation_baselines": {
+    "recent28": {
+      "sku_count": 563,
+      "actual_quantity": 382082.0,
+      "mae_units": 208.06927175843694,
+      "wape": 0.30659125528028014,
+      "bias": -0.13016315869368356,
+      "predicted_quantity": 332349.0
+    },
+    "mean56": {
+      "sku_count": 563,
+      "actual_quantity": 382082.0,
+      "mae_units": 203.56927175843694,
+      "wape": 0.2999604796876063,
+      "bias": -0.2176954161672102,
+      "predicted_quantity": 298904.5
+    },
+    "seasonal_blend": {
+      "sku_count": 563,
+      "actual_quantity": 382082.0,
+      "mae_units": 171.12921847246892,
+      "wape": 0.2521598766756874,
+      "bias": -0.0485491334320905,
+      "predicted_quantity": 363532.25
+    }
+  },
+  "validation_candidates": {
+    "RMSE": {
+      "fit": {
+        "training_rows": 33045,
+        "train_origin_min": "2025-03-26",
+        "train_origin_max": "2026-05-27",
+        "train_label_end_max": "2026-06-24",
+        "cutoff": "2026-06-29",
+        "seconds": 2.87
+      },
+      "metrics": {
+        "sku_count": 563,
+        "actual_quantity": 382082.0,
+        "mae_units": 257.7675035494236,
+        "wape": 0.379821882471107,
+        "bias": -0.1013909996778087,
+        "predicted_quantity": 343342.3240611035
+      }
+    },
+    "ScaledRMSE": {
+      "fit": {
+        "training_rows": 33045,
+        "train_origin_min": "2025-03-26",
+        "train_origin_max": "2026-05-27",
+        "train_label_end_max": "2026-06-24",
+        "cutoff": "2026-06-29",
+        "seconds": 2.879
+      },
+      "metrics": {
+        "sku_count": 563,
+        "actual_quantity": 382082.0,
+        "mae_units": 218.6278574430153,
+        "wape": 0.32214939133593734,
+        "bias": -0.12383537883276055,
+        "predicted_quantity": 334766.7307848212
+      }
+    },
+    "ScaledPoisson": {
+      "fit": {
+        "training_rows": 33045,
+        "train_origin_min": "2025-03-26",
+        "train_origin_max": "2026-05-27",
+        "train_label_end_max": "2026-06-24",
+        "cutoff": "2026-06-29",
+        "seconds": 6.981
+      },
+      "metrics": {
+        "sku_count": 563,
+        "actual_quantity": 382082.0,
+        "mae_units": 178.74672959413675,
+        "wape": 0.26338432263623773,
+        "bias": -0.030666406922816608,
+        "predicted_quantity": 370364.9179101165
+      }
+    }
+  },
+  "selected_loss": "ScaledPoisson",
+  "selected_baseline": "seasonal_blend",
+  "preferred_method_on_validation": "seasonal_blend",
+  "test_folds": [
+    {
+      "origin": "2026-07-27",
+      "forecast_end": "2026-08-24",
+      "fit": {
+        "training_rows": 35860,
+        "train_origin_min": "2025-03-26",
+        "train_origin_max": "2026-06-29",
+        "train_label_end_max": "2026-07-27",
+        "cutoff": "2026-07-27",
+        "seconds": 7.572
+      },
+      "catboost": {
+        "sku_count": 565,
+        "actual_quantity": 287581.0,
+        "mae_units": 351.8086400548187,
+        "wape": 0.6911857237820738,
+        "bias": 0.6278216969305475,
+        "predicted_quantity": 468130.59142498375
+      },
+      "baseline_name": "seasonal_blend",
+      "baseline": {
+        "sku_count": 565,
+        "actual_quantity": 287581.0,
+        "mae_units": 301.3477876106195,
+        "wape": 0.5920471102054725,
+        "bias": 0.4746367110483655,
+        "predicted_quantity": 424077.5
+      },
+      "interval_80_coverage": 0.7557522123893805,
+      "not_yet_observed_skus_with_future_sales": 0,
+      "not_yet_observed_future_quantity": 0.0
+    },
+    {
+      "origin": "2026-08-24",
+      "forecast_end": "2026-09-21",
+      "fit": {
+        "training_rows": 38680,
+        "train_origin_min": "2025-03-26",
+        "train_origin_max": "2026-07-27",
+        "train_label_end_max": "2026-08-24",
+        "cutoff": "2026-08-24",
+        "seconds": 8.619
+      },
+      "catboost": {
+        "sku_count": 565,
+        "actual_quantity": 418726.0,
+        "mae_units": 263.1630964203013,
+        "wape": 0.3550941414611709,
+        "bias": -0.22254710471791406,
+        "predicted_quantity": 325539.74102988676
+      },
+      "baseline_name": "seasonal_blend",
+      "baseline": {
+        "sku_count": 565,
+        "actual_quantity": 418726.0,
+        "mae_units": 170.35398230088495,
+        "wape": 0.22986392055902904,
+        "bias": -0.12494328033129062,
+        "predicted_quantity": 366409.0
+      },
+      "interval_80_coverage": 0.8106194690265487,
+      "not_yet_observed_skus_with_future_sales": 0,
+      "not_yet_observed_future_quantity": 0.0
+    }
+  ],
+  "final_fit": {
+    "training_rows": 41505,
+    "train_origin_min": "2025-03-26",
+    "train_origin_max": "2026-08-24",
+    "train_label_end_max": "2026-09-21",
+    "cutoff": "2026-09-21",
+    "seconds": 8.392
+  },
+  "feature_importance": [
+    [
+      "sku",
+      34.95181641889177
+    ],
+    [
+      "days_since_sale",
+      11.009063486075998
+    ],
+    [
+      "sum84",
+      10.162062545864412
+    ],
+    [
+      "age_days",
+      10.072849555969666
+    ],
+    [
+      "target_month",
+      8.336761145779773
+    ],
+    [
+      "month_sin",
+      5.905066323690628
+    ],
+    [
+      "nonzero84",
+      4.407634880430529
+    ],
+    [
+      "month_cos",
+      4.174425474428936
+    ],
+    [
+      "trend28",
+      3.918104914861235
+    ],
+    [
+      "prior_year28",
+      2.283080169338705
+    ],
+    [
+      "sum56",
+      1.3734258955374328
+    ],
+    [
+      "std28",
+      0.7347296177958019
+    ],
+    [
+      "max28",
+      0.7070702378549468
+    ],
+    [
+      "seasonal_available",
+      0.5228870696219636
+    ],
+    [
+      "sum28",
+      0.39779480185214416
+    ],
+    [
+      "nonzero28",
+      0.2733109545631838
+    ],
+    [
+      "sum7",
+      0.2533300046580044
+    ],
+    [
+      "week3",
+      0.12244709017315256
+    ],
+    [
+      "week4",
+      0.09551660262118844
+    ],
+    [
+      "robust_sum28",
+      0.08725680669729566
+    ],
+    [
+      "sum14",
+      0.08238077821194631
+    ],
+    [
+      "large_day_excess28",
+      0.0733771362605749
+    ],
+    [
+      "week2",
+      0.05560808882076393
+    ]
+  ],
+  "limitations": [
+    "Target is observed positive invoice sales, not latent demand or net revenue.",
+    "No client IDs: large one-off client orders cannot be reliably identified.",
+    "No daily availability: stockout compensation is not trained or validated on real data.",
+    "Large-day features are robust; actual targets are not secretly clipped or relabeled.",
+    "Last observed day completeness is unverified; it is excluded from evaluation/training targets but used for current forecast features.",
+    "Intervals are pooled validation-residual estimates; coverage is reported, not assumed to be calibrated per SKU.",
+    "Supplier SE, one warehouse, units pieces; IEK and unseen products are outside this model's scope.",
+    "Prices, stock, inbound, MOQ, individual order policy and LLM judgement belong to later modules described in the specification.",
+    "No automatic retraining: infer reads fresh sales; train must be run explicitly.",
+    "Two test windows were inspected during development; final candidate selection uses validation only. A new untouched future window is needed before production acceptance."
+  ],
+  "test_aggregate": {
+    "catboost": {
+      "sku_windows": 1130,
+      "mae_units": 307.48586823756,
+      "wape": 0.49193768589075687,
+      "bias": 0.1236903109481719
+    },
+    "baseline": {
+      "sku_windows": 1130,
+      "mae_units": 235.8508849557522,
+      "wape": 0.37733096231525387,
+      "bias": 0.11918259340485086
+    }
+  }
+}
